@@ -1,0 +1,43 @@
+# You can override the included template(s) by including variable overrides.
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Note that environment variables can be set in several places:
+# https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+
+stages:
+  - test
+  - deploy
+
+default:
+  tags:
+    - frontend-docker
+
+sast:
+  stage: test
+
+include:
+  - template: Security/SAST.gitlab-ci.yml
+
+pages:
+  image: node:22
+  stage: deploy
+  variables:
+    AI_EDITOR_PROVIDER: openai
+    AI_EDITOR_MODEL: gpt-5.4-mini
+    AI_EDITOR_TIMEOUT_MS: "90000"
+    SOURCE_FETCH_TIMEOUT_MS: "10000"
+    DATA_DIR: ./data
+    STATIC_DIR: ./public
+    PUBLIC_BASE_PATH: /daily-news
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "schedule"'
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "main"'
+  script:
+    - npm install
+    - npm run build
+    - node src/cli.js run
+    - npm run export:static
+  artifacts:
+    paths:
+      - public
+    expire_in: 7 days

@@ -1,0 +1,27 @@
+# Large binary files
+photos/
+pdf_pages/
+*.pdf
+*.png
+
+# Python artifacts
+__pycache__/
+*.pyc
+
+# Generated/base64 data
+_avatar_base64.js
+
+# Verification artifacts
+verify_*.png
+_verify*.py
+_verify*.mjs
+_redo_*.py
+_embed_avatars.py
+rename_avatars.py
+
+# Backups (with their own git repos)
+address-audit-agent-v1-backup/
+address-audit-agent-v2-backup/
+
+# Temp files
+_review_diff*.txt

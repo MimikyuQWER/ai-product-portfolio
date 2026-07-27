@@ -1,0 +1,553 @@
+"""
+Agent 工具函数
+- geocode: 高德地图地址核验
+- web_search: 联网搜索
+- parse_excel: Excel 文件解析
+- ocr_image: 图片 OCR 文字提取
+"""
+
+import os
+import json
+import base64
+import httpx
+from io import BytesIO
+from typing import Any
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# ============================================================
+# 工具定义（OpenAI function calling 格式，传给 LLM）
+# ============================================================
+
+TOOL_DEFINITIONS = [
+    {
+        "type": "function",
+        "function": {
+            "name": "geocode",
+            "description": "高德地图地址核验：传入地址字符串，返回该地址在地图上的定位结果，包括标准化地址、经纬度、匹配精度级别（兴趣点/门牌号/道路/区县/城市/省份）。用于验证地址是否真实存在。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "address": {
+                        "type": "string",
+                        "description": "需要验证的完整中文地址，如'上海市浦东新区张江路498号'",
+                    },
+                },
+                "required": ["address"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "web_search",
+            "description": "联网搜索：传入搜索关键词，返回网页搜索结果（标题、URL、摘要）。用于在地图之外补充验证地址是否在公开信息中被提及。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "搜索关键词，如'北京市海淀区中关村大街1号 地址'",
+                    },
+                },
+                "required": ["query"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "parse_excel",
+            "description": "解析上传的Excel文件，提取其中的客户姓名和地址信息。支持 .xlsx 和 .xls 格式。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_base64": {
+                        "type": "string",
+                        "description": "Excel文件的 base64 编码内容",
+                    },
+                },
+                "required": ["file_base64"],
+            },
+        },
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "ocr_image",
+            "description": "OCR 图片文字识别：传入图片的 base64 编码，提取图片中的所有文字内容。用于识别截图、照片中的地址信息。返回提取到的文本内容。",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "file_base64": {
+                        "type": "string",
+                        "description": "图片文件的 base64 编码字符串（支持 png/jpg/jpeg 格式）",
+                    },
+                },
+                "required": ["file_base64"],
+            },
+        },
+    },
+]
+
+
+# ============================================================
+# 工具实现
+# ============================================================
+
+
+# 简单缓存：避免批量文件中同地址重复调 API
+_geocode_cache: dict[str, str] = {}
+
+def geocode(address: str) -> str:
+    """
+    高德地图地理编码 API
+    文档：https://lbs.amap.com/api/webservice/guide/api/georegeo
+
+    返回 JSON 字符串，包含：
+    - status: "success" | "error"
+    - found: bool 是否找到
+    - formatted_address: 标准化地址
+    - location: 经纬度 "lng,lat"
+    - level: 匹配级别（兴趣点/门牌号/道路/区县/城市/省份）
+    - province, city, district, street, number: 结构化地址
+    - source: "高德地图地理编码API"
+    """
+    # 缓存命中：批量文件中同地址不重复调 API
+    cache_key = address.strip()
+    if cache_key in _geocode_cache:
+        return _geocode_cache[cache_key]
+
+    api_key = os.getenv("AMAP_API_KEY", "")
+    if not api_key:
+        return json.dumps(
+            {"status": "error", "message": "高德地图 API Key 未配置，无法进行地图核验"},
+            ensure_ascii=False,
+        )
+
+    try:
+        # 从地址中提取城市名作为 city 参数，提高准确率
+        url = "https://restapi.amap.com/v3/geocode/geo"
+        params: dict[str, Any] = {
+            "key": api_key,
+            "address": address,
+        }
+
+        response = httpx.get(url, params=params, timeout=10.0)
+        data = response.json()
+
+        if data.get("status") != "1" or not data.get("geocodes"):
+            return json.dumps(
+                {
+                    "status": "success",
+                    "found": False,
+                    "message": f"高德地图未找到该地址：{address}",
+                    "source": "高德地图地理编码API",
+                },
+                ensure_ascii=False,
+            )
+
+        geocode_info = data["geocodes"][0]
+        location = geocode_info.get("location", "")
+        level = geocode_info.get("level", "")
+
+        # 生成高德地图可跳转链接（搜索直达，非仅坐标标记）
+        from urllib.parse import quote
+        addr_query = geocode_info.get("formatted_address", address)
+        map_url = f"https://ditu.amap.com/search?query={quote(addr_query)}" if location else ""
+
+        # 解析结构化地址信息
+        result = {
+            "status": "success",
+            "found": True,
+            "formatted_address": geocode_info.get("formatted_address", address),
+            "location": location,
+            "map_url": map_url,
+            "level": level,
+            "level_desc": _level_description(level),
+            "province": geocode_info.get("province", ""),
+            "city": geocode_info.get("city", ""),
+            "district": geocode_info.get("district", ""),
+            "street": geocode_info.get("street", ""),
+            "number": geocode_info.get("number", ""),
+            "source": "高德地图地理编码API",
+        }
+        json_result = json.dumps(result, ensure_ascii=False)
+        _geocode_cache[cache_key] = json_result
+        return json_result
+
+    except Exception as e:
+        return json.dumps(
+            {"status": "error", "message": f"高德地图 API 调用失败：{str(e)}"},
+            ensure_ascii=False,
+        )
+
+
+def _level_description(level: str) -> str:
+    """将高德返回的 level 代码转为中文说明"""
+    mapping = {
+        "兴趣点": "精确匹配到具体地点（最高精度）",
+        "门牌号": "精确匹配到门牌号",
+        "道路": "匹配到道路级别，具体门牌号可能不精确",
+        "区县": "仅匹配到区县级，地址可能不完整",
+        "城市": "仅匹配到城市级，地址信息严重不足",
+        "省份": "仅匹配到省级",
+    }
+    return mapping.get(level, f"未知精度级别：{level}")
+
+
+def web_search(query: str) -> str:
+    """
+    联网搜索（Bing Web Search API）
+    文档：https://learn.microsoft.com/en-us/bing/search-apis/bing-web-search/
+
+    返回 JSON 字符串，包含：
+    - status: "success" | "error"
+    - results: [{title, url, snippet}, ...]
+    - source: "Bing Web Search API"
+    """
+    api_key = os.getenv("BING_SEARCH_KEY", "")
+    if not api_key:
+        return json.dumps(
+            {
+                "status": "skipped",
+                "results": [],
+                "message": "联网搜索功能未启用（Bing Search Key 未配置），请仅依据地图核验结果和你的文本理解能力来判断地址有效性。搜索不可用不代表地址无效。",
+                "source": "Bing Web Search API（未配置）",
+            },
+            ensure_ascii=False,
+        )
+
+    try:
+        url = "https://api.bing.microsoft.com/v7.0/search"
+        headers = {"Ocp-Apim-Subscription-Key": api_key}
+        params: dict[str, Any] = {
+            "q": query,
+            "count": 5,
+            "mkt": "zh-CN",
+        }
+
+        response = httpx.get(url, headers=headers, params=params, timeout=10.0)
+        data = response.json()
+
+        results = []
+        for item in data.get("webPages", {}).get("value", []):
+            results.append(
+                {
+                    "title": item.get("name", ""),
+                    "url": item.get("url", ""),
+                    "snippet": item.get("snippet", ""),
+                }
+            )
+
+        return json.dumps(
+            {
+                "status": "success",
+                "results": results,
+                "total": len(results),
+                "source": "Bing Web Search API",
+            },
+            ensure_ascii=False,
+        )
+
+    except Exception as e:
+        return json.dumps(
+            {"status": "error", "message": f"搜索 API 调用失败：{str(e)}"},
+            ensure_ascii=False,
+        )
+
+
+def parse_excel(file_base64: str) -> str:
+    """
+    解析表格文件（Excel 或 CSV），提取姓名和地址列
+
+    返回 JSON 字符串，包含：
+    - status: "success" | "error"
+    - records: [{name, address, row}, ...]
+    - total: 记录总数
+    - columns: 检测到的列名
+    """
+    # 解码 base64
+    file_bytes = base64.b64decode(file_base64)
+
+    # 先尝试 Excel 格式
+    try:
+        from openpyxl import load_workbook
+
+        wb = load_workbook(BytesIO(file_bytes), read_only=True)
+    except Exception:
+        # Excel 解析失败，尝试 CSV
+        return _parse_csv(file_bytes)
+
+    try:
+        ws = wb.active
+
+        if ws is None:
+            return json.dumps(
+                {"status": "error", "message": "Excel 文件中没有可读取的工作表"},
+                ensure_ascii=False,
+            )
+
+        # 读取表头
+        rows = list(ws.iter_rows(values_only=True))
+        if not rows:
+            return json.dumps(
+                {"status": "error", "message": "Excel 文件为空"},
+                ensure_ascii=False,
+            )
+
+        headers = [str(h).strip() if h else "" for h in rows[0]]
+        data_rows = rows[1:]
+
+        # 智能匹配列名（支持中英文常见写法）
+        name_col = _find_column(headers, ["姓名", "客户名称", "公司名称", "name", "客户", "联系人"])
+        addr_col = _find_column(
+            headers,
+            ["地址", "详细地址", "联系地址", "address", "addr", "公司地址", "注册地址"],
+        )
+
+        if addr_col is None:
+            return json.dumps(
+                {
+                    "status": "error",
+                    "message": f"未找到地址列。检测到的列名：{headers}。请确保 Excel 中包含'地址'或'详细地址'列。",
+                    "columns": headers,
+                },
+                ensure_ascii=False,
+            )
+
+        records = []
+        for i, row in enumerate(data_rows):
+            if not row:
+                continue
+            addr = str(row[addr_col]).strip() if len(row) > addr_col and row[addr_col] else ""
+            if not addr or addr == "None":
+                continue
+
+            name = ""
+            if name_col is not None and len(row) > name_col:
+                name = str(row[name_col]).strip() if row[name_col] else ""
+
+            records.append(
+                {
+                    "name": name if name and name != "None" else "未知",
+                    "address": addr,
+                    "row": i + 2,  # Excel 行号（从 1 开始，第 1 行是表头）
+                }
+            )
+
+        return json.dumps(
+            {
+                "status": "success",
+                "records": records,
+                "total": len(records),
+                "columns": headers,
+                "name_column": headers[name_col] if name_col is not None else None,
+                "address_column": headers[addr_col],
+            },
+            ensure_ascii=False,
+        )
+
+    except Exception as e:
+        return json.dumps(
+            {"status": "error", "message": f"Excel 解析失败：{str(e)}"},
+            ensure_ascii=False,
+        )
+    finally:
+        wb.close()
+
+
+def _parse_csv(file_bytes: bytes) -> str:
+    """CSV 文件解析，自动检测编码和分隔符"""
+    import csv
+    import io
+
+    # 自动检测编码
+    text = None
+    for enc in ["utf-8-sig", "utf-8", "gbk", "gb2312", "latin-1"]:
+        try:
+            text = file_bytes.decode(enc)
+            break
+        except (UnicodeDecodeError, LookupError):
+            continue
+
+    if text is None:
+        return json.dumps(
+            {"status": "error", "message": "CSV 文件编码无法识别"},
+            ensure_ascii=False,
+        )
+
+    # 快速检测分隔符：跳过慢速 csv.Sniffer，直接看第一行
+    first_line = text.split("\n")[0].replace("\r", "") if text else ""
+    delim = "\t" if first_line.count("\t") > first_line.count(",") else ","
+
+    reader = csv.reader(io.StringIO(text), delimiter=delim)
+    try:
+        headers = [h.strip() if h else "" for h in next(reader)]
+    except StopIteration:
+        return json.dumps(
+            {"status": "error", "message": "CSV 文件为空"},
+            ensure_ascii=False,
+        )
+
+    # 使用与 Excel 解析相同的列匹配逻辑
+    name_col = _find_column(headers, ["姓名", "客户名称", "公司名称", "name", "客户", "联系人", "UID", "客户UID"])
+    addr_col = _find_column(
+        headers,
+        ["地址", "详细地址", "联系地址", "address", "addr", "公司地址", "注册地址", "客户地址"],
+    )
+
+    if addr_col is None:
+        return json.dumps(
+            {
+                "status": "error",
+                "message": f"未找到地址列。检测到的列名：{headers}。请确保 CSV 中包含'地址'或'详细地址'列。",
+                "columns": headers,
+            },
+            ensure_ascii=False,
+        )
+
+    records = []
+    for i, row in enumerate(reader, start=2):
+        if not row or all(not cell for cell in row):
+            continue
+        addr = str(row[addr_col]).strip() if len(row) > addr_col and row[addr_col] else ""
+        if not addr or addr == "None":
+            continue
+        name = ""
+        if name_col is not None and len(row) > name_col and row[name_col]:
+            name = str(row[name_col]).strip()
+
+        records.append(
+            {
+                "name": name if name and name != "None" else "未知",
+                "address": addr,
+                "row": i,
+            }
+        )
+
+    return json.dumps(
+        {
+            "status": "success",
+            "records": records,
+            "total": len(records),
+            "columns": headers,
+            "name_column": headers[name_col] if name_col is not None else None,
+            "address_column": headers[addr_col],
+        },
+        ensure_ascii=False,
+    )
+
+
+def _find_column(headers: list[str], candidates: list[str]) -> int | None:
+    """在表头中智能匹配目标列名（优先精确匹配，避免误匹配如'邮箱地址'→'地址'）"""
+    for i, h in enumerate(headers):
+        h_clean = h.lower().replace(" ", "").replace("_", "")
+        for c in candidates:
+            c_clean = c.lower().replace(" ", "").replace("_", "")
+            # 精确匹配优先
+            if h_clean == c_clean:
+                return i
+            # 长候选词（≥3字）允许子串匹配，短候选词仅精确匹配
+            if len(c_clean) >= 3 and c_clean in h_clean:
+                return i
+    return None
+
+
+def ocr_image(file_base64: str) -> str:
+    """
+    OCR 图片文字识别
+    使用 pytesseract 提取图片中的文字，用于识别截图/照片中的地址信息。
+
+    返回 JSON 字符串，包含：
+    - status: "success" | "error"
+    - text: 识别出的完整文本
+    - source: "pytesseract OCR"
+    """
+    try:
+        from PIL import Image
+
+        img_bytes = base64.b64decode(file_base64)
+        img = Image.open(BytesIO(img_bytes))
+    except Exception as e:
+        return json.dumps(
+            {"status": "error", "message": f"图片解码失败：{str(e)}"},
+            ensure_ascii=False,
+        )
+
+    try:
+        import pytesseract
+
+        text = pytesseract.image_to_string(img, lang="chi_sim+eng")
+        text = text.strip()
+
+        if not text:
+            return json.dumps(
+                {
+                    "status": "success",
+                    "text": "",
+                    "message": "图片中未识别到文字，请确认图片清晰且包含文字内容。",
+                    "source": "pytesseract OCR",
+                },
+                ensure_ascii=False,
+            )
+
+        return json.dumps(
+            {
+                "status": "success",
+                "text": text,
+                "source": "pytesseract OCR",
+            },
+            ensure_ascii=False,
+        )
+    except ImportError:
+        return json.dumps(
+            {
+                "status": "error",
+                "message": "OCR 功能未安装。请运行 pip install pytesseract Pillow 并安装 Tesseract-OCR。\n下载地址：https://github.com/UB-Mannheim/tesseract/wiki",
+                "source": "pytesseract OCR（未安装）",
+            },
+            ensure_ascii=False,
+        )
+    except Exception as e:
+        return json.dumps(
+            {"status": "error", "message": f"OCR 识别失败：{str(e)}"},
+            ensure_ascii=False,
+        )
+
+
+# ============================================================
+# 工具执行调度
+# ============================================================
+
+TOOL_FUNCTIONS = {
+    "geocode": geocode,
+    "web_search": web_search,
+    "parse_excel": parse_excel,
+    "ocr_image": ocr_image,
+}
+
+
+def execute_tool(name: str, arguments: dict) -> str:
+    """根据工具名称执行对应的工具函数"""
+    import inspect
+
+    func = TOOL_FUNCTIONS.get(name)
+    if func is None:
+        return json.dumps(
+            {"status": "error", "message": f"未知工具：{name}"},
+            ensure_ascii=False,
+        )
+
+    # 只传递函数签名中存在的参数，过滤 LLM 可能多余生成的 key
+    valid_params = set(inspect.signature(func).parameters.keys())
+    filtered_args = {k: v for k, v in arguments.items() if k in valid_params}
+
+    try:
+        return func(**filtered_args)
+    except Exception as e:
+        return json.dumps(
+            {"status": "error", "message": f"工具 {name} 执行失败：{str(e)}"},
+            ensure_ascii=False,
+        )

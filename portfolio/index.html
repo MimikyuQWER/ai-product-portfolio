@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>张逸帆 · AI 产品作品集</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #16181d;
+    --ink-2: #2d3038;
+    --ink-3: #555a63;
+    --bg: #f8f9fb;
+    --surface: #ffffff;
+    --border: #e6e8ed;
+    --border-light: #eff0f4;
+    --radius: 8px;
+    --radius-lg: 12px;
+    /* Project accents */
+    --vur-blue: #2563eb;
+    --vur-blue-light: #eff4ff;
+    --audit-gold: #b8860b;
+    --audit-gold-light: #fef9f0;
+  }
+
+  body {
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    font-size: 14.5px;
+  }
+
+  .container { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Header ── */
+  .header { padding: 60px 0 40px; }
+  .header-name {
+    font-size: 28px; font-weight: 700;
+    letter-spacing: -0.015em; margin-bottom: 10px;
+    text-wrap: balance;
+  }
+  .header-school { font-size: 14.5px; color: var(--ink-3); margin-bottom: 10px; }
+  .header-companies { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .company-badge {
+    font-size: 12.5px; font-weight: 600; padding: 5px 12px;
+    border-radius: 999px;
+  }
+  .company-badge.tencent { background: #ecfdf3; color: #15803d; }
+  .company-badge.mihoyo { background: #eff4ff; color: #2563eb; }
+
+  .header-summary {
+    font-size: 14px; color: var(--ink-2);
+    line-height: 1.75; padding: 16px 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+  }
+  .header-summary strong { color: var(--ink); }
+
+  /* ── Divider ── */
+  .divider {
+    height: 1px; background: var(--border-light);
+    margin: 36px 0;
+  }
+
+  /* ── Project Section ── */
+  .project { margin-bottom: 48px; }
+
+  .project-title {
+    font-size: 20px; font-weight: 700;
+    letter-spacing: -0.01em; margin-bottom: 4px;
+    text-wrap: balance;
+  }
+  .project-context {
+    font-size: 13px; color: var(--ink-3); margin-bottom: 20px;
+  }
+  .project-context strong { color: var(--ink-2); font-weight: 600; }
+
+  /* ── Narrative ── */
+  .narrative { margin-bottom: 22px; }
+  .narrative p, .narrative li {
+    font-size: 14px; color: var(--ink-2); line-height: 1.8;
+  }
+  .narrative ul { padding-left: 18px; }
+  .narrative li { margin-bottom: 6px; }
+
+  .highlight-box {
+    padding: 14px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin: 14px 0;
+    font-size: 13.5px; color: var(--ink-2); line-height: 1.75;
+  }
+  .highlight-box.vur  { border-left: 3px solid var(--vur-blue);  background: var(--vur-blue-light); }
+  .highlight-box.audit { border-left: 3px solid var(--audit-gold); background: var(--audit-gold-light); }
+
+  /* ── Flow ── */
+  .flow {
+    display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+    margin: 12px 0;
+  }
+  .flow-step {
+    padding: 6px 14px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    font-size: 12.5px; color: var(--ink-2); white-space: nowrap;
+  }
+  .flow-arrow { font-size: 12px; color: var(--ink-3); }
+
+  /* ── CTA ── */
+  .cta-row { display: flex; gap: 10px; margin-top: 18px; align-items: center; }
+  .cta {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 9px 20px; border-radius: 999px;
+    font-size: 13.5px; font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .cta.primary { background: var(--ink); color: #fff; }
+  .cta.primary:hover { background: #32353d; }
+  .cta.ghost { background: var(--surface); border: 1px solid var(--border); color: var(--ink); }
+  .cta.ghost:hover { background: #f5f5f8; }
+
+  /* ── Footer ── */
+  .footer {
+    padding: 36px 0 52px; margin-top: 8px;
+    border-top: 1px solid var(--border-light);
+    font-size: 13px; color: var(--ink-3); line-height: 1.8;
+  }
+  .footer a { color: var(--ink-2); text-underline-offset: 3px; }
+
+  @media (max-width: 600px) {
+    .header { padding: 36px 0 28px; }
+    .header-name { font-size: 24px; }
+    .project-title { font-size: 18px; }
+    .container { padding: 0 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- ═══════════ HEADER ═══════════ -->
+  <header class="header">
+    <div class="header-name">张逸帆</div>
+    <div class="header-school">复旦大学</div>
+    <div class="header-companies">
+      <span class="company-badge tencent">腾讯 · 微信支付风控</span>
+      <span class="company-badge mihoyo">米哈游 · 原神国际化</span>
+    </div>
+    <div class="header-summary">
+      在以上两段实习中独立完成两个 AI 产品项目，均在业务团队实际投入使用。<strong>虚拟用户访谈平台</strong>面向原神海外玩家用研场景，用 28 位基于真实数据建模的虚拟玩家替代传统访谈排期；<strong>地址审核 Agent</strong>面向微信支付 KYC 场景，通过 LLM + 高德地图 + 联网搜索三重交叉验证，将单条地址审核效率提升约 3 倍。以下 Demo 已去除敏感业务信息，保留完整的产品设计与交互逻辑。
+    </div>
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════ PROJECT 1: VUR ═══════════ -->
+  <section class="project">
+    <div class="project-title">虚拟用户访谈平台</div>
+    <div class="project-context">米哈游 · <strong>原神国际化用户研究</strong> · 纯前端单文件 · 离线可用</div>
+
+    <div class="narrative">
+      <p>原神海外用户研究团队在规划版本内容时，需要提前了解不同区域玩家对新功能的接受度和流失原因。但传统访谈面临三个瓶颈：<strong>跨国招募玩家排期 2-4 周</strong>、单次访谈仅覆盖 3-5 人导致结论碎片化、不同研究员对同一批访谈记录的理解存在主观偏差。</p>
+    </div>
+
+    <div class="narrative">
+      <p>这个平台将用户研究员日常工作中「筛选目标用户 → 一对一访谈 → 跨用户对比 → 提炼共性」的完整流程，转化为一个可交互的 AI 工具：</p>
+      <div class="flow">
+        <span class="flow-step">筛选目标群体</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">选择用户进入访谈</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">AI 基于档案生成回答</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">查阅推理依据与信息源</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">群聊对比或画像合成</span>
+      </div>
+    </div>
+
+    <div class="highlight-box vur">
+      <strong>不同于通用 Chatbot 的关键设计：</strong>每位虚拟用户的回答不是自由发挥，而是先检索该用户的<strong>真实档案数据</strong>（UID、付费记录、游戏时长、流失原因分析等 20+ 字段）作为依据，再进行角色化推演。每条回答上方有可展开的「本轮用户思考过程」面板，展示推理链路和原始信息源——让研究员能够判断回答的可信程度，而不是盲信 AI 输出。
+    </div>
+
+    <div class="narrative">
+      <p>实际数据规模：28 位虚拟玩家覆盖 19 个国家/地区，包含 6 种行为类型（社交驱动型、竞技硬核、剧情情感型、效率最优型、休闲轻度型、探索沉浸型），支持群聊推演和三维建模聚合的代表用户合成。</p>
+    </div>
+
+    <div class="narrative">
+      <p>已在米哈游用研团队作为<strong>访谈前的情景预演工具</strong>实际使用，帮助研究员在正式访谈前快速形成假设、识别不同用户群体的差异化诉求。当前 Demo 版本使用模拟数据展示产品逻辑，交互流程与生产版本一致。</p>
+    </div>
+
+    <div class="cta-row">
+      <a class="cta primary" href="../visual_user_research/虚拟人demoV7.html" target="_blank">打开完整 Demo</a>
+      <span style="font-size:12.5px;color:var(--ink-3);">单文件 HTML · 双击即开 · 无需部署</span>
+    </div>
+  </section>
+
+  <!-- ═══════════ PROJECT 2: ADDRESS AUDIT ═══════════ -->
+  <section class="project">
+    <div class="project-title">地址信息审核 Agent</div>
+    <div class="project-context">腾讯 · <strong>微信支付 KYC 风控</strong> · Python + Streamlit · ReAct Agent 架构</div>
+
+    <div class="narrative">
+      <p>微信支付在个人客户身份识别（KYC）环节，需要核验客户提交的居住或联系地址是否真实存在。传统做法是审核员逐条在百度地图和搜索引擎上交叉比对——<strong>一条地址平均耗时 3-5 分钟，批量审核数百条地址时效率极低，且不同审核员的判断标准不统一</strong>。项目初期只是一个大模型提示词实验，经过多轮数据驱动的迭代后，演进为一个完整的 ReAct Agent 系统。<strong>该方法论具有通用性</strong>，同样可扩展到商户资质审核、法律文书地址核验、企业注册信息验证等场景。</p>
+    </div>
+
+    <div class="highlight-box audit">
+      <strong>迭代过程 · 从提示词到 Agent：</strong>初版用万能公式（角色 + 任务 + 输出要求 + 示例）撰写基础提示词。每次用带人审标签的历史数据跑一轮，将 AI 结果与人审结果逐条对比——重点关注两者不一致的 case 和 AI 输出「不确定」的 case，归类观察原因，调整提示词。遇到有争议的边界 case 则咨询之前负责审核的同事和文档积累，将他们的判断逻辑逐一编码进提示词。在基座模型间交叉验证，最终将准确率从 80% 提升到约 95%，人力消耗降低约 1/3。
+    </div>
+
+    <div class="narrative">
+      <p>迭代过程中积累的核心经验——<strong>判断标准定义越细致，模型判断越准确</strong>——最终沉淀为 5 条量化审核标准：完整度≥6 级、可搜索核实、定位准确、门牌号可查、特定地点豁免。每条标准都包含正反面示例和边界 case（如「门牌号符合常见规范≠真实存在」「附近/旁边等模糊方位词→判不确定」），并给模型保留「不确定」的输出余地，严禁编造和假设推断。这些标准后来被重构为 ReAct Agent 的 System Prompt。</p>
+    </div>
+
+    <div class="narrative">
+      <p>技术架构上，Agent 按 ReAct 模式（Think → Act → Observe → Answer）执行。每条地址先由 LLM 做格式和完整度初判，信息不足时主动追问；确认后并行调用高德地图 geocode 和 Bing 搜索进行交叉验证；最终对照 5 标准输出四列审核报告（序号、地址、结论、依据+可点击链接）。支持单条输入和 Excel 批量上传，审核结果汇总为结构化表格。</p>
+    </div>
+
+    <div class="highlight-box audit">
+      <strong>实际使用中团队最认可的设计：预审报告环节。</strong>Agent 在调用任何外部 API 之前，先向用户展示数据摘要——共多少条、每条完整度评估（缺省/市/区/街道/门牌号）、哪些明显无效、预计 API 调用次数——<strong>用户确认后才进入正式审核</strong>。这个设计避免了大量无效 API 调用和 Token 浪费，也保持了审核员对流程的控制感。
+    </div>
+
+    <div class="narrative">
+      <p>已在腾讯金融业务团队作为<strong>客户 KYC 审核辅助工具</strong>实际使用，处理过真实地址数据。当前 Demo 版本使用示例数据展示审核流程与判断逻辑，核心 Agent 架构与生产版本一致。</p>
+    </div>
+
+    <div class="cta-row">
+      <a class="cta primary" href="../address-audit-agent/landing.html" target="_blank">打开项目介绍页</a>
+      <span style="font-size:12.5px;color:var(--ink-3);">需 Python 环境 · Streamlit 本地运行</span>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════ FOOTER ═══════════ -->
+  <footer class="footer">
+    张逸帆 · 复旦大学 · AI 产品作品集 2026<br>
+    两个项目均已在实际业务中投入使用，Demo 版本去除敏感信息后保留产品设计逻辑<br>
+    本地离线可运行 · 联系与更多信息：<a href="#">GitHub</a> · <a href="#">Email</a>（待补充）
+  </footer>
+
+</div>
+</body>
+</html>

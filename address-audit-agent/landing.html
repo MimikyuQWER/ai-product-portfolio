@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>地址审核 AGENT — Harness 级地址真实性验证</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  :root {
+    --ink: #0f172a;
+    --ink-muted: #475569;
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --surface-alt: #fdfcfb;
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+    --accent: #c8941e;
+    --accent-hover: #a67c1a;
+    --accent-light: #fef9f0;
+    --accent-muted: #fdf3e0;
+    --success: #15803d;
+    --success-light: #f0fdf4;
+    --warning: #c2410c;
+    --warning-light: #fff7ed;
+    --danger: #b91c1c;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  html { background: var(--bg); }
+  body {
+    font-family: 'Geist', system-ui, -apple-system, sans-serif;
+    background: transparent;
+    color: var(--ink);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- 金融风背景纹理 ---- */
+  body::before {
+    content: ''; position: fixed; inset: 0; z-index: -1;
+    background:
+      repeating-linear-gradient(-35deg, transparent, transparent 3px, rgba(200,148,30,0.07) 3px, rgba(200,148,30,0.07) 4px),
+      linear-gradient(rgba(200,148,30,0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,148,30,0.07) 1px, transparent 1px);
+    background-size: auto, 64px 64px, 64px 64px;
+  }
+  body::after {
+    content: ''; position: fixed; inset: 0; z-index: -2;
+    background:
+      radial-gradient(ellipse 900px 700px at 5% 15%, rgba(200,148,30,0.15) 0%, transparent 50%),
+      radial-gradient(ellipse 700px 500px at 88% 45%, rgba(200,148,30,0.09) 0%, transparent 45%),
+      radial-gradient(ellipse 500px 400px at 45% 80%, rgba(148,163,184,0.07) 0%, transparent 40%);
+  }
+
+  /* ---- Navigation ---- */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(255,255,255,0.9); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0.6rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-brand { font-size: 1rem; font-weight: 600; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; }
+  .nav-brand img { width: 42px; height: 42px; border-radius: 8px; object-fit: cover; object-position: center; transform: scale(1.3); }
+  .nav-cta {
+    background: var(--accent); color: white; border: none;
+    padding: 0.45rem 1.2rem; border-radius: 6px; font-size: 0.84rem;
+    font-weight: 600; cursor: pointer; text-decoration: none;
+    transition: background 150ms ease;
+  }
+  .nav-cta:hover { background: var(--accent-hover); }
+
+  /* ---- Layout ---- */
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 2rem; }
+
+  /* ---- Hero ---- */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center;
+    padding: 6rem 0 4rem;
+  }
+  .hero .container { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.8rem; font-weight: 500; color: var(--accent);
+    background: var(--accent-light); padding: 0.25rem 0.75rem;
+    border-radius: 100px; margin-bottom: 1rem;
+  }
+  .hero-tag::before { content: ''; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
+  .hero-tag.green::before { background: var(--success); }
+  .hero-tag.green { color: var(--success); background: var(--success-light); }
+  .hero-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+  .hero h1 {
+    font-size: clamp(2rem, 4.5vw, 3rem); font-weight: 700;
+    line-height: 1.18; letter-spacing: -0.02em; margin-bottom: 1rem;
+  }
+  .hero h1 mark { background: none; color: var(--accent); }
+  .hero-desc {
+    font-size: 1rem; color: var(--ink-muted); max-width: 460px;
+    line-height: 1.7; margin-bottom: 2rem;
+  }
+  .hero-desc strong { color: var(--ink); font-weight: 600; }
+  .hero-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; }
+  .hero-note { font-size: 0.78rem; color: var(--success); font-weight: 500; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    background: var(--accent); color: white; border: none;
+    padding: 0.7rem 1.75rem; border-radius: 6px; font-size: 0.9rem;
+    font-weight: 600; cursor: pointer; text-decoration: none;
+    transition: all 150ms ease;
+  }
+  .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    background: var(--bg); color: var(--ink); border: 1px solid var(--border);
+    padding: 0.7rem 1.75rem; border-radius: 6px; font-size: 0.9rem;
+    font-weight: 500; cursor: pointer; text-decoration: none;
+    transition: all 150ms ease;
+  }
+  .btn-secondary:hover { border-color: var(--accent); background: var(--accent-light); }
+
+  /* Hero visual */
+  .hero-visual { position: relative; }
+  .browser-frame {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden;
+    box-shadow: 0 2px 24px rgba(0,0,0,0.06), 0 8px 48px rgba(0,0,0,0.04);
+  }
+  .browser-bar {
+    background: var(--border-light); padding: 0.5rem 0.75rem;
+    display: flex; gap: 0.4rem; align-items: center;
+  }
+  .browser-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+  .browser-dot:nth-child(1) { background: #ef4444; }
+  .browser-dot:nth-child(2) { background: #f59e0b; }
+  .browser-dot:nth-child(3) { background: #22c55e; }
+  .browser-body {
+    padding: 1.25rem; font-size: 0.78rem;
+    font-family: 'Geist Mono', 'JetBrains Mono', monospace;
+  }
+  .browser-body .audit-header {
+    font-family: 'Geist', sans-serif; font-weight: 600;
+    color: var(--ink); margin-bottom: 0.75rem; font-size: 0.85rem;
+  }
+  .audit-table {
+    width: 100%; border-collapse: collapse; margin-bottom: 0.75rem;
+  }
+  .audit-table th, .audit-table td {
+    text-align: left; padding: 0.35rem 0.5rem; font-size: 0.7rem;
+    border-bottom: 1px solid var(--border); font-family: 'Geist', sans-serif;
+  }
+  .audit-table th { font-weight: 600; color: var(--ink-muted); font-size: 0.65rem; }
+  .audit-table .v-valid { color: var(--success); font-weight: 600; }
+  .audit-table .v-uncertain { color: var(--warning); font-weight: 600; }
+  .audit-table .v-invalid { color: var(--danger); font-weight: 600; }
+  .audit-table .v-bad { color: #94a3b8; font-weight: 600; }
+  .audit-stats { display: flex; gap: 1rem; margin-top: 0.5rem; }
+  .audit-stat {
+    text-align: center; font-family: 'Geist', sans-serif;
+    padding: 0.35rem 0.6rem; border-radius: 6px; background: var(--border-light);
+  }
+  .audit-stat .num { font-size: 1rem; font-weight: 700; }
+  .audit-stat .lbl { font-size: 0.6rem; color: var(--ink-muted); }
+  .floating-badge {
+    position: absolute; top: -12px; right: -12px;
+    background: var(--accent); color: white;
+    font-size: 0.68rem; font-weight: 600; padding: 0.3rem 0.6rem;
+    border-radius: 6px; box-shadow: 0 4px 12px rgba(200,148,30,0.3);
+    font-family: 'Geist', sans-serif;
+  }
+
+  /* ---- Section ---- */
+  section { padding: 5rem 0; }
+  .section-header { margin-bottom: 2.5rem; }
+  .section-header h2 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
+  .section-header p { font-size: 0.95rem; color: var(--ink-muted); max-width: 560px; }
+
+  /* ---- Difference ---- */
+  .diff { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .diff-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .diff-card {
+    border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem;
+    transition: border-color 150ms ease; background: var(--bg);
+  }
+  .diff-card:hover { border-color: var(--accent); }
+  .diff-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.75rem; }
+  .diff-card ul { list-style: none; padding: 0; }
+  .diff-card li {
+    font-size: 0.84rem; color: var(--ink-muted); padding: 0.4rem 0;
+    display: flex; align-items: flex-start; gap: 0.45rem; line-height: 1.5;
+  }
+  .diff-card li::before { content: '×'; color: var(--danger); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .diff-card.better li::before { content: '✓'; color: var(--success); }
+
+  /* ---- Features ---- */
+  .feature-row {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 0; counter-reset: feat;
+  }
+  .feature-card {
+    padding: 2rem 1.5rem; border-right: 1px solid var(--border);
+    position: relative;
+  }
+  .feature-card:last-child { border-right: none; }
+  .feature-card::before {
+    counter-increment: feat; content: '0' counter(feat);
+    font-size: 0.7rem; font-weight: 700; color: var(--accent);
+    display: block; margin-bottom: 1rem;
+    font-family: 'Geist Mono', monospace;
+  }
+  .feature-card h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.4rem; }
+  .feature-card p { font-size: 0.8rem; color: var(--ink-muted); line-height: 1.55; }
+
+  /* ---- How ---- */
+  .how-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  .how-step {
+    padding: 1.25rem; border-radius: var(--radius-lg);
+    background: var(--surface); border: 1px solid var(--border);
+    position: relative;
+  }
+  .how-step-number {
+    font-family: 'Geist Mono', monospace; font-size: 0.7rem; font-weight: 700;
+    color: var(--accent); margin-bottom: 0.6rem;
+  }
+  .how-step h4 { font-size: 0.88rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .how-step p { font-size: 0.78rem; color: var(--ink-muted); line-height: 1.5; }
+
+  /* ---- Design Principles ---- */
+  .principles { background: var(--surface-alt); border-top: 1px solid var(--border); }
+  .principle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .principle-card { padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--bg); }
+  .principle-card h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .principle-card p { font-size: 0.82rem; color: var(--ink-muted); line-height: 1.6; }
+
+  /* ---- CTA ---- */
+  .cta {
+    text-align: center; padding: 5rem 0;
+    background: var(--surface); border-top: 1px solid var(--border);
+  }
+  .cta h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .cta p { color: var(--ink-muted); margin-bottom: 1rem; font-size: 0.95rem; }
+  .cta .api-note {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    font-size: 0.82rem; color: var(--success); font-weight: 500;
+    background: var(--success-light); padding: 0.35rem 0.75rem; border-radius: 100px;
+    margin-bottom: 1.5rem;
+  }
+
+  /* ---- Footer ---- */
+  footer {
+    border-top: 1px solid var(--border); padding: 1.5rem;
+    text-align: center; font-size: 0.75rem; color: var(--ink-muted);
+  }
+  footer a { color: var(--ink); }
+  footer .separator { margin: 0 0.5rem; color: var(--border); }
+
+  /* ---- Color Swatches ---- */
+  .color-swatches { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+  .swatch {
+    width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border);
+    cursor: pointer; transition: transform 150ms ease;
+  }
+  .swatch:hover { transform: scale(1.15); }
+  .swatch.active { border-color: var(--ink); border-width: 3px; }
+
+  /* ---- Modal ---- */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(15,23,42,0.6);
+    z-index: 200; display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .modal {
+    background: var(--bg); border-radius: 16px; padding: 2.5rem;
+    max-width: 460px; width: 90%;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.18);
+  }
+  .modal-dots { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .modal-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--border);
+    transition: all 200ms ease;
+  }
+  .modal-dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
+  .modal-dot.done { background: var(--success); }
+  .modal h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .modal p { font-size: 0.88rem; color: var(--ink-muted); margin-bottom: 1.5rem; line-height: 1.6; }
+  .modal-code {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.75rem 1rem; font-family: 'Geist Mono', monospace;
+    font-size: 0.84rem; color: var(--ink); margin-bottom: 1.5rem;
+    text-align: left; word-break: break-all;
+  }
+  .modal-actions { display: flex; gap: 0.5rem; justify-content: center; }
+  .modal-skip {
+    display: block; margin: 1rem auto 0; background: none; border: none;
+    color: var(--ink-muted); font-size: 0.8rem; cursor: pointer;
+    text-decoration: underline;
+  }
+
+  /* ---- Responsive ---- */
+  @media (max-width: 860px) {
+    .hero .container { grid-template-columns: 1fr; gap: 2rem; }
+    .hero-visual { order: -1; }
+    .feature-row, .how-grid, .diff-grid, .principle-grid { grid-template-columns: 1fr; }
+    .feature-card { border-right: none; border-bottom: 1px solid var(--border); }
+    .container { padding: 0 1.25rem; }
+    nav { padding: 0.6rem 1.25rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Background texture overlay -->
+
+
+<nav>
+  <a href="#" class="nav-brand">
+    <img src="robot-avatar.png" alt="logo"> 地址审核 AGENT
+  </a>
+  <a href="#try" class="nav-cta" onclick="startOnboarding()">开始使用</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <div class="container">
+    <div>
+      <div class="hero-tags">
+        <span class="hero-tag">金融 / 法律 / 强合规</span>
+        <span class="hero-tag green">开箱即用 · 无需配置</span>
+      </div>
+      <h1>每一次地址验证<br><mark>有据可查</mark></h1>
+      <p class="hero-desc">
+        通用 AI 聊天能告诉你一个地址"看起来对不对"。
+        这个 Agent 会<strong>调用高德地图定位</strong>、<strong>搜索公开网页记录</strong>，
+        然后把找到的链接直接放在审核依据里——你可以点开核实。
+        覆盖金融、法律、有强合规要求的各类客户信息审核场景。
+      </p>
+      <div class="hero-actions">
+        <a href="#try" class="btn-primary" onclick="startOnboarding()">免费试用 →</a>
+        <a href="#diff" class="btn-secondary">和通用 AI 有什么区别？</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="browser-frame">
+        <div class="browser-bar"><div class="browser-dot"></div><div class="browser-dot"></div><div class="browser-dot"></div></div>
+        <div class="browser-body">
+          <div class="audit-header">📊 审核报告摘要（共 4 条）</div>
+          <table class="audit-table">
+            <tr><th>#</th><th>地址</th><th>结果</th><th>依据</th></tr>
+            <tr><td>1</td><td>北京市海淀区中关村大街1号</td><td class="v-valid">有效</td><td>高德API · 门牌号级</td></tr>
+            <tr><td>2</td><td>上海市浦东新区陆家嘴环路1000号</td><td class="v-valid">有效</td><td>高德API · 门牌号级</td></tr>
+            <tr><td>3</td><td>浙江省杭州市西湖区</td><td class="v-uncertain">不确定</td><td>缺街道门牌号</td></tr>
+            <tr><td>4</td><td>火星省月球市幻想路999号</td><td class="v-invalid">无效</td><td>地图无结果 · 搜索无记录</td></tr>
+          </table>
+          <div class="audit-stats">
+            <div class="audit-stat"><div class="num">2</div><div class="lbl">✓ 有效</div></div>
+            <div class="audit-stat"><div class="num">1</div><div class="lbl">~ 不确定</div></div>
+            <div class="audit-stat"><div class="num">1</div><div class="lbl">✗ 无效</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="floating-badge">每条依据可点击跳转</div>
+    </div>
+  </div>
+</section>
+
+<!-- Difference -->
+<section class="diff" id="diff">
+  <div class="container">
+    <div class="section-header">
+      <h2>和通用 AI 网页版有何不同？</h2>
+      <p>同样的基座模型，不同的可靠性。区别在于harness 约束和系统设计。</p>
+    </div>
+    <div class="diff-grid">
+      <div class="diff-card">
+        <h3>🤖 通用 AI chatbot</h3>
+        <ul>
+          <li>判断标准模糊——对"有效"和"无效"的边界没有明确定义，每次回答可能不一致</li>
+          <li>新对话即失忆——每次都要重新输入提示词，无法延续已有的审核规则</li>
+          <li>可能编造不存在的链接作为"证据"，你无法核实它说的是不是真的</li>
+          <li>回答只有一段文字——不能批量处理、不能导出表格、不能追溯每一步的判断依据</li>
+        </ul>
+      </div>
+      <div class="diff-card better">
+        <h3>📍 地址审核 Agent</h3>
+        <ul>
+          <li>五级审核标准，四类判定结果——规则明确且一致，每次回答遵循同一套框架</li>
+          <li>项目级记忆——审核规则、对话上下文不会因新会话丢失，打开即用</li>
+          <li>每条结论附带可点击链接——来源是高德 API 或 Bing 搜索的真实返回，harness 层自动拦截编造内容</li>
+          <li>上传表格或截图即得结构化报告，每一步工具调用有完整日志</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section id="features">
+  <div class="container">
+    <div class="section-header">
+      <h2>Agent设计原理</h2>
+      <p>LLM 推理负责判断，harness 代码负责验证。每一层各司其职。</p>
+    </div>
+    <div class="feature-row">
+      <div class="feature-card">
+        <h4>文本理解</h4>
+        <p>LLM 解析地址格式，判断完整度。缺少门牌号就追问，乱码直接拦截。</p>
+      </div>
+      <div class="feature-card">
+        <h4>地图定位</h4>
+        <p>高德地理编码 API，返回省市区街道门牌号七级解析。门牌号级精度才判有效。</p>
+      </div>
+      <div class="feature-card">
+        <h4>公开记录</h4>
+        <p>Bing 搜索查找地址在企业信息、政府公示、新闻中的记录。地图+搜索双重确认。</p>
+      </div>
+      <div class="feature-card">
+        <h4>结果护栏</h4>
+        <p>输出前过四道关卡：工具证据存在性、URL 可溯源、结论无矛盾、格式完整。不通过则自动重新生成。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Design Principles -->
+<section class="principles">
+  <div class="container">
+    <div class="section-header">
+      <h2>不是提示词套壳产物</h2>
+      <p>不依赖单一提示词，而是系统提示词 + harness 代码双重约束。</p>
+    </div>
+    <div class="principle-grid">
+      <div class="principle-card">
+        <h4>🎯 输入输出双向约束</h4>
+        <p>输入端：提示词定义了明确地址审核标准和输出结果，约束LLM 在框架内推理。输出端：ResultGuard 代码层拦截不符合规范的输出，自动重新生成。</p>
+      </div>
+      <div class="principle-card">
+        <h4>🧪 提示词经过严格迭代</h4>
+        <p>审核标准基于真实尽调场景制定。提示词经多轮人工测试和优化，更换基座模型（DeepSeek、GPT-4o 等）不影响核心判断准确率。</p>
+      </div>
+      <div class="principle-card">
+        <h4>🔧 支持定制化场景</h4>
+        <p>审核标准、完整度级别、特殊豁免规则均可按使用者的业务场景微调。修改提示词即可生效，无需改动代码。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How -->
+<section id="how">
+  <div class="container">
+    <div class="section-header">
+      <h2>四种使用方式</h2>
+      <p>输入地址、上传表格、或者拍张照。剩下的交给 Agent。</p>
+    </div>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-step-number">01</div>
+        <h4>粘贴地址</h4>
+        <p>把地址输入对话框，Agent 自动检查完整度，不够会追问补充信息。</p>
+      </div>
+      <div class="how-step">
+        <div class="how-step-number">02</div>
+        <h4>上传表格</h4>
+        <p>把 Excel 或 CSV 拖进去，Agent 逐条审核。支持批量处理。</p>
+      </div>
+      <div class="how-step">
+        <div class="how-step-number">03</div>
+        <h4>拍照识别</h4>
+        <p>对着地址截图或纸质文件拍张照或上传本地图片，OCR 提取文字后自动进入审核流程。</p>
+      </div>
+      <div class="how-step">
+        <div class="how-step-number">04</div>
+        <h4>导出报告</h4>
+        <p>审核结果以表格呈现，每条依据附带可点击链接。可用于合规留档。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="try">
+  <div class="container">
+    <h2>现在就试试</h2>
+    <p>页面已预配 DeepSeek + 高德地图 API Key，打开即用。</p>
+    <div class="api-note">🔑 API 已配好 · 无需注册 · 直接试用</div>
+    <br>
+    <a href="http://localhost:8502" class="btn-primary" style="font-size:1rem;padding:0.8rem 2.2rem;">
+      启动审核助手 →
+    </a>
+    <p style="font-size:0.8rem;color:var(--ink-muted);margin-top:0.75rem;">
+      首次使用？点右上角"开始使用"查看三步引导
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    地址审核 Agent<span class="separator">·</span>
+    系统提示词 + Harness 工程化，输入输出双重约束 · 每条地址验证结果都有据可查<span class="separator">·</span>
+    覆盖金融、法律等强合规、高精确度场景的客户信息审核
+  </div>
+</footer>
+
+<!-- Onboarding Modal -->
+<div class="modal-overlay" id="onboarding" style="display:none;">
+  <div class="modal">
+    <div class="modal-dots" id="step-dots">
+      <div class="modal-dot active"></div><div class="modal-dot"></div><div class="modal-dot"></div>
+    </div>
+    <div id="step-content"></div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="btn-prev" style="display:none;">← 上一步</button>
+      <button class="btn-primary" id="btn-next">下一步</button>
+    </div>
+    <button class="modal-skip" onclick="closeOnboarding()">跳过，直接开始</button>
+  </div>
+</div>
+
+<script>
+  const steps = [
+    { title: '输入地址', desc: '在底部输入框粘贴要验证的地址。Agent 会检查格式是否完整，信息不够会自动追问。', code: '北京市海淀区中关村大街1号' },
+    { title: '上传文件（可选）', desc: '点击输入框旁的➕，上传 Excel 表格或地址截图。支持 .xlsx .csv .png .jpg 格式。' },
+    { title: '查看报告', desc: '审核完成后展开 📊 报告摘要。每条结果都附带可点击的来源链接，可以人工二次核实。' },
+  ];
+  let currentStep = 0;
+
+  function startOnboarding() {
+    currentStep = 0;
+    document.getElementById('onboarding').style.display = 'flex';
+    renderStep();
+  }
+  function closeOnboarding() {
+    document.getElementById('onboarding').style.display = 'none';
+  }
+  function renderStep() {
+    const s = steps[currentStep];
+    document.getElementById('step-content').innerHTML = `<h3>${s.title}</h3><p>${s.desc}</p>${s.code ? '<div class="modal-code">'+s.code+'</div>' : ''}`;
+    document.querySelectorAll('.modal-dot').forEach((d, i) => {
+      d.className = 'modal-dot';
+      if (i < currentStep) d.classList.add('done');
+      if (i === currentStep) d.classList.add('active');
+    });
+    document.getElementById('btn-prev').style.display = currentStep ? 'inline-flex' : 'none';
+    if (currentStep === steps.length - 1) {
+      document.getElementById('btn-next').textContent = '开始使用';
+      document.getElementById('btn-next').onclick = () => { closeOnboarding(); window.open('http://localhost:8502', '_blank'); };
+    } else {
+      document.getElementById('btn-next').textContent = '下一步';
+      document.getElementById('btn-next').onclick = nextStep;
+    }
+  }
+  function nextStep() { if (currentStep < 2) { currentStep++; renderStep(); } }
+  document.getElementById('btn-prev').onclick = () => { if (currentStep > 0) { currentStep--; renderStep(); } };
+  document.getElementById('onboarding').addEventListener('click', function(e) { if (e.target === this) closeOnboarding(); });
+  document.querySelectorAll('a[href^="#"]').forEach(a => { a.addEventListener('click', function(e) { const t = document.querySelector(this.getAttribute('href')); if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); } }); });
+</script>
+</body>
+</html>
