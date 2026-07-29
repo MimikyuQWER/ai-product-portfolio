@@ -27,7 +27,7 @@
     border-radius: 999px; font-size: 13px; font-weight: 600;
     text-decoration: none; transition: all 0.15s;
   }
-  .nav-cta:hover { background: #1a2540; transform: translateY(-1px); }
+  .nav-cta:hover { background: #1a2540; }
 
   /* ── Hero ── */
   .hero-wrap { background: linear-gradient(175deg, #f0f4ff 0%, #e8effe 40%, var(--bg) 100%); padding: 0 0 56px; }
@@ -41,12 +41,17 @@
     border-radius: 999px; font-size: 15px; font-weight: 600;
     text-decoration: none; transition: all 0.15s; box-shadow: 0 4px 14px rgba(29,78,216,0.18);
   }
-  .hero-cta:hover { background: #1b40c0; box-shadow: 0 6px 20px rgba(29,78,216,0.25); transform: translateY(-1px); }
+  .hero-cta:hover { background: #1b40c0; box-shadow: 0 6px 20px rgba(29,78,216,0.25); }
 
-  .hero-metrics { display: flex; justify-content: center; gap: 48px; margin-top: 48px; flex-wrap: wrap; }
-  .hero-metric { text-align: center; }
-  .hero-metric .val { font-size: 36px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); }
-  .hero-metric .lbl { font-size: 13px; color: var(--ink-3); margin-top: 4px; }
+  /* ── Narrative card ── */
+  .narrative { max-width:760px; margin:40px auto 0; text-align:left; }
+  .narrative-step { display:flex; gap:12px; margin-bottom:10px; font-size:13.5px; color:var(--ink-2); line-height:1.85; align-items:flex-start; }
+  .narrative-step:last-child { margin-bottom:0; }
+  .narrative-num { flex:0 0 auto; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; color:#fff; margin-top:3px; }
+  .narrative-num.a { background:var(--accent); }
+  .narrative-num.b { background:var(--ink-3); }
+  .narrative-num.c { background:#15803d; }
+  .narrative-num.d { background:var(--ink); }
 
   /* ── Section ── */
   .section { padding: 72px 0; }
@@ -54,24 +59,11 @@
   .section h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; text-wrap: balance; }
   .section .lead { font-size: 16px; color: var(--ink-3); max-width: 640px; line-height: 1.7; margin-bottom: 44px; }
 
-  /* ── Problem cards ── */
-  .problem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-  .problem-card {
-    background: #fff; border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 32px 26px;
-    transition: box-shadow 0.15s;
-  }
-  .problem-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.05); }
-  .problem-card .pc-num { font-size: 13px; font-weight: 800; color: var(--accent); margin-bottom: 10px; }
-  .problem-card h4 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
-  .problem-card p { font-size: 13.5px; color: var(--ink-3); line-height: 1.7; }
-
   /* ── Tiers ── */
   .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .tier {
     background: #fff; border: 1px solid var(--border);
     border-radius: var(--radius); padding: 32px 26px;
-    position: relative;
   }
   .tier.highlight { background: var(--accent); color: #fff; border-color: var(--accent); }
   .tier.highlight h4, .tier.highlight .tier-num { color: #fff; }
@@ -90,28 +82,22 @@
   .feature-item:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.04); }
   .feature-item .fi-icon { font-size: 28px; flex: 0 0 auto; line-height: 1; }
   .feature-item h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
-  .feature-item p { font-size: 13px; color: var(--ink-3); line-height: 1.6; }
+  .feature-item p { font-size: 13px; color: var(--ink-2); line-height: 1.6; }
 
   /* ── Philosophy ── */
-  .phil-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .phil-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  @media (max-width: 900px) { .phil-grid { grid-template-columns: 1fr 1fr; } }
   .phil-card {
-    padding: 28px; background: #fff; border: 1px solid var(--border);
-    border-radius: var(--radius); border-left: 4px solid var(--accent);
+    padding: 28px 24px; background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius); border-top: 3px solid var(--accent);
   }
-  .phil-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  .phil-card p { font-size: 13.5px; color: var(--ink-3); line-height: 1.7; }
-
-  /* ── Scale ── */
-  .scale-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-  .scale-item { text-align: center; padding: 32px 16px; }
-  .scale-val { font-size: 42px; font-weight: 900; color: var(--accent); letter-spacing: -0.03em; line-height: 1; }
-  .scale-lbl { font-size: 14px; color: var(--ink-3); margin-top: 8px; }
+  .phil-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+  .phil-card p { font-size: 13px; color: var(--ink-2); line-height: 1.7; }
 
   /* ── CTA ── */
   .cta-section {
     text-align: center; padding: 88px 0;
-    background: linear-gradient(175deg, #0f1b36 0%, #162447 100%);
-    color: #fff;
+    background: linear-gradient(175deg, #0f1b36 0%, #162447 100%); color: #fff;
   }
   .cta-section h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
   .cta-section p { font-size: 16px; color: #94a8c8; margin-bottom: 32px; line-height: 1.7; }
@@ -122,9 +108,7 @@
 
   @media (max-width: 768px) {
     .hero h1 { font-size: 34px; }
-    .hero-metrics { gap: 24px; }
-    .hero-metric .val { font-size: 28px; }
-    .problem-grid, .tiers, .feature-row, .phil-grid, .scale-row { grid-template-columns: 1fr; }
+    .tiers, .feature-row, .phil-grid { grid-template-columns: 1fr; }
     .section h2, .cta-section h2 { font-size: 26px; }
   }
 </style>
@@ -139,43 +123,31 @@
     </nav>
 
     <section class="hero">
-      <h1>用 <mark>AI 模拟真实玩家访谈</mark></h1>
-      <p>基于上千名真实玩家数据 1:1 建模，覆盖美国、英国、日本、俄罗斯等区域，虚拟人与真人一一对应，回答效果可评测。Demo 展示其中 28 位典型用户。</p>
+      <h1><mark>探索 AI 时代下的用户研究新范式</mark></h1>
+      <p>基于上千名真实玩家数据 1:1 建模，覆盖美国、英国、日本、俄罗斯等区域，虚拟人与真人一一对应，回答效果可评测。</p>
       <a class="hero-cta" href="虚拟人demoV7.html" target="_blank">打开完整 Demo →</a>
-      <div class="hero-metrics">
-        <div class="hero-metric"><div class="val">1000+</div><div class="lbl">真实用户 1:1 建模</div></div>
-        <div class="hero-metric"><div class="val">19</div><div class="lbl">覆盖国家/地区</div></div>
-        <div class="hero-metric"><div class="val">6</div><div class="lbl">玩家类型</div></div>
-        <div class="hero-metric"><div class="val">28</div><div class="lbl">Demo 展示用户</div></div>
+
+      <div class="narrative">
+        <div class="narrative-step">
+          <span class="narrative-num a">1</span>
+          <span><strong>传统模式：</strong>真人访谈真人 → 受人力与语言限制速度慢 → 专业用研团队分析写报告 → 报告完成后原始数据资产不再利用 → 业务团队只能看到「二手信息」。</span>
+        </div>
+        <div class="narrative-step">
+          <span class="narrative-num b">2</span>
+          <span><strong>AI 时代的机遇：</strong>AI 访谈产品提升了效率与产出量，但用研团队面对激增的访谈数据，<strong>分析能力成为新瓶颈</strong>。</span>
+        </div>
+        <div class="narrative-step">
+          <span class="narrative-num c">3</span>
+          <span><strong>本项目的思路：</strong>用已有访谈与 BI 数据为真实受访者建立 <strong>AI 数字分身</strong>，用研调教分析 Skill → 激活数据资产 → 业务方和管理层直接对数字分身发起对话，获取一手用户洞察。</span>
+        </div>
+        <div class="narrative-step">
+          <span class="narrative-num d">4</span>
+          <span><strong>目标闭环：</strong>AI 访谈真人 → 访谈结果 + BI 数据回收 → 用研产出报告并调优分析 Skill → 数字分身作为资产持续优化 → 业务团队与管理层直接对话数字分身。</span>
+        </div>
       </div>
     </section>
   </div>
 </div>
-
-  <!-- ═══ Problem ═══ -->
-  <section class="section">
-    <div class="container">
-      <h2>传统玩家访谈的三个瓶颈</h2>
-      <p class="lead">原神海外用户研究团队需要提前了解不同区域玩家对新内容的反馈。但真人访谈在效率、规模和一致性上存在系统性问题。</p>
-      <div class="problem-grid">
-        <div class="problem-card">
-          <div class="pc-num">瓶颈一</div>
-          <h4>招募排期 2–4 周</h4>
-          <p>跨国招募特定画像的目标玩家周期漫长，遇到小众群体时更长。产品迭代节奏等不起。</p>
-        </div>
-        <div class="problem-card">
-          <div class="pc-num">瓶颈二</div>
-          <h4>单轮仅覆盖 3–5 人</h4>
-          <p>样本量太小，结论碎片化。想达到有统计意义的样本量需要投入数倍的人力和预算。</p>
-        </div>
-        <div class="problem-card">
-          <div class="pc-num">瓶颈三</div>
-          <h4>研究员理解偏差</h4>
-          <p>不同人对同一句玩家反馈的解读可能完全不同——「对内容不满」还是「对节奏不满」？主观偏差难以消除。</p>
-        </div>
-      </div>
-    </div>
-  </section>
 
   <!-- ═══ How ═══ -->
   <section class="section alt">
@@ -210,7 +182,7 @@
       <div class="feature-row">
         <div class="feature-item">
           <div class="fi-icon">🎭</div>
-          <div><h4>28 位虚拟玩家</h4><p>每人含 UID、付费金额、游戏时长、流失原因分析、社媒习惯等 20+ 档案字段，基于真实玩家数据建模。</p></div>
+          <div><h4>虚拟玩家库</h4><p>基于上千名真实玩家的访谈与 BI 数据建模，虚拟人与真人 1:1 对应，包含 UID、付费金额、游戏时长、流失原因等 20+ 档案字段。</p></div>
         </div>
         <div class="feature-item">
           <div class="fi-icon">🔍</div>
@@ -222,49 +194,49 @@
         </div>
         <div class="feature-item">
           <div class="fi-icon">👥</div>
-          <div><h4>群聊推演</h4><p>多用户同时进入群聊，一个问题 → 6 种人设差异化回答，模拟真实多人访谈场景。</p></div>
+          <div><h4>群聊推演</h4><p>多用户同时进入群聊，一个问题 → 每个 AI 根据对应真人的资料，模拟当事人的思路，尝试还原真实焦点小组调研方式。</p></div>
         </div>
         <div class="feature-item">
           <div class="fi-icon">🧬</div>
-          <div><h4>代表用户合成</h4><p>行为标签频率加权聚合，生成最具代表性的群体画像。支持对合成用户直接发起单访。</p></div>
+          <div><h4>代表用户合成</h4><p>行为标签频率加权聚合，生成最具代表性的群体画像。支持对合成用户直接发起单访。<em style="color:var(--ink-3);font-size:12px;">（等待后续迭代，目前尚未上线）</em></p></div>
         </div>
         <div class="feature-item">
           <div class="fi-icon">🏷️</div>
-          <div><h4>14 种玩家原型</h4><p>从真实研究数据归纳出碎片逃离型、家庭陪伴型、Anime-native RPG 玩家等 14 种差异化画像。</p></div>
+          <div><h4>玩家解读与画像</h4><p>对玩家进行深度解读，提炼具有业务意义的软标签（如社交驱动型、碎片逃离型、家庭陪伴型等），尝试建立差异化用户画像。每个标签可回溯到访谈原文或 BI 字段。</p></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ Philosophy ═══ -->
+  <!-- ═══ Philosophy + Trust ═══ -->
   <section class="section alt">
     <div class="container">
-      <h2>产品设计理念</h2>
-      <p class="lead">从产品迭代文档中沉淀的核心原则，指导了 v2 到 v7 的每次决策。</p>
+      <h2>设计理念与品质保障</h2>
+      <p class="lead">从产品迭代文档中沉淀的核心原则与质量体系，指导了 v2 到 v7 的每次决策。</p>
       <div class="phil-grid">
         <div class="phil-card">
-          <h4>信任源于透明，而非黑盒</h4>
-          <p>每条回答展示完整推理链路。使用者不是在「信 AI」，而是在验证 AI 的判断——用到了哪些依据、做了哪些推断、存在什么风险。</p>
+          <h4>信任源于透明</h4>
+          <p>每条回答展示完整推理链路：用到了哪些依据、做了哪些推断、存在什么风险。使用者不是在「信 AI」，而是在验证 AI 的判断。</p>
         </div>
         <div class="phil-card">
-          <h4>三级评分体系：结论 50 + 原因 40 + 风格 10</h4>
-          <p>回答结论一致、推理原因一致、语言篇幅合适。每次 Skill 迭代后全量重跑测试集，确保不退化。</p>
+          <h4>端到端评测：50 + 40 + 10</h4>
+          <p>回答结论是否与真人一致（50分）· 推理原因是否一致（40分）· 语言风格与篇幅是否合适（10分）。每次 Skill 迭代后全量重跑测试集，确保不退化。</p>
+        </div>
+        <div class="phil-card">
+          <h4>独立审计 Agent</h4>
+          <p>主 Agent 生成回答后，独立审计 Agent 对回答质量进行二次评估。审计结果支持点赞/点踩反馈，bad case 按错误类型分类归档，针对性调优。</p>
+        </div>
+        <div class="phil-card">
+          <h4>严禁「机器预习」</h4>
+          <p>不能用测试集训练 AI——又做选手又做裁判，会导致对小样本回答很好但碰见新情况不尽人意。优化来自其他问题的反馈，测试集仅用于验证。</p>
+        </div>
+        <div class="phil-card">
+          <h4>硬标签筛选 · 软标签理解</h4>
+          <p>人口学标签用于精确筛选；3–5 个业务意义软标签（社交驱动型/竞技硬核/碎片逃离型）用于真正理解用户本质。</p>
         </div>
         <div class="phil-card">
           <h4>Agent 驱动调优闭环</h4>
-          <p>Benchmark 评测 → 差异归因 → 生成优化方案 → 人工审核 → 应用修改 → 回归测试。迭代过程可量化、可回溯。</p>
-        </div>
-        <div class="phil-card">
-          <h4>硬标签筛选，软标签理解</h4>
-          <p>人口学标签用于精确筛选；3–5 个业务意义软标签（社交驱动型/竞技硬核/碎片逃离型）用于真正理解用户。</p>
-        </div>
-        <div class="phil-card">
-          <h4>禁止「机器预习」</h4>
-          <p>不能用测试集训练 AI——又做选手又做裁判。优化方向来自其他问题的反馈，测试集仅用于验证进步。</p>
-        </div>
-        <div class="phil-card">
-          <h4>建立信任 = 面试逻辑</h4>
-          <p>简历（数据档案）+ 沟通风格（语言润色）+ 内容（言之有物）+ 活人感（不 OOC）——让业务方愿意用、敢于信。</p>
+          <p>AI 执行 → Benchmark 评测 → 差异归因 → 生成优化方案 → 人工审核 → 回归测试。每次迭代可量化、可回溯，不靠「感觉」判断。</p>
         </div>
       </div>
     </div>
