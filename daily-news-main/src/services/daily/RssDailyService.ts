@@ -231,7 +231,7 @@ export async function fetchSources(
 ): Promise<{ items: DailyRssItem[]; statuses: DailyRssSourceStatus[] }> {
   const effectiveOptions = {
     now: options.now || new Date(),
-    maxAgeDays: options.maxAgeDays ?? 3,
+    maxAgeDays: options.maxAgeDays ?? 1,
     fetchImpl: options.fetchImpl || fetch,
   };
 
