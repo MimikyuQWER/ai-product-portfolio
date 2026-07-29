@@ -16,6 +16,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# Streamlit Cloud: read secrets from st.secrets, fallback to env vars
+def _get_config(key: str, default: str = "") -> str:
+    try:
+        import streamlit as st
+        return st.secrets.get(key, os.getenv(key, default))
+    except Exception:
+        return os.getenv(key, default)
+
 # ============================================================
 # 工具定义（OpenAI function calling 格式，传给 LLM）
 # ============================================================
@@ -119,7 +127,7 @@ def geocode(address: str) -> str:
     if cache_key in _geocode_cache:
         return _geocode_cache[cache_key]
 
-    api_key = os.getenv("AMAP_API_KEY", "")
+    api_key = _get_config("AMAP_API_KEY")
     if not api_key:
         return json.dumps(
             {"status": "error", "message": "高德地图 API Key 未配置，无法进行地图核验"},
@@ -207,17 +215,11 @@ def web_search(query: str) -> str:
     - results: [{title, url, snippet}, ...]
     - source: "Bing Web Search API"
     """
-    api_key = os.getenv("BING_SEARCH_KEY", "")
-    if not api_key:
-        return json.dumps(
-            {
-                "status": "skipped",
-                "results": [],
-                "message": "联网搜索功能未启用（Bing Search Key 未配置），请仅依据地图核验结果和你的文本理解能力来判断地址有效性。搜索不可用不代表地址无效。",
-                "source": "Bing Web Search API（未配置）",
-            },
-            ensure_ascii=False,
-        )
+    api_key = _get_config("BING_SEARCH_KEY")
+
+    # Fallback: use Bing if configured, otherwise try DuckDuckGo (free, no key needed)
+    if not api_key or api_key == "your-bing-key":
+        return _duckduckgo_search(query)
 
     try:
         url = "https://api.bing.microsoft.com/v7.0/search"
@@ -254,6 +256,73 @@ def web_search(query: str) -> str:
     except Exception as e:
         return json.dumps(
             {"status": "error", "message": f"搜索 API 调用失败：{str(e)}"},
+            ensure_ascii=False,
+        )
+
+
+def _duckduckgo_search(query: str) -> str:
+    """DuckDuckGo 免费搜索（无需 API Key，fallback 方案）"""
+    try:
+        resp = httpx.get(
+            "https://lite.duckduckgo.com/lite/",
+            params={"q": query},
+            headers={"User-Agent": "Mozilla/5.0"},
+            timeout=10.0,
+        )
+        from html.parser import HTMLParser
+
+        class DDGParser(HTMLParser):
+            def __init__(self):
+                super().__init__()
+                self.results = []
+                self.current = {}
+                self.in_link = False
+                self.in_snippet = False
+                self.capture = False
+
+            def handle_starttag(self, tag, attrs):
+                attrs = dict(attrs)
+                if tag == "a" and "result-link" in attrs.get("class", ""):
+                    self.current = {"title": "", "url": attrs.get("href", ""), "snippet": ""}
+                    self.in_link = True
+                elif tag == "td" and "result-snippet" in attrs.get("class", ""):
+                    self.in_snippet = True
+
+            def handle_endtag(self, tag):
+                if tag == "a" and self.in_link:
+                    self.in_link = False
+                    self.results.append(self.current)
+                    self.current = {}
+                if tag == "td" and self.in_snippet:
+                    self.in_snippet = False
+
+            def handle_data(self, data):
+                if self.in_link:
+                    self.current["title"] += data.strip()
+                if self.in_snippet:
+                    self.current["snippet"] += data.strip()
+
+        parser = DDGParser()
+        parser.feed(resp.text)
+
+        # Strip HTML tags from snippets
+        import re
+        for r in parser.results:
+            r["snippet"] = re.sub(r"<[^>]+>", "", r["snippet"])
+
+        results = parser.results[:5]
+        return json.dumps(
+            {
+                "status": "success",
+                "results": results,
+                "total": len(results),
+                "source": "DuckDuckGo (免费搜索)",
+            },
+            ensure_ascii=False,
+        )
+    except Exception as e:
+        return json.dumps(
+            {"status": "error", "message": f"搜索失败：{str(e)}", "source": "DuckDuckGo"},
             ensure_ascii=False,
         )
 
