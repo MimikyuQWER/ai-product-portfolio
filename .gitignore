@@ -1,8 +1,9 @@
 # Large binary files
-photos/
-pdf_pages/
+visual_user_research/photos/
+visual_user_research/pdf_pages/
 *.pdf
-*.png
+visual_user_research/*.png
+visual_user_research/verify_*.png
 
 # Python artifacts
 __pycache__/
