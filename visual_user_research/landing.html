@@ -7,295 +7,264 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
-    --ink: #0f172a; --ink-2: #334155; --ink-3: #64748b;
-    --bg: #ffffff; --surface: #f8fafc;
-    --border: #e2e8f0; --border-light: #f1f5f9;
-    --accent: #2563eb; --accent-light: #eff6ff; --accent-muted: #dbeafe;
-    --radius: 10px; --radius-lg: 16px;
+    --ink: #0b1120; --ink-2: #364153; --ink-3: #5b6e8c;
+    --bg: #fafbfd; --surface: #f4f6fa;
+    --border: #e2e6ee; --accent: #1d4ed8; --accent-light: #eef4ff;
+    --radius: 10px;
   }
-  html { scroll-behavior: smooth; }
   body {
     font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
     background: var(--bg); color: var(--ink); line-height: 1.6;
     -webkit-font-smoothing: antialiased; font-size: 15px;
   }
-  .container { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 28px; }
 
   /* ── Nav ── */
-  .nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 0; }
-  .nav-logo { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; }
+  .nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+  .nav-logo { font-size: 17px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
   .nav-cta {
-    padding: 8px 20px; background: var(--ink); color: #fff;
+    padding: 9px 22px; background: var(--ink); color: #fff;
     border-radius: 999px; font-size: 13px; font-weight: 600;
-    text-decoration: none; transition: background 0.15s;
+    text-decoration: none; transition: all 0.15s;
   }
-  .nav-cta:hover { background: #1e293b; }
+  .nav-cta:hover { background: #1a2540; transform: translateY(-1px); }
 
   /* ── Hero ── */
-  .hero { padding: 72px 0 64px; text-align: center; }
-  .hero-tag {
-    display: inline-block; font-size: 12px; font-weight: 600;
-    letter-spacing: 0.05em; color: var(--accent); background: var(--accent-light);
-    padding: 5px 14px; border-radius: 999px; margin-bottom: 20px;
-  }
-  .hero h1 { font-size: 44px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 16px; text-wrap: balance; }
-  .hero h1 span { color: var(--accent); }
-  .hero p { font-size: 17px; color: var(--ink-3); max-width: 560px; margin: 0 auto 28px; text-wrap: pretty; }
+  .hero-wrap { background: linear-gradient(175deg, #f0f4ff 0%, #e8effe 40%, var(--bg) 100%); padding: 0 0 56px; }
+  .hero { padding: 80px 0 56px; text-align: center; }
+  .hero h1 { font-size: 54px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.12; margin-bottom: 18px; text-wrap: balance; }
+  .hero h1 mark { background: none; color: var(--accent); }
+  .hero p { font-size: 17px; color: var(--ink-3); max-width: 580px; margin: 0 auto 32px; text-wrap: pretty; line-height: 1.65; }
   .hero-cta {
     display: inline-flex; align-items: center; gap: 8px;
-    padding: 12px 28px; background: var(--accent); color: #fff;
+    padding: 13px 30px; background: var(--accent); color: #fff;
     border-radius: 999px; font-size: 15px; font-weight: 600;
-    text-decoration: none; transition: background 0.15s;
+    text-decoration: none; transition: all 0.15s; box-shadow: 0 4px 14px rgba(29,78,216,0.18);
   }
-  .hero-cta:hover { background: #1d4ed8; }
-  .hero-badges { display: flex; justify-content: center; gap: 24px; margin-top: 36px; flex-wrap: wrap; }
-  .hero-badge { font-size: 13px; color: var(--ink-3); display: flex; align-items: center; gap: 6px; }
+  .hero-cta:hover { background: #1b40c0; box-shadow: 0 6px 20px rgba(29,78,216,0.25); transform: translateY(-1px); }
+
+  .hero-metrics { display: flex; justify-content: center; gap: 48px; margin-top: 48px; flex-wrap: wrap; }
+  .hero-metric { text-align: center; }
+  .hero-metric .val { font-size: 36px; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); }
+  .hero-metric .lbl { font-size: 13px; color: var(--ink-3); margin-top: 4px; }
 
   /* ── Section ── */
   .section { padding: 72px 0; }
-  .section.alt { background: var(--surface); }
-  .section-label { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--accent); margin-bottom: 12px; }
-  .section h2 { font-size: 30px; font-weight: 700; letter-spacing: -0.015em; margin-bottom: 14px; text-wrap: balance; }
-  .section .lead { font-size: 16px; color: var(--ink-3); max-width: 620px; line-height: 1.7; margin-bottom: 40px; }
+  .section.alt { background: #f0f3f8; }
+  .section h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; text-wrap: balance; }
+  .section .lead { font-size: 16px; color: var(--ink-3); max-width: 640px; line-height: 1.7; margin-bottom: 44px; }
 
-  /* ── Feature Grid ── */
-  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-  .feature-card {
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 28px 24px;
+  /* ── Problem cards ── */
+  .problem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .problem-card {
+    background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px 26px;
     transition: box-shadow 0.15s;
   }
-  .feature-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
-  .feature-card .fc-icon { font-size: 28px; margin-bottom: 12px; }
-  .feature-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-  .feature-card p { font-size: 13.5px; color: var(--ink-3); line-height: 1.65; }
+  .problem-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.05); }
+  .problem-card .pc-num { font-size: 13px; font-weight: 800; color: var(--accent); margin-bottom: 10px; }
+  .problem-card h4 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+  .problem-card p { font-size: 13.5px; color: var(--ink-3); line-height: 1.7; }
 
   /* ── Tiers ── */
-  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .tiers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .tier {
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: var(--radius-lg); padding: 28px 24px;
-    position: relative; overflow: hidden;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px 26px;
+    position: relative;
   }
-  .tier.highlight { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-  .tier-num { font-size: 40px; font-weight: 800; color: var(--border); position: absolute; top: 8px; right: 20px; }
-  .tier h4 { font-size: 17px; font-weight: 700; margin-bottom: 8px; }
-  .tier p { font-size: 13.5px; color: var(--ink-3); line-height: 1.65; }
+  .tier.highlight { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .tier.highlight h4, .tier.highlight .tier-num { color: #fff; }
+  .tier.highlight p { color: rgba(255,255,255,0.82); }
+  .tier-num { font-size: 48px; font-weight: 900; color: var(--border); margin-bottom: 8px; line-height: 1; }
+  .tier h4 { font-size: 18px; font-weight: 700; margin-bottom: 10px; }
+  .tier p { font-size: 13.5px; color: var(--ink-3); line-height: 1.7; }
 
-  /* ── Scale Row ── */
-  .scale-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-  .scale-item { text-align: center; padding: 28px 16px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); }
-  .scale-val { font-size: 32px; font-weight: 800; color: var(--accent); letter-spacing: -0.02em; }
-  .scale-lbl { font-size: 13px; color: var(--ink-3); margin-top: 4px; }
-
-  /* ── Trust ── */
-  .trust-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-  .trust-item {
-    display: flex; align-items: center; gap: 8px;
-    padding: 10px 18px; background: var(--accent-light);
-    border-radius: 999px; font-size: 13px; font-weight: 600; color: var(--accent);
+  /* ── Feature Row ── */
+  .feature-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .feature-item {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 24px; background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius); transition: box-shadow 0.15s;
   }
+  .feature-item:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.04); }
+  .feature-item .fi-icon { font-size: 28px; flex: 0 0 auto; line-height: 1; }
+  .feature-item h4 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .feature-item p { font-size: 13px; color: var(--ink-3); line-height: 1.6; }
 
-  /* ── CTA Section ── */
-  .cta-section { text-align: center; padding: 72px 0; background: var(--ink); color: #fff; }
-  .cta-section h2 { font-size: 30px; font-weight: 700; letter-spacing: -0.015em; margin-bottom: 12px; }
-  .cta-section p { font-size: 16px; color: #94a3b8; margin-bottom: 28px; }
-  .cta-section .hero-cta { background: #fff; color: var(--ink); }
-  .cta-section .hero-cta:hover { background: #e2e8f0; }
+  /* ── Philosophy ── */
+  .phil-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .phil-card {
+    padding: 28px; background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius); border-left: 4px solid var(--accent);
+  }
+  .phil-card h4 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .phil-card p { font-size: 13.5px; color: var(--ink-3); line-height: 1.7; }
 
-  /* ── Footer ── */
-  .footer { padding: 32px 0; border-top: 1px solid var(--border-light); font-size: 13px; color: var(--ink-3); text-align: center; }
+  /* ── Scale ── */
+  .scale-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .scale-item { text-align: center; padding: 32px 16px; }
+  .scale-val { font-size: 42px; font-weight: 900; color: var(--accent); letter-spacing: -0.03em; line-height: 1; }
+  .scale-lbl { font-size: 14px; color: var(--ink-3); margin-top: 8px; }
+
+  /* ── CTA ── */
+  .cta-section {
+    text-align: center; padding: 88px 0;
+    background: linear-gradient(175deg, #0f1b36 0%, #162447 100%);
+    color: #fff;
+  }
+  .cta-section h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 12px; }
+  .cta-section p { font-size: 16px; color: #94a8c8; margin-bottom: 32px; line-height: 1.7; }
+  .cta-section .hero-cta { background: #fff; color: var(--ink); box-shadow: none; }
+  .cta-section .hero-cta:hover { background: #e8ecf4; }
+
+  .footer { padding: 28px 0; font-size: 13px; color: var(--ink-3); text-align: center; }
 
   @media (max-width: 768px) {
-    .hero h1 { font-size: 32px; }
-    .feature-grid, .tiers, .scale-row { grid-template-columns: 1fr; }
-    .hero-badges { gap: 12px; }
-    .section h2 { font-size: 26px; }
+    .hero h1 { font-size: 34px; }
+    .hero-metrics { gap: 24px; }
+    .hero-metric .val { font-size: 28px; }
+    .problem-grid, .tiers, .feature-row, .phil-grid, .scale-row { grid-template-columns: 1fr; }
+    .section h2, .cta-section h2 { font-size: 26px; }
   }
 </style>
 </head>
 <body>
-<div class="container">
 
-  <nav class="nav">
-    <div class="nav-logo">虚拟用户访谈平台</div>
-    <a class="nav-cta" href="虚拟人demoV7.html" target="_blank">打开 Demo</a>
-  </nav>
+<div class="hero-wrap">
+  <div class="container">
+    <nav class="nav">
+      <div class="nav-logo">虚拟用户访谈平台</div>
+      <a class="nav-cta" href="虚拟人demoV7.html" target="_blank">打开 Demo</a>
+    </nav>
 
-  <!-- ═══ Hero ═══ -->
-  <section class="hero">
-    <div class="hero-tag">AI-POWERED USER RESEARCH</div>
-    <h1>用 <span>AI 模拟真实玩家访谈</span></h1>
-    <p>28 位基于真实数据建模的虚拟玩家，即问即答，推理链路完全可追溯。帮助研究团队在正式访谈前快速形成假设、识别不同群体的差异化诉求。</p>
-    <a class="hero-cta" href="虚拟人demoV7.html" target="_blank">🚀 打开完整 Demo</a>
-    <div class="hero-badges">
-      <span class="hero-badge">✅ 已在米哈游用研团队投入使用</span>
-      <span class="hero-badge">📊 基于真实玩家数据建模</span>
-      <span class="hero-badge">🔍 推理链路完全可追溯</span>
-    </div>
-  </section>
+    <section class="hero">
+      <h1>用 <mark>AI 模拟真实玩家访谈</mark></h1>
+      <p>28 位基于真实数据建模的虚拟玩家，即问即答，推理链路可追溯。已在实际业务中帮助研究团队在正式访谈前快速形成假设。</p>
+      <a class="hero-cta" href="虚拟人demoV7.html" target="_blank">打开完整 Demo →</a>
+      <div class="hero-metrics">
+        <div class="hero-metric"><div class="val">28</div><div class="lbl">虚拟玩家</div></div>
+        <div class="hero-metric"><div class="val">19</div><div class="lbl">覆盖国家</div></div>
+        <div class="hero-metric"><div class="val">6</div><div class="lbl">玩家类型</div></div>
+        <div class="hero-metric"><div class="val">20+</div><div class="lbl">档案字段/人</div></div>
+      </div>
+    </section>
+  </div>
 </div>
 
   <!-- ═══ Problem ═══ -->
-  <section class="section alt">
+  <section class="section">
     <div class="container">
-      <div class="section-label">WHY</div>
-      <h2>传统玩家访谈的三大瓶颈</h2>
-      <p class="lead">原神海外用户研究团队在规划版本内容时，需要提前了解不同区域玩家的反馈。但传统的真人访谈方式面临系统性的效率问题。</p>
-      <div class="feature-grid">
-        <div class="feature-card">
-          <div class="fc-icon">📅</div>
-          <h4>排期漫长</h4>
-          <p>跨国招募目标玩家平均需要 2-4 周，遇到小众群体或特定区域用户时周期更长，难以响应快速迭代的产品节奏。</p>
+      <h2>传统玩家访谈的三个瓶颈</h2>
+      <p class="lead">原神海外用户研究团队需要提前了解不同区域玩家对新内容的反馈。但真人访谈在效率、规模和一致性上存在系统性问题。</p>
+      <div class="problem-grid">
+        <div class="problem-card">
+          <div class="pc-num">瓶颈一</div>
+          <h4>招募排期 2–4 周</h4>
+          <p>跨国招募特定画像的目标玩家周期漫长，遇到小众群体时更长。产品迭代节奏等不起。</p>
         </div>
-        <div class="feature-card">
-          <div class="fc-icon">👤</div>
-          <h4>样本稀疏</h4>
-          <p>单轮访谈通常只能覆盖 3-5 位玩家，结论缺乏统计意义。想要达到 20+ 样本量需要投入巨大的人力和时间成本。</p>
+        <div class="problem-card">
+          <div class="pc-num">瓶颈二</div>
+          <h4>单轮仅覆盖 3–5 人</h4>
+          <p>样本量太小，结论碎片化。想达到有统计意义的样本量需要投入数倍的人力和预算。</p>
         </div>
-        <div class="feature-card">
-          <div class="fc-icon">🔀</div>
-          <h4>理解偏差</h4>
-          <p>不同研究员对同一批访谈记录的解读存在主观差异。同一条玩家反馈，有人解读为"对内容不满"，有人解读为"对节奏不满"。</p>
+        <div class="problem-card">
+          <div class="pc-num">瓶颈三</div>
+          <h4>研究员理解偏差</h4>
+          <p>不同人对同一句玩家反馈的解读可能完全不同——「对内容不满」还是「对节奏不满」？主观偏差难以消除。</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ═══ How ═══ -->
-  <section class="section">
+  <section class="section alt">
     <div class="container">
-      <div class="section-label">HOW</div>
       <h2>三级回答生成体系</h2>
-      <p class="lead">不同于通用 Chatbot 的自由发挥——每条回答先判断证据充分性，再选择对应的生成策略。这是这套系统区别于其他 AI 访谈工具的核心设计。</p>
+      <p class="lead">不同于通用 Chatbot——每条回答先判断证据充分性，再选择对应的生成策略。回答可追溯、可验证、可评估。</p>
       <div class="tiers">
         <div class="tier">
           <div class="tier-num">01</div>
           <h4>原文可答</h4>
-          <p>检索召回相关访谈原文 → AI 做自然转述和口吻润色 → 引用原文出处。不走角色扮演，只做忠实转述。</p>
+          <p>检索召回访谈原文 → AI 做自然转述和口吻润色 → 引用出处。不走角色扮演，忠实还原玩家本意。</p>
         </div>
         <div class="tier highlight">
           <div class="tier-num">02</div>
           <h4>证据可推演</h4>
-          <p>检索访谈原文 / BI 字段 / 画像证据 → 确定可用论据 → 调用角色扮演 Skill → 基于证据推演回答。只引用本轮召回的证据，不做越界推断。</p>
+          <p>检索原文 / BI 字段 / 画像证据 → 确定可用论据 → 调用角色扮演生成回答。只引用本轮召回的证据，不越界推断。</p>
         </div>
         <div class="tier">
           <div class="tier-num">03</div>
           <h4>证据不足</h4>
-          <p>不调用角色扮演 → 不强行推断 → 直接告知用户资料不足，无法回答。诚实的不确定性比胡编的回答更有价值。</p>
+          <p>不调用角色扮演 · 不强行推断 · 直接告知资料不足。诚实的「不确定」比胡编的回答更值得信赖。</p>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ═══ Features ═══ -->
-  <section class="section alt">
+  <section class="section">
     <div class="container">
-      <div class="section-label">FEATURES</div>
       <h2>核心功能</h2>
-      <p class="lead">将用户研究员日常工作中"筛选 → 访谈 → 对比 → 提炼"的完整流程转化为可交互的 AI 工具。</p>
-      <div class="feature-grid">
-        <div class="feature-card">
-          <div class="fc-icon">🎭</div>
-          <h4>28 位虚拟玩家</h4>
-          <p>每位包含 UID、付费金额、游戏时长、流失原因分析、社交媒体习惯等 20+ 档案字段，基于真实玩家数据建模。</p>
+      <p class="lead">将用户研究员「筛选 → 访谈 → 对比 → 提炼」的完整工作流，转化为可交互的 AI 工具。</p>
+      <div class="feature-row">
+        <div class="feature-item">
+          <div class="fi-icon">🎭</div>
+          <div><h4>28 位虚拟玩家</h4><p>每人含 UID、付费金额、游戏时长、流失原因分析、社媒习惯等 20+ 档案字段，基于真实玩家数据建模。</p></div>
         </div>
-        <div class="feature-card">
-          <div class="fc-icon">🔍</div>
-          <h4>多维度筛选</h4>
-          <p>国家/性别/年龄/平台/付费等级/所属游戏/冒险等级，滑块与标签组合筛选，快速定位目标群体。</p>
+        <div class="feature-item">
+          <div class="fi-icon">🔍</div>
+          <div><h4>7 维度筛选</h4><p>国家/性别/年龄/平台/付费等级/所属游戏/冒险等级。滑块 + 标签组合，快速定位目标群体。</p></div>
         </div>
-        <div class="feature-card">
-          <div class="fc-icon">💬</div>
-          <h4>深度访谈</h4>
-          <p>AI 基于用户档案生成角色化回答，每条回答附带可展开的"思考过程"面板，展示推理链路和信息源引用。</p>
+        <div class="feature-item">
+          <div class="fi-icon">💬</div>
+          <div><h4>深度访谈</h4><p>AI 检索用户档案后角色化回答。可展开「本轮思考过程」面板，展示推理链路与信息源引用。</p></div>
         </div>
-        <div class="feature-card">
-          <div class="fc-icon">👥</div>
-          <h4>群聊推演</h4>
-          <p>多用户同时进入群聊，发送一个问题后 6 种人设类型差异化回答，模拟真实多人访谈场景。</p>
+        <div class="feature-item">
+          <div class="fi-icon">👥</div>
+          <div><h4>群聊推演</h4><p>多用户同时进入群聊，一个问题 → 6 种人设差异化回答，模拟真实多人访谈场景。</p></div>
         </div>
-        <div class="feature-card">
-          <div class="fc-icon">🧬</div>
-          <h4>代表用户合成</h4>
-          <p>行为标签频率加权聚合，生成最具群体代表性的虚拟画像。支持对合成用户直接发起单访。</p>
+        <div class="feature-item">
+          <div class="fi-icon">🧬</div>
+          <div><h4>代表用户合成</h4><p>行为标签频率加权聚合，生成最具代表性的群体画像。支持对合成用户直接发起单访。</p></div>
         </div>
-        <div class="feature-card">
-          <div class="fc-icon">🏷️</div>
-          <h4>14 种玩家原型</h4>
-          <p>从真实研究数据中归纳出碎片时间逃离型、家庭陪伴型、Anime-native RPG 玩家等 14 种差异化玩家画像。</p>
+        <div class="feature-item">
+          <div class="fi-icon">🏷️</div>
+          <div><h4>14 种玩家原型</h4><p>从真实研究数据归纳出碎片逃离型、家庭陪伴型、Anime-native RPG 玩家等 14 种差异化画像。</p></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ Design Philosophy ═══ -->
-  <section class="section">
-    <div class="container">
-      <div class="section-label">PHILOSOPHY</div>
-      <h2>设计理念</h2>
-      <p class="lead">产品迭代文档中沉淀的核心设计原则，指导了从 v2 到 v7 的每次决策。</p>
-      <div class="feature-grid">
-        <div class="feature-card">
-          <div class="fc-icon">🔎</div>
-          <h4>信任源于透明</h4>
-          <p>每条回答必须展示推理链路：用到了哪些依据、做了什么推断、存在什么风险。使用者不是在"信 AI"，而是在"验证 AI 的判断"。</p>
-        </div>
-        <div class="feature-card">
-          <div class="fc-icon">📐</div>
-          <h4>三级评分体系</h4>
-          <p>回答结论是否一致（50分）+ 回答原因是否一致（40分）+ 语言风格和篇幅是否合适（10分）。每次 Skill 迭代后全量重跑测试集。</p>
-        </div>
-        <div class="feature-card">
-          <div class="fc-icon">🔄</div>
-          <h4>Agent 驱动调优闭环</h4>
-          <p>AI 执行 → 全量 Benchmark 评测 → 差异分析 + 归因 → 生成优化方案 → 人工审核 → 应用修改 → 回归测试。迭代过程可量化、可回溯。</p>
-        </div>
-        <div class="feature-card">
-          <div class="fc-icon">🏷️</div>
-          <h4>硬标签筛选 · 软标签理解</h4>
-          <p>人口学硬标签（国家/年龄/等级）用于精确筛选；3-5 个业务意义软标签（社交驱动型/竞技硬核/碎片逃离型）用于理解用户本质。</p>
-        </div>
-        <div class="feature-card">
-          <div class="fc-icon">🚫</div>
-          <h4>禁止"机器预习"</h4>
-          <p>不能用测试集训练 AI，避免"又做选手又做裁判"。优化方向来自其他问题的反馈，测试集只用于验证是否有进步。</p>
-        </div>
-        <div class="feature-card">
-          <div class="fc-icon">🎯</div>
-          <h4>建立信任 = 面试逻辑</h4>
-          <p>简历（数据档案）+ 沟通风格（语言润色）+ 语言内容（言之有物）+ 活人感（不 OOC）。让业务方愿意用、敢于信。</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ Scale ═══ -->
+  <!-- ═══ Philosophy ═══ -->
   <section class="section alt">
     <div class="container">
-      <div class="section-label">SCALE</div>
-      <h2>数据规模</h2>
-      <div class="scale-row">
-        <div class="scale-item"><div class="scale-val">28</div><div class="scale-lbl">虚拟玩家</div></div>
-        <div class="scale-item"><div class="scale-val">19</div><div class="scale-lbl">覆盖国家/地区</div></div>
-        <div class="scale-item"><div class="scale-val">6</div><div class="scale-lbl">行为类型</div></div>
-        <div class="scale-item"><div class="scale-val">20+</div><div class="scale-lbl">每人档案字段</div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ═══ Trust ═══ -->
-  <section class="section">
-    <div class="container">
-      <div style="text-align:center;">
-        <div class="section-label" style="text-align:center;">TRUST</div>
-        <h2>生产就绪</h2>
-        <p class="lead" style="margin: 0 auto 32px;">已在业务中实际投入使用。Demo 版本去除敏感信息后保留完整产品设计逻辑。</p>
-        <div class="trust-row">
-          <span class="trust-item">✅ 已在米哈游用研团队投入使用</span>
-          <span class="trust-item">📊 基于真实玩家数据建模</span>
-          <span class="trust-item">🔍 推理链路完全可追溯</span>
-          <span class="trust-item">📋 纯前端单文件 · 离线可用</span>
+      <h2>产品设计理念</h2>
+      <p class="lead">从产品迭代文档中沉淀的核心原则，指导了 v2 到 v7 的每次决策。</p>
+      <div class="phil-grid">
+        <div class="phil-card">
+          <h4>信任源于透明，而非黑盒</h4>
+          <p>每条回答展示完整推理链路。使用者不是在「信 AI」，而是在验证 AI 的判断——用到了哪些依据、做了哪些推断、存在什么风险。</p>
+        </div>
+        <div class="phil-card">
+          <h4>三级评分体系：结论 50 + 原因 40 + 风格 10</h4>
+          <p>回答结论一致、推理原因一致、语言篇幅合适。每次 Skill 迭代后全量重跑测试集，确保不退化。</p>
+        </div>
+        <div class="phil-card">
+          <h4>Agent 驱动调优闭环</h4>
+          <p>Benchmark 评测 → 差异归因 → 生成优化方案 → 人工审核 → 应用修改 → 回归测试。迭代过程可量化、可回溯。</p>
+        </div>
+        <div class="phil-card">
+          <h4>硬标签筛选，软标签理解</h4>
+          <p>人口学标签用于精确筛选；3–5 个业务意义软标签（社交驱动型/竞技硬核/碎片逃离型）用于真正理解用户。</p>
+        </div>
+        <div class="phil-card">
+          <h4>禁止「机器预习」</h4>
+          <p>不能用测试集训练 AI——又做选手又做裁判。优化方向来自其他问题的反馈，测试集仅用于验证进步。</p>
+        </div>
+        <div class="phil-card">
+          <h4>建立信任 = 面试逻辑</h4>
+          <p>简历（数据档案）+ 沟通风格（语言润色）+ 内容（言之有物）+ 活人感（不 OOC）——让业务方愿意用、敢于信。</p>
         </div>
       </div>
     </div>
@@ -303,16 +272,18 @@
 
   <!-- ═══ CTA ═══ -->
   <section class="cta-section">
-    <h2>在浏览器中体验完整 Demo</h2>
-    <p>28 位虚拟玩家 · 群聊推演 · 画像合成 · 推理可追溯<br>纯前端实现，无需部署，双击即开</p>
-    <a class="hero-cta" href="虚拟人demoV7.html" target="_blank">打开完整 Demo →</a>
+    <div class="container">
+      <h2>在浏览器中体验完整 Demo</h2>
+      <p>纯前端实现，无需部署，双击即开。<br>已在米哈游用研团队投入使用 · 推理链路完全可追溯</p>
+      <a class="hero-cta" href="虚拟人demoV7.html" target="_blank">打开完整 Demo →</a>
+    </div>
   </section>
 
-<div class="container">
-  <footer class="footer">
-    虚拟用户访谈平台 · 米哈游原神国际化用户研究项目 · 2026
-  </footer>
-</div>
+  <div class="container">
+    <footer class="footer">
+      虚拟用户访谈平台 · 米哈游原神国际化用户研究项目 · 2026
+    </footer>
+  </div>
 
 </body>
 </html>
