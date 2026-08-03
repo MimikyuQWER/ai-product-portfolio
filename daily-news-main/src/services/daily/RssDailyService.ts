@@ -411,6 +411,32 @@ export async function summarizeItems(
   return result;
 }
 
+/**
+ * 扫描已有日报文件，提取所有已出现过的 URL，用于跨天去重
+ */
+async function getPreviousUrls(
+  dailyDir: string,
+  excludeDate: string
+): Promise<Set<string>> {
+  const urls = new Set<string>();
+  try {
+    const files = await fs.readdir(dailyDir);
+    for (const file of files) {
+      const match = file.match(/^(\d{4}-\d{2}-\d{2})\.md$/);
+      if (!match || match[1] === excludeDate) continue;
+      const content = await fs.readFile(path.join(dailyDir, file), 'utf-8');
+      // 提取 markdown 链接中的 URL
+      const linkRegex = /\]\(https?:\/\/[^)]+\)/g;
+      for (const link of content.match(linkRegex) || []) {
+        urls.add(canonicalizeUrl(link.slice(2, -1)));
+      }
+    }
+  } catch {
+    // daily 目录可能不存在，忽略
+  }
+  return urls;
+}
+
 export async function generateDailyMarkdown(options: {
   sources: DailyRssSource[];
   date?: string;
@@ -426,8 +452,25 @@ export async function generateDailyMarkdown(options: {
   imageMarkdownPrefix?: string;
 }): Promise<{ markdown: string; filePath?: string; itemCount: number; statuses: DailyRssSourceStatus[] }> {
   const date = options.date || getISODate();
-  const { items, statuses } = await fetchSources(options.sources, { maxAgeDays: options.maxAgeDays ?? 3 });
-  const sortedItems = items.sort((a, b) => {
+  const dailyDir = options.outputDir || 'daily';
+  // 以目标日期为基准计算 maxAgeDays，避免补生成历史日报时窗口偏移
+  const targetDate = new Date(`${date}T23:59:59+08:00`);
+  const { items: rawItems, statuses } = await fetchSources(options.sources, {
+    maxAgeDays: (options.maxAgeDays ?? 1) + 1, // +1 宽容度，覆盖时区差异
+    now: targetDate,
+  });
+
+  // 跨天去重：仅对慢更新源（公司博客、从业者博客）去重
+  // Product Hunt / GitHub Trending / 论文每日更新，不去重
+  const SLOW_SOURCE_GROUPS: DailyRssSourceGroup[] = ['company', 'practitioner'];
+  const previousUrls = await getPreviousUrls(dailyDir, date);
+  const filteredItems = rawItems.filter((item) => {
+    if (!SLOW_SOURCE_GROUPS.includes(item.sourceGroup)) return true;
+    const key = item.url ? canonicalizeUrl(item.url) : item.title.trim().toLowerCase();
+    return !previousUrls.has(key);
+  });
+
+  const sortedItems = filteredItems.sort((a, b) => {
     const priorityA = options.sources.find((source) => source.name === a.sourceName)?.priority || 0;
     const priorityB = options.sources.find((source) => source.name === b.sourceName)?.priority || 0;
     return priorityB - priorityA || new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();

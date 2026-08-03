@@ -298,7 +298,7 @@ def _duckduckgo_search(query: str) -> str:
 
         for r in parser.results:
             if r["url"]:
-                pat = re.escape(r["url"]) + r".*?<span class="result-snippet">(.*?)</span>"
+                pat = re.escape(r["url"]) + r'.*?<span class="result-snippet">(.*?)</span>'
                 m = re.search(pat, html, re.DOTALL)
                 if m:
                     r["snippet"] = re.sub(r"<[^>]+>", "", m.group(1)).strip()

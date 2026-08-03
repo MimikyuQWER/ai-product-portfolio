@@ -11,6 +11,9 @@ __pycache__/
 
 # Generated/base64 data
 _avatar_base64.js
+_avatar_circles.js
+_hero_bg.txt
+_hero_mosaic.txt
 
 # Verification artifacts
 verify_*.png
@@ -23,6 +26,17 @@ rename_avatars.py
 # Backups (with their own git repos)
 address-audit-agent-v1-backup/
 address-audit-agent-v2-backup/
+
+# Archive snapshots
+visual_user_research/archive/
+
+# Node modules (portfolio)
+portfolio/node_modules/
+
+# Unreferenced hero images
+visual_user_research/hero_bg.jpg
+visual_user_research/hero_left.jpg
+visual_user_research/hero_right.jpg
 
 # Temp files
 _review_diff*.txt

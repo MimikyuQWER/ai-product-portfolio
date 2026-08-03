@@ -324,7 +324,10 @@
   <a href="#" class="nav-brand">
     <img src="robot-avatar.png" alt="logo"> 地址审核 AGENT
   </a>
-  <a href="#try" class="nav-cta" onclick="startOnboarding()">开始使用</a>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <a href="../portfolio/index.html" style="font-size:0.8rem;color:var(--ink-muted);text-decoration:none;">← 作品集</a>
+    <a href="#try" class="nav-cta" onclick="startOnboarding()">开始使用</a>
+  </div>
 </nav>
 
 <!-- Hero -->
@@ -492,7 +495,7 @@
     <p>页面已预配 DeepSeek + 高德地图 API Key，打开即用。</p>
     <div class="api-note">🔑 API 已配好 · 无需注册 · 直接试用</div>
     <br>
-    <a href="http://localhost:8502" class="btn-primary" style="font-size:1rem;padding:0.8rem 2.2rem;">
+    <a href="http://localhost:8501" class="btn-primary" style="font-size:1rem;padding:0.8rem 2.2rem;">
       启动审核助手 →
     </a>
     <p style="font-size:0.8rem;color:var(--ink-muted);margin-top:0.75rem;">
@@ -551,7 +554,7 @@
     document.getElementById('btn-prev').style.display = currentStep ? 'inline-flex' : 'none';
     if (currentStep === steps.length - 1) {
       document.getElementById('btn-next').textContent = '开始使用';
-      document.getElementById('btn-next').onclick = () => { closeOnboarding(); window.open('http://localhost:8502', '_blank'); };
+      document.getElementById('btn-next').onclick = () => { closeOnboarding(); window.open('http://localhost:8501', '_blank'); };
     } else {
       document.getElementById('btn-next').textContent = '下一步';
       document.getElementById('btn-next').onclick = nextStep;
