@@ -40,3 +40,36 @@ visual_user_research/hero_right.jpg
 
 # Temp files
 _review_diff*.txt
+
+# ── Claude Code internals ──
+.agents/
+.claude/
+.impeccable/
+skills-lock.json
+
+# ── Runtime outputs ──
+audit_output/
+
+# ── Sensitive files ──
+.env
+*.env
+!*.env.example
+!address-audit-agent/.env
+
+# ── Old project versions (keep only final V7) ──
+visual_user_research/archive/
+visual_user_research/虚拟人demoV2*
+visual_user_research/虚拟人demoV3*
+visual_user_research/虚拟人demoV4*
+visual_user_research/虚拟人demoV7_full*
+visual_user_research/verify_avatars.html
+visual_user_research/compress_avatars.py
+visual_user_research/embed_avatars.py
+visual_user_research/ocr_to_md.py
+visual_user_research/头像生成提示词_28用户.md
+
+# ── Binary archives ──
+*.zip
+
+# ── Generated assets (not portfolio material) ──
+daily-news-main/daily-assets/
