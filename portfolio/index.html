@@ -152,7 +152,7 @@
       <span class="company-badge mihoyo">米哈游 · 原神国际化</span>
     </div>
     <div class="header-summary">
-      在以上两段实习中独立完成两个 AI 产品项目，均在业务团队实际投入使用。<strong>虚拟用户访谈平台</strong>面向原神海外玩家用研场景，用 28 位基于真实数据建模的虚拟玩家替代传统访谈排期；<strong>地址审核 Agent</strong>面向微信支付 KYC 场景，通过 LLM + 高德地图 + 联网搜索三重交叉验证，将单条地址审核效率提升约 3 倍。以下 Demo 已去除敏感业务信息，保留完整的产品设计与交互逻辑。
+      在以上两段实习中独立完成两个 AI 产品项目，均在业务团队实际投入使用。<strong>虚拟用户访谈平台</strong>面向原神海外玩家用户调研场景，用基于真实玩家数据建模的AI数字分身嵌入业务流程，帮助一线团队和高层管理者了解真实玩家画像；<strong>地址审核 Agent</strong>面向微信支付等金融法律 KYC 场景，通过 LLM + 高德地图 + 联网搜索三重交叉验证，将地址审核效率提升约 3 倍，准确率达95%+。以下 Demo 已去除敏感业务信息，保留完整的产品设计与交互逻辑。
     </div>
   </header>
 
@@ -172,7 +172,7 @@
     </div>
 
     <div class="highlight-box vur">
-      <strong>本项目的思路：</strong>用已有访谈与 BI 数据为真实受访者建立 <strong>AI 数字分身</strong>——用研调教分析 Skill → 激活数据资产 → 业务方和管理层直接对数字分身发起对话，获取一手用户洞察。目标闭环：AI 访谈真人 → 数据回收 → 用研产出报告并持续调优 → 数字分身作为资产持续迭代。
+      <strong>本项目的思路：</strong>AI访谈真人 - 用回收的访谈结果与 BI 数据为真实受访者建立 <strong>AI 数字分身</strong>——专业用研团队调教分析 Skill、产出中间层研报 → 激活数据资产 → 业务方和管理层直接对数字分身发起对话，获取一手用户洞察。目标闭环：AI 访谈真人 → 数据回收 → 用研产出报告并持续调优 → 数字分身作为资产持续迭代。
     </div>
 
     <div class="narrative">
@@ -192,9 +192,9 @@
 
     <div class="highlight-box vur">
       <strong>三个核心设计：</strong><br>
-      ① <strong>三级回答体系</strong>——原文可答 → 证据可推演 → 证据不足直说不编造，每条回答可追溯、可验证<br>
-      ② <strong>50+40+10 评测体系</strong>——结论一致性(50分)·推理一致性(40分)·风格适当(10分)，每次迭代全量回归<br>
-      ③ <strong>独立审计 Agent</strong>——主 Agent 回答后由审计 Agent 二次评估，bad case 分类归档、针对性调优
+      ① <strong>三级回答体系</strong>——原文可答 → 证据可推演 → 证据不足直说不编造，保证AI每条回答可追溯、可验证，减少黑盒不信任感<br>
+      ② <strong>端到端+过程评测体系</strong>——建立黄金评测集，从结果端和每个中间环节设计验收标准，每次迭代保证黄金评测集效果不退步<br>
+      ③ <strong>独立审计 Agent</strong>——主 Agent 回答后由独立审计 Agent 二次评估，bad case 分类归档、针对性调优
     </div>
 
     <div class="narrative">
@@ -230,7 +230,7 @@
     </div>
 
     <div class="highlight-box audit">
-      <strong>实际使用中团队最认可的设计：预审报告环节。</strong>Agent 在调用任何外部 API 之前，先向用户展示数据摘要——共多少条、每条完整度评估（缺省/市/区/街道/门牌号）、哪些明显无效、预计 API 调用次数——<strong>用户确认后才进入正式审核</strong>。这个设计避免了大量无效 API 调用和 Token 浪费，也保持了审核员对流程的控制感。
+      <strong>实际使用中团队认可的设计：预审报告环节。</strong>Agent 在调用任何外部 API 之前，先向用户展示数据摘要——共多少条、每条完整度评估（缺省/市/区/街道/门牌号）、哪些明显无效、是否需要使用者补充信息或做核对——<strong>用户确认后才进入正式审核</strong>。这个设计避免了大量无效 API 调用和 Token 浪费，也保持了审核员对流程的控制感。
     </div>
 
     <div class="narrative">
@@ -238,8 +238,8 @@
     </div>
 
     <div class="cta-row">
-      <a class="cta ghost" href="../address-audit-agent/landing.html" target="_blank">项目介绍页</a>
-      <a class="cta primary" href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank">GitHub 仓库</a>
+      <a class="cta primary" href="../address-audit-agent/landing.html" target="_blank">项目介绍页</a>
+      <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank">GitHub 仓库</a>
       <span style="font-size:12.5px;color:var(--ink-3);">克隆后 streamlit run · Key 已预配</span>
     </div>
   </section>

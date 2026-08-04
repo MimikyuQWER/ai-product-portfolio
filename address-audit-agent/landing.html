@@ -491,16 +491,26 @@
 <!-- CTA -->
 <section class="cta" id="try">
   <div class="container">
-    <h2>现在就试试</h2>
-    <p>克隆仓库后直接运行，API Key 已预配，无需申请。</p>
+    <h2>3 步跑起来</h2>
+    <p>API Key 已预配，克隆后直接运行，无需额外配置。</p>
     <div class="api-note">🔑 DeepSeek + 高德地图 API 已配好 · 克隆即用</div>
     <br>
-    <a href="https://github.com/MimikyuQWER/ai-product-portfolio" class="btn-primary" style="font-size:1rem;padding:0.8rem 2.2rem;" target="_blank">
-      查看仓库 & 运行指南 →
-    </a>
-    <p style="font-size:0.8rem;color:var(--ink-muted);margin-top:0.75rem;">
-      需 Python 环境 · 首次使用看右上角"开始使用"
+    <div style="background:#1e293b;color:#e2e8f0;border-radius:8px;padding:18px 24px;font-family:'Geist Mono','JetBrains Mono',monospace;font-size:0.82rem;line-height:1.9;text-align:left;max-width:520px;margin:0 auto;">
+      <div><span style="color:#94a3b8;"># 1. 克隆仓库</span></div>
+      <div>git clone https://github.com/MimikyuQWER/ai-product-portfolio.git</div>
+      <div>cd ai-product-portfolio/address-audit-agent</div>
+      <div style="margin-top:8px;"><span style="color:#94a3b8;"># 2. 安装依赖</span></div>
+      <div>pip install -r requirements.txt</div>
+      <div style="margin-top:8px;"><span style="color:#94a3b8;"># 3. 启动</span></div>
+      <div>streamlit run app.py</div>
+    </div>
+    <p style="font-size:0.8rem;color:var(--ink-muted);margin-top:1rem;">
+      需 Python 3.10+ · 浏览器自动打开 http://localhost:8501
     </p>
+    <br>
+    <a href="https://github.com/MimikyuQWER/ai-product-portfolio" class="btn-primary" style="font-size:0.9rem;padding:0.65rem 1.6rem;" target="_blank">
+      查看完整文档 →
+    </a>
   </div>
 </section>
 
@@ -554,7 +564,7 @@
     document.getElementById('btn-prev').style.display = currentStep ? 'inline-flex' : 'none';
     if (currentStep === steps.length - 1) {
       document.getElementById('btn-next').textContent = '开始使用';
-      document.getElementById('btn-next').onclick = () => { closeOnboarding(); window.open('https://github.com/MimikyuQWER/ai-product-portfolio', '_blank'); };
+      document.getElementById('btn-next').onclick = () => { closeOnboarding(); document.getElementById('try').scrollIntoView({ behavior: 'smooth' }); };
     } else {
       document.getElementById('btn-next').textContent = '下一步';
       document.getElementById('btn-next').onclick = nextStep;

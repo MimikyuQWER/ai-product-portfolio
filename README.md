@@ -21,7 +21,6 @@
 |------|------|
 | [🌐 在线体验 Demo](https://mimikyuqwer.github.io/ai-product-portfolio/visual_user_research/%E8%99%9A%E6%8B%9F%E4%BA%BAdemoV7.html) | GitHub Pages 直接打开，秒开即用 |
 | [📄 产品介绍页](https://mimikyuqwer.github.io/ai-product-portfolio/visual_user_research/landing.html) | 三级回答体系 + 品质保障设计 |
-| [📝 迭代文档](visual_user_research/%E8%99%9A%E6%8B%9F%E4%BA%BA%E8%BF%AD%E4%BB%A3%E6%96%87%E6%A1%A3.md) | v2→v7 迭代记录 + 评测体系 |
 
 ---
 
