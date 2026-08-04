@@ -164,39 +164,47 @@
     <div class="project-context">米哈游 · <strong>原神国际化用户研究</strong> · 纯前端单文件 · 离线可用</div>
 
     <div class="narrative">
-      <p>原神海外用户研究团队在规划版本内容时，需要提前了解不同区域玩家对新功能的接受度和流失原因。但传统访谈面临三个瓶颈：<strong>跨国招募玩家排期 2-4 周</strong>、单次访谈仅覆盖 3-5 人导致结论碎片化、不同研究员对同一批访谈记录的理解存在主观偏差。</p>
+      <p><strong>传统模式：</strong>真人访谈真人 → 受人力与语言限制速度慢 → 专业用研团队分析写报告 → 报告完成后原始数据不再利用 → 业务团队只能看到「二手信息」。</p>
     </div>
 
     <div class="narrative">
-      <p>这个平台将用户研究员日常工作中「筛选目标用户 → 一对一访谈 → 跨用户对比 → 提炼共性」的完整流程，转化为一个可交互的 AI 工具：</p>
+      <p><strong>AI 时代的机遇：</strong>AI 访谈产品提升了效率与产出量，但用研团队面对激增的访谈数据，<strong>分析能力成为新瓶颈</strong>。</p>
+    </div>
+
+    <div class="highlight-box vur">
+      <strong>本项目的思路：</strong>用已有访谈与 BI 数据为真实受访者建立 <strong>AI 数字分身</strong>——用研调教分析 Skill → 激活数据资产 → 业务方和管理层直接对数字分身发起对话，获取一手用户洞察。目标闭环：AI 访谈真人 → 数据回收 → 用研产出报告并持续调优 → 数字分身作为资产持续迭代。
+    </div>
+
+    <div class="narrative">
+      <p>将用户研究员「筛选 → 访谈 → 对比 → 提炼」的完整工作流转化为可交互的 AI 工具：</p>
       <div class="flow">
         <span class="flow-step">筛选目标群体</span>
         <span class="flow-arrow">→</span>
         <span class="flow-step">选择用户进入访谈</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">AI 基于档案生成回答</span>
+        <span class="flow-step">AI 检索档案生成回答</span>
         <span class="flow-arrow">→</span>
-        <span class="flow-step">查阅推理依据与信息源</span>
+        <span class="flow-step">展开思考过程与信息源</span>
         <span class="flow-arrow">→</span>
         <span class="flow-step">群聊对比或画像合成</span>
       </div>
     </div>
 
     <div class="highlight-box vur">
-      <strong>不同于通用 Chatbot 的关键设计：</strong>每位虚拟用户的回答不是自由发挥，而是先检索该用户的<strong>真实档案数据</strong>（UID、付费记录、游戏时长、流失原因分析等 20+ 字段）作为依据，再进行角色化推演。每条回答上方有可展开的「本轮用户思考过程」面板，展示推理链路和原始信息源——让研究员能够判断回答的可信程度，而不是盲信 AI 输出。
+      <strong>三个核心设计：</strong><br>
+      ① <strong>三级回答体系</strong>——原文可答 → 证据可推演 → 证据不足直说不编造，每条回答可追溯、可验证<br>
+      ② <strong>50+40+10 评测体系</strong>——结论一致性(50分)·推理一致性(40分)·风格适当(10分)，每次迭代全量回归<br>
+      ③ <strong>独立审计 Agent</strong>——主 Agent 回答后由审计 Agent 二次评估，bad case 分类归档、针对性调优
     </div>
 
     <div class="narrative">
-      <p>实际数据规模：28 位虚拟玩家覆盖 19 个国家/地区，包含 6 种行为类型（社交驱动型、竞技硬核、剧情情感型、效率最优型、休闲轻度型、探索沉浸型），支持群聊推演和三维建模聚合的代表用户合成。</p>
-    </div>
-
-    <div class="narrative">
-      <p>已在米哈游用研团队作为<strong>访谈前的情景预演工具</strong>实际使用，帮助研究员在正式访谈前快速形成假设、识别不同用户群体的差异化诉求。当前 Demo 版本使用模拟数据展示产品逻辑，交互流程与生产版本一致。</p>
+      <p>基于上千名真实玩家的访谈与 BI 数据 1:1 建模，每位虚拟玩家包含 20+ 档案字段（UID、付费金额、游戏时长、流失原因等）。支持 7 维度筛选（国家/性别/年龄/平台/付费等级/所属游戏/冒险等级），覆盖美国、英国、日本、俄罗斯等区域。已在米哈游用研团队作为<strong>访谈前的情景预演工具</strong>实际使用。</p>
     </div>
 
     <div class="cta-row">
-      <a class="cta primary" href="../visual_user_research/虚拟人demoV7.html" target="_blank">打开完整 Demo</a>
-      <span style="font-size:12.5px;color:var(--ink-3);">单文件 HTML · 双击即开 · 无需部署</span>
+      <a class="cta ghost" href="../visual_user_research/landing.html" target="_blank">项目介绍页</a>
+      <a class="cta primary" href="../visual_user_research/虚拟人demoV7.html" target="_blank">打开 Demo</a>
+      <span style="font-size:12.5px;color:var(--ink-3);">纯前端 · 双击即开 · 离线可用</span>
     </div>
   </section>
 
@@ -230,8 +238,9 @@
     </div>
 
     <div class="cta-row">
-      <a class="cta primary" href="../address-audit-agent/landing.html" target="_blank">打开项目介绍页</a>
-      <span style="font-size:12.5px;color:var(--ink-3);">需 Python 环境 · Streamlit 本地运行</span>
+      <a class="cta ghost" href="../address-audit-agent/landing.html" target="_blank">项目介绍页</a>
+      <a class="cta primary" href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank">GitHub 仓库</a>
+      <span style="font-size:12.5px;color:var(--ink-3);">克隆后 streamlit run · Key 已预配</span>
     </div>
   </section>
 
