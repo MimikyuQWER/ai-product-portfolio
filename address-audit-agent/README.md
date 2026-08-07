@@ -70,8 +70,8 @@
 ### 1. 克隆项目
 
 ```bash
-git clone https://github.com/your-username/address-audit-agent.git
-cd address-audit-agent
+git clone https://github.com/MimikyuQWER/ai-product-portfolio.git
+cd ai-product-portfolio/address-audit-agent
 ```
 
 ### 2. 安装依赖
@@ -84,23 +84,24 @@ pip install -r requirements.txt
 
 ```bash
 cp .env.example .env
-# 编辑 .env，填入你的 Key
+# 编辑 .env，将 LLM_API_KEY 替换为你的 DeepSeek 或 OpenAI Key
+# 🗺️ 高德地图 Key 已预配，无需修改
 ```
 
-**最少需要两个 Key：**
+**你只需要一个 AI API Key：**
 
 | Key | 注册地址 | 免费额度 |
 |-----|---------|---------|
 | `LLM_API_KEY` | [platform.deepseek.com](https://platform.deepseek.com/) | 注册送 500 万 token |
-| `AMAP_API_KEY` | [console.amap.com](https://console.amap.com/) | 5000 次/天 |
+| （备选）OpenAI | [platform.openai.com](https://platform.openai.com/) | 新用户 $5 额度 |
 
-Bing Search Key 可选，不填则只用高德地图验证。
+高德地图和 Bing Search 已预配，开箱即用。
 
 ### 4. 启动
 
 **Web 界面（推荐）：**
 ```bash
-streamlit run app.py
+python -m streamlit run app.py
 ```
 
 **命令行：**

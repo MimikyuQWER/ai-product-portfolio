@@ -491,18 +491,22 @@
 <!-- CTA -->
 <section class="cta" id="try">
   <div class="container">
-    <h2>3 步跑起来</h2>
-    <p>API Key 已预配，克隆后直接运行，无需额外配置。</p>
-    <div class="api-note">🔑 DeepSeek + 高德地图 API 已配好 · 克隆即用</div>
+    <h2>4 步跑起来</h2>
+    <p>高德地图 Key 已预配，你只需要一个免费的 AI API Key（5 分钟搞定）。</p>
     <br>
-    <div style="background:#1e293b;color:#e2e8f0;border-radius:8px;padding:18px 24px;font-family:'Geist Mono','JetBrains Mono',monospace;font-size:0.82rem;line-height:1.9;text-align:left;max-width:520px;margin:0 auto;">
+    <div style="background:#1e293b;color:#e2e8f0;border-radius:8px;padding:18px 24px;font-family:'Geist Mono','JetBrains Mono',monospace;font-size:0.82rem;line-height:1.9;text-align:left;max-width:540px;margin:0 auto;">
       <div><span style="color:#94a3b8;"># 1. 克隆仓库</span></div>
       <div>git clone https://github.com/MimikyuQWER/ai-product-portfolio.git</div>
       <div>cd ai-product-portfolio/address-audit-agent</div>
-      <div style="margin-top:8px;"><span style="color:#94a3b8;"># 2. 安装依赖</span></div>
-      <div>pip install -r requirements.txt</div>
-      <div style="margin-top:8px;"><span style="color:#94a3b8;"># 3. 启动</span></div>
-      <div>streamlit run app.py</div>
+      <div style="margin-top:8px;"><span style="color:#94a3b8;"># 2. 获取 AI API Key（免费）</span></div>
+      <div style="color:#94a3b8;">前往 <a href="https://platform.deepseek.com/" target="_blank" style="color:#818cf8;">platform.deepseek.com</a> 注册（送 500 万 token）</div>
+      <div style="color:#94a3b8;">或使用 <a href="https://platform.openai.com/" target="_blank" style="color:#818cf8;">OpenAI</a> · 创建 Key 后粘贴到 .env 文件</div>
+      <div style="margin-top:8px;"><span style="color:#94a3b8;"># 3. 配置（只需改一行 Key）</span></div>
+      <div>cp .env.example .env</div>
+      <div style="color:#94a3b8;">编辑 .env，将 LLM_API_KEY 替换为你的 Key</div>
+      <div style="color:#fbbf24;">🗺️ 高德地图 Key 已配好，无需修改</div>
+      <div style="margin-top:8px;"><span style="color:#94a3b8;"># 4. 启动</span></div>
+      <div>python -m streamlit run app.py</div>
     </div>
     <p style="font-size:0.8rem;color:var(--ink-muted);margin-top:1rem;">
       需 Python 3.10+ · 浏览器自动打开 http://localhost:8501

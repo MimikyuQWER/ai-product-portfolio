@@ -22,6 +22,8 @@
     --vur-blue-light: #eff4ff;
     --audit-gold: #b8860b;
     --audit-gold-light: #fef9f0;
+    --skill-purple: #7c3aed;
+    --skill-purple-light: #f5f3ff;
   }
 
   body {
@@ -97,6 +99,7 @@
   }
   .highlight-box.vur  { border-left: 3px solid var(--vur-blue);  background: var(--vur-blue-light); }
   .highlight-box.audit { border-left: 3px solid var(--audit-gold); background: var(--audit-gold-light); }
+  .highlight-box.skill { border-left: 3px solid var(--skill-purple); background: var(--skill-purple-light); }
 
   /* ── Flow ── */
   .flow {
@@ -240,7 +243,63 @@
     <div class="cta-row">
       <a class="cta primary" href="../address-audit-agent/landing.html" target="_blank">项目介绍页</a>
       <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank">GitHub 仓库</a>
-      <span style="font-size:12.5px;color:var(--ink-3);">克隆后 streamlit run · Key 已预配</span>
+      <span style="font-size:12.5px;color:var(--ink-3);">克隆后 pip install + 填入 AI Key 即用</span>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════ SECTION: SKILLS ═══════════ -->
+  <section class="project">
+    <div class="project-title">AI 开发基础设施</div>
+    <div class="project-context">6 个自建 Claude Code Skill · <strong>量化投资 + AI 产品开发 + 知识库管理</strong> · 日常 AI 协作的工程底座</div>
+
+    <div class="narrative">
+      <p>在以上两个项目的迭代过程中，发现单靠提示词约束 AI 行为不够可靠——LLM 会静默违反规则、编造数据、跳过验证步骤。于是将每个领域的工作规范沉淀为结构化的 <strong>Skill</strong>——不是文档，是行为约束：定义 AI 在特定场景下该做什么、不该做什么、如何验证。同一个模型，有 Skill 和没有 Skill 的表现差异远大于不同模型之间的差距。</p>
+    </div>
+
+    <div class="highlight-box skill">
+      <strong>三个领域的 Skill 体系：</strong><br>
+      ① <strong>量化投资</strong>——factor-backtest 覆盖因子研究→回测→版本管理完整链路，统一计算口径（几何年化、ddof=1），所有结果从版本档案读取不重算，严禁编造数据；cn-investment-research 提供个股五层分析、DCF 估值（中债利率）、可转债双低策略，AKShare（免费优先）+ iFinD MCP（付费兜底）双数据源<br>
+      ② <strong>AI 产品开发</strong>——harness-engineering 沉淀了 Agent 集群设计原则、Context 工程方法论、评测体系搭建流程，源自米哈游多 Agent 集群实战 + Anthropic/OpenAI 官方 Harness 实践<br>
+      ③ <strong>知识库管理</strong>——wiki-material-ingest（研报 PDF/PPTX 双工具对比择优入库）、wiki-page-writer（结构化页面编写 + 内容溯源反编造）、feishu-qa-detector（飞书笔记自动检测疑问句 + 知识库答疑）
+    </div>
+
+    <div class="narrative">
+      <p>Skill 的设计遵循<strong>渐进式披露</strong>原则——前面是触发条件和核心规则（AI 快速判断是否适用），详细参考在后方（需要时深入）。每个 Skill 都包含明确的禁止项，这些硬约束在每次 AI 调用时被注入上下文，从根本上减少幻觉和遗漏。</p>
+    </div>
+
+    <div class="cta-row">
+      <a class="cta ghost" href="../skills/README.md" target="_blank">Skills 总览</a>
+      <a class="cta primary" href="https://github.com/MimikyuQWER/ai-product-portfolio/tree/main/skills" target="_blank">GitHub 查看</a>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ═══════════ SECTION: KNOWLEDGE WIKI ═══════════ -->
+  <section class="project">
+    <div class="project-title">结构化知识库系统</div>
+    <div class="project-context">159 页 Markdown · <strong>量化金融 + AI 产品</strong>双领域 · AI 可检索、可维护、可溯源</div>
+
+    <div class="narrative">
+      <p>AI 的知识不能只靠每次对话的上下文——对话结束就清零。于是搭建了一套<strong>结构化个人知识库</strong>，让 AI 能跨 session 持续积累和检索知识。不是简单的笔记堆砌，而是有 Schema、有索引、有溯源机制的工程系统。</p>
+    </div>
+
+    <div class="highlight-box skill">
+      <strong>三层知识体系：</strong><br>
+      ① <strong>数据流入层</strong>——飞书知识库每日增量同步（SHA-256 去重）+ PDF/PPTX 研报 MarkItDown/pdfplumber 双工具对比择优转换 → 存入 raw/<br>
+      ② <strong>结构化层</strong>——4 种页面类型（Entity/Judgment/Pattern/Observation），统一 frontmatter 元数据，[[wikilink]] 交叉引用图<br>
+      ③ <strong>检索层</strong>——渐进式披露设计（大纲索引 50 行掌握全貌 → 详细内容 → raw/ 原始材料），时效性标记自动提醒过期数据
+    </div>
+
+    <div class="narrative">
+      <p>核心设计理念：<strong>每条事实性陈述必须可溯源到 raw/ 原文</strong>。不确定就标注待补充，不允许用常识填空。raw/ 目录对 AI 只读，防止编造内容污染原始素材。每次更新自动 git commit，形成可追溯的知识演进历史。</p>
+    </div>
+
+    <div class="cta-row">
+      <a class="cta ghost" href="../knowledge-wiki-system/README.md" target="_blank">系统设计文档</a>
+      <a class="cta primary" href="https://github.com/MimikyuQWER/ai-product-portfolio/tree/main/knowledge-wiki-system" target="_blank">GitHub 查看</a>
     </div>
   </section>
 
@@ -249,7 +308,7 @@
   <!-- ═══════════ FOOTER ═══════════ -->
   <footer class="footer">
     张逸帆 · 复旦大学 · AI 产品作品集 2026<br>
-    两个项目均已在实际业务中投入使用，Demo 版本去除敏感信息后保留产品设计逻辑<br>
+    前两个项目已在实际业务中投入使用，后两部分为日常 AI 协作的工程基础设施<br>
     本地离线可运行 · <a href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank">GitHub</a> · <a href="mailto:zhangyifan@example.com">Email</a>
   </footer>
 
