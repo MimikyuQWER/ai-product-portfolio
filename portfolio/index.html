@@ -252,10 +252,10 @@
   <!-- ═══════════ SECTION: SKILLS ═══════════ -->
   <section class="project">
     <div class="project-title">AI 开发基础设施</div>
-    <div class="project-context">6 个自建 Claude Code Skill · <strong>量化投资 + AI 产品开发 + 知识库管理</strong> · 日常 AI 协作的工程底座</div>
+    <div class="project-context">Harness 工程化实践 · <strong>量化投资 + AI 产品 + 知识库</strong> · 6 个 Skill + 代码硬约束体系</div>
 
     <div class="narrative">
-      <p>在以上两个项目的迭代过程中，发现单靠提示词约束 AI 行为不够可靠——LLM 会静默违反规则、编造数据、跳过验证步骤。于是将每个领域的工作规范沉淀为结构化的 <strong>Skill</strong>——不是文档，是行为约束：定义 AI 在特定场景下该做什么、不该做什么、如何验证。同一个模型，有 Skill 和没有 Skill 的表现差异远大于不同模型之间的差距。</p>
+      <p>在日常使用 AI 的过程中，逐渐形成了一套 <strong>Harness 工程化</strong>思路：提示词约束是软性的——LLM 会静默违反规则、编造数据、跳过验证步骤。真正的可靠性来自工程代码的硬约束：定义输入输出规格 → 程序化校验结果 → 不符合要求打回重跑。不依赖 AI 自觉，而是让代码做最终把关。这套思想贯穿地址审核 Agent 的 ResultGuard（输出前四道关卡自动拦截不合规结果）和量化策略的版本管理（禁止重写回测引擎、强制从档案读取指标）。在此基础上，将日常高频场景的行为规范沉淀为 6 个结构化 Skill，固化流程、消除歧义。同一个模型，有这套 Harness 约束和没有的表现差异，远大于不同模型之间的差距。</p>
     </div>
 
     <div class="highlight-box skill">
@@ -266,7 +266,7 @@
     </div>
 
     <div class="narrative">
-      <p>Skill 的设计遵循<strong>渐进式披露</strong>原则——前面是触发条件和核心规则（AI 快速判断是否适用），详细参考在后方（需要时深入）。每个 Skill 都包含明确的禁止项，这些硬约束在每次 AI 调用时被注入上下文，从根本上减少幻觉和遗漏。</p>
+      <p>约束分层实施：<strong>提示词定义边界</strong>（告诉 AI 规则是什么）→ <strong>Skill 固化流程</strong>（每个场景的输入输出和禁止项标准化）→ <strong>工程代码做最终校验</strong>（不通过则打回）。三个层次逐级兜底，而非把可靠性押注在任何单一环节。</p>
     </div>
 
     <div class="cta-row">
@@ -294,7 +294,19 @@
     </div>
 
     <div class="narrative">
-      <p>核心设计理念：<strong>每条事实性陈述必须可溯源到 raw/ 原文</strong>。不确定就标注待补充，不允许用常识填空。raw/ 目录对 AI 只读，防止编造内容污染原始素材。每次更新自动 git commit，形成可追溯的知识演进历史。</p>
+      <p>核心设计理念：<strong>每条事实性陈述必须可溯源到 raw/ 原文</strong>。不确定就标注「待补充」，不允许用常识填空。raw/ 目录对 AI 只读，防止编造内容污染原始素材。每次更新自动 git commit，形成可追溯的知识演进历史。</p>
+    </div>
+
+    <div class="highlight-box skill">
+      <strong>AI 协作闭环：</strong><br>
+      ① <strong>摄入</strong>——读研报/笔记 → 提取要点确认 → 结构化写入对应页面 → 更新索引<br>
+      ② <strong>沉淀</strong>——对话结束后提取新判断/事实/方法 → 写入 wiki → 检查与已有内容矛盾<br>
+      ③ <strong>答疑</strong>——飞书笔记自动检测疑问句 → 查 wiki 框架性知识 + iFinD 实时数据 → 给出可溯源答案<br>
+      ④ <strong>健康检查</strong>——定期扫描 inbox 积压、孤立页面、矛盾判断、过期数据
+    </div>
+
+    <div class="narrative">
+      <p>知识来源两条线：<strong>飞书知识库每日自动同步</strong>（SHA-256 增量去重，token 过期自动刷新） + <strong>本地研报 PDF/PPTX 双工具择优转换</strong>（MarkItDown + pdfplumber 对比评分，质量检查通过后入库）。飞书笔记中的疑问句被自动扫描识别后，优先从 wiki 结构化页面检索框架性知识，wiki 没覆盖的再从 raw/ 原始材料深挖，确保每一条回答可溯源、不编造。</p>
     </div>
 
     <div class="cta-row">
