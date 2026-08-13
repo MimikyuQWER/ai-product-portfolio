@@ -19,7 +19,7 @@ from typing import Any
 # ============================================================
 
 # 四类有效审核结果
-VALID_VERDICTS = {"有效地址", "无效地址", "不确定", "不符合地址格式"}
+VALID_VERDICTS = {"有效地址", "无效地址", "不确定", "不符合地址格式", "审核失败"}
 
 # 无需工具证据的审核结果
 NO_EVIDENCE_VERDICTS = {"不符合地址格式"}
@@ -262,6 +262,14 @@ class ResultGuard:
             v in {"有效地址", "无效地址"} for v in verdicts
         )
 
+        # 「审核失败」是技术性核验中断的声明，本身即"无成功工具证据"，不强制要求证据；
+        # 但要求依据写明失败原因与下一步，否则给出警告（软校验）。
+        if "审核失败" in verdicts and not _mentions_next_step(llm_output):
+            warnings.append(
+                "存在'审核失败'结论，但审核依据未清晰写明失败原因与下一步操作建议，"
+                "请补充①地图 API 失败原因 ②已尝试联网搜索但无结果 ③下一步建议（换 Key/稍后重试/转人工）。"
+            )
+
         if needs_evidence and len(valid_evidence) == 0:
             return (
                 "审核结论包含'有效地址'或'无效地址'，但未检测到任何成功的工具调用记录。"
@@ -380,6 +388,12 @@ class ResultGuard:
 
 
 # ---- Helpers ----
+
+def _mentions_next_step(text: str) -> bool:
+    """判断审核依据是否提及失败原因/下一步（用于"审核失败"结论的软校验）"""
+    signals = ["失败原因", "下一步", "转人工", "稍后重试", "更换", "配置有效", "QPS", "限流", "网络超时", "Key"]
+    return any(s in text for s in signals)
+
 
 def _is_separator(line: str) -> bool:
     """判断是否是 Markdown 表格分隔行 |---|"""

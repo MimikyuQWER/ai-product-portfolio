@@ -286,6 +286,10 @@ class AddressAuditAgent:
             f"以下是第 {chunk_num}/{total_chunks} 批，共 {len(chunk)} 条地址，请只审核本批：\n"
             f"```json\n{json.dumps(chunk, ensure_ascii=False, indent=2)}\n```\n\n"
             f"请优先使用 geocode 工具验证本批每条地址（精确命中可不再调 web_search）。\n"
+            f"**降级规则**：若某条地址 geocode 重试 3 次仍返回技术性失败（status=error），"
+            f"必须改用 web_search 降级交叉验证；若 web_search 也无可靠结果，则该条结论判「审核失败」"
+            f"并在「审核依据」写明①地图 API 失败原因 ②已尝试联网搜索但无结果 ③下一步建议（换 Key/稍后重试/转人工）。"
+            f"「审核失败」≠「不确定」，后者是地址本身信息不足、已核验但证据不够。\n"
             f"输出**六列表格**，列顺序固定为：序号 | 姓名 | 地址 | 审核结果 | 审核依据 | 审核信息源。\n"
             f"严格要求：\n"
             f"1. 「序号」列必须填我上面 JSON 里给出的 idx（即文件原始行号 1..N），不要重排、不要从 1 开始；\n"
@@ -297,6 +301,7 @@ class AddressAuditAgent:
             f"   - 凡调用了 web_search 且有结果，必须在该列附上来源网页 URL；\n"
             f"   - 链接放在「审核信息源」列即可，审核依据列只写文字分析、不放链接。\n"
             f"若某条地址信息不足导致无法定位唯一地点，直接判定为'不确定'，不要向用户追问（批量模式下无法交互）。"
+            f"注意：此'不确定'指地址本身证据不足；若 geocode 与 web_search 均因技术故障失败，则应判'审核失败'而非'不确定'。"
             f"{self._cap_note if chunk_num == total_chunks else ''}"
         )
         self.messages = base + [{"role": "user", "content": chunk_ctx}]

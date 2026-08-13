@@ -100,7 +100,13 @@ def test_direct_audit():
 
     ag2 = AddressAuditAgent()
     out2 = ag2.chat("请审核以下地址：北京市")
-    check("T1d 不完整地址未判为有效", "有效地址" not in out2 or "不确定" in out2 or "无效" in out2,
+    # 注：模型解释审核标准时会出现"有效地址"字样（如"有效地址完整度要达到6级"），
+    # 故不采用"全文不含有效地址"的负向子串检查；改为验证"北京市"未被当作有效结论，
+    # 且被正确识别为完整度不足/需补充（符合 prompt：信息不足先追问）。
+    check("T1d 不完整地址未被判有效（识别为完整度不足/需补充）",
+          ("有效地址" not in out2)
+          or ("完整度" in out2 and ("不足" in out2 or "追问" in out2 or "补充" in out2))
+          or ("不确定" in out2) or ("无效" in out2) or ("不符合地址格式" in out2),
           detail=out2[:60].replace("\n", " "))
 
 
@@ -238,8 +244,8 @@ def test_geocode_robustness():
         out1 = json.loads(T.geocode("任意地址"))
         check("T7a 高德故障返回 status=error（非 found=false）",
               out1.get("status") == "error", detail=out1.get("message", "")[:40])
-        check("T7b error 提示应判不确定（不得误导为无效）",
-              "不确定" in out1.get("message", ""))
+        check("T7b error 带 degraded 信号并提示降级 web_search",
+              out1.get("degraded") is True and "web_search" in out1.get("message", ""))
 
         # 场景 2：高德匹配到多个地点（count>1）—— 需暴露 match_count / is_unique=False
         T.httpx.get = lambda *a, **kw: _FakeResp({
@@ -258,6 +264,68 @@ def test_geocode_robustness():
     finally:
         T.httpx.get = orig_get
         T._get_config = orig_cfg
+
+
+# ============================================================
+# T9：geocode 重试（≤3）与降级信号 —— 覆盖限流/网络异常容错
+# ============================================================
+def test_geocode_retry_degrade():
+    print("\n===== T9 geocode 重试（≤3）与降级信号 =====")
+    import agent.tools as T
+
+    orig_get = T.httpx.get
+    orig_cfg = T._get_config
+    T._get_config = lambda k, d="": "test-key" if k == "AMAP_API_KEY" else orig_cfg(k, d)
+
+    class _R:
+        def __init__(self, d):
+            self._d = d
+        def json(self):
+            return self._d
+
+    try:
+        # 场景 A：限流（10021）连续 3 次失败 → 重试耗尽后返回 error+degraded，共调用 3 次
+        T._geocode_cache.clear()
+        calls = {"n": 0}
+        def lim(*a, **k):
+            calls["n"] += 1
+            return _R({"status": "0", "info": "CUQPS_HAS_EXCEEDED_THE_LIMIT", "infocode": "10021"})
+        T.httpx.get = lim
+        out = json.loads(T.geocode("某地址"))
+        check("T9a 限流重试耗尽后返回 status=error", out.get("status") == "error")
+        check("T9b error 带 degraded 降级信号", out.get("degraded") is True)
+        check("T9c reason 含限流码 10021", "10021" in str(out.get("reason", "")))
+        check("T9d 重试次数=3（首次+2次重试）", calls["n"] == 3)
+        check("T9e message 提示降级到 web_search", "web_search" in out.get("message", ""))
+
+        # 场景 B：限流首次失败、第 2 次成功 → 仅 2 次调用即 success（自愈）
+        T._geocode_cache.clear()
+        calls2 = {"n": 0}
+        def recover(*a, **k):
+            calls2["n"] += 1
+            if calls2["n"] < 2:
+                return _R({"status": "0", "info": "CUQPS_HAS_EXCEEDED_THE_LIMIT", "infocode": "10021"})
+            return _R({"status": "1", "count": "1",
+                       "geocodes": [{"formatted_address": "某地址", "location": "116,39", "level": "兴趣点"}]})
+        T.httpx.get = recover
+        out2 = json.loads(T.geocode("某地址"))
+        check("T9f 限流重试后恢复为 success", out2.get("status") == "success")
+        check("T9g 恢复仅用 2 次调用", calls2["n"] == 2)
+
+        # 场景 C：不可重试错误（10001 Key 失效）→ 直接失败，不空耗配额重试
+        T._geocode_cache.clear()
+        calls3 = {"n": 0}
+        def fatal(*a, **k):
+            calls3["n"] += 1
+            return _R({"status": "0", "info": "INVALID_USER_KEY", "infocode": "10001"})
+        T.httpx.get = fatal
+        out3 = json.loads(T.geocode("某地址"))
+        check("T9h 不可重试错误返回 error", out3.get("status") == "error")
+        check("T9i 不可重试错误不重试（仅 1 次调用）", calls3["n"] == 1)
+    finally:
+        T.httpx.get = orig_get
+        T._get_config = orig_cfg
+        T._geocode_cache.clear()
 
 
 # ============================================================
@@ -292,7 +360,8 @@ def main():
     print("开始端到端测试用例（真实 DeepSeek + 真实高德 + 真实联网搜索回退链）\n")
     for fn in (test_frontend_helpers, test_direct_audit, test_file_upload_flow,
                test_ocr_quality, test_progress_callback, test_web_search_fallback,
-               test_file_multi_batch, test_geocode_robustness, test_match_chunk_no_mismatch):
+               test_file_multi_batch, test_geocode_robustness, test_match_chunk_no_mismatch,
+               test_geocode_retry_degrade):
         try:
             fn()
         except Exception as e:

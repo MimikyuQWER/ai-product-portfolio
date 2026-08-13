@@ -249,6 +249,7 @@ def render_audit_result(content: str, uid: str = ""):
     count_invalid = sum(1 for v in _verdicts if "无效地址" in v)
     count_uncertain = sum(1 for v in _verdicts if "不确定" in v)
     count_bad = sum(1 for v in _verdicts if "不符合地址格式" in v)
+    count_failed = sum(1 for v in _verdicts if "审核失败" in v)
     content_hash = hashlib.md5(content.encode("utf-8")).hexdigest()[:12]
     u = f"{uid}_" if uid else ""  # 防重复 key 前缀
 
@@ -256,7 +257,8 @@ def render_audit_result(content: str, uid: str = ""):
     st.markdown("**📑 第 2 步 · 最终审核报告**")
     st.markdown(
         f"✅ **{count_valid}** 有效　⚠️ **{count_uncertain}** 不确定　"
-        f"❌ **{count_invalid}** 无效　🚫 **{count_bad}** 不符合格式"
+        f"❌ **{count_invalid}** 无效　🚫 **{count_bad}** 不符合格式　"
+        f"⛔ **{count_failed}** 审核失败"
     )
     # 醒目独立按钮：点击后从右侧弹出完整明细扩展屏
     if st.button("📑 打开终审报告（右侧弹窗）", key=f"{u}open_{content_hash}", type="primary"):

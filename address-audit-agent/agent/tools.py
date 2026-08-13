@@ -8,6 +8,7 @@ Agent 工具函数
 
 import os
 import json
+import time
 import base64
 import httpx
 from io import BytesIO
@@ -113,7 +114,7 @@ TOOL_DEFINITIONS = [
 # 简单缓存：避免批量文件中同地址重复调 API
 _geocode_cache: dict[str, str] = {}
 
-def geocode(address: str) -> str:
+def geocode(address: str, max_retries: int = 3) -> str:
     """
     高德地图地理编码 API
     文档：https://lbs.amap.com/api/webservice/guide/api/georegeo
@@ -121,13 +122,17 @@ def geocode(address: str) -> str:
     返回 JSON 字符串，包含：
     - status: "success" | "error"
     - found: bool 是否找到
-    - formatted_address: 标准化地址
-    - location: 经纬度 "lng,lat"
-    - level: 匹配级别（兴趣点/门牌号/道路/区县/城市/省份）
-    - province, city, district, street, number: 结构化地址
+    - formatted_address / location / level / province ... 结构化地址
+    - degraded: 仅 error 时存在，标记"技术性失败，需降级到 web_search"
+    - reason: 仅 error 时存在，失败分类（限流 / Key失效 / 网络异常）
     - source: "高德地图地理编码API"
+
+    容错策略（修复高德 QPS 限流 infocode=10021 导致偶发"失败"）：
+    - 单次调用失败（限流 / 网络抖动 / 瞬时错误）自动重试，最多 max_retries 次（指数退避）；
+    - 重试耗尽仍失败 → 返回 status="error" 并带 degraded=True，提示调用方改用 web_search 降级；
+    - 已成功但高德"未找到"(found=False) 不属于技术失败，不重试（重试无意义），正常返回供上层交叉验证。
     """
-    # 缓存命中：批量文件中同地址不重复调 API
+    # 缓存命中：批量文件中同地址不重复调 API（仅成功结果缓存，失败不缓存避免污染）
     cache_key = address.strip()
     if cache_key in _geocode_cache:
         return _geocode_cache[cache_key]
@@ -135,100 +140,137 @@ def geocode(address: str) -> str:
     api_key = _get_config("AMAP_API_KEY")
     if not api_key:
         return json.dumps(
-            {"status": "error", "message": "高德地图 API Key 未配置，无法进行地图核验"},
+            {
+                "status": "error",
+                "degraded": True,
+                "reason": "Key未配置",
+                "source": "高德地图地理编码API",
+                "message": (
+                    "高德地图 API Key 未配置，无法进行地图核验。请检查 .env 中的 AMAP_API_KEY，"
+                    "或改用 web_search（联网搜索）对该地址进行交叉验证；若联网搜索也无可靠结果，"
+                    "审核结论应为「审核失败」并在依据注明原因与下一步（配置 Key / 转人工核验）。"
+                ),
+            },
             ensure_ascii=False,
         )
 
-    try:
-        # 高德地理编码：直接传完整地址字符串（无需单独提取 city 参数，
-        # 高德服务端会自动解析省/市/区/街道/门牌号各级信息）
-        url = "https://restapi.amap.com/v3/geocode/geo"
-        params: dict[str, Any] = {
-            "key": api_key,
-            "address": address,
-        }
+    url = "https://restapi.amap.com/v3/geocode/geo"
+    params: dict[str, Any] = {"key": api_key, "address": address}
 
-        response = httpx.get(url, params=params, timeout=10.0)
-        data = response.json()
+    last_failure = None  # (kind, detail)
+    for attempt in range(max_retries):
+        try:
+            response = httpx.get(url, params=params, timeout=10.0)
+            data = response.json()
+            if data.get("status") != "1":
+                # 高德返回错误：限流 / Key 失效 / 配额耗尽等 —— 技术性故障
+                info = data.get("info", "未知错误")
+                code = str(data.get("infocode", "?"))
+                # 不可重试类（Key 失效 / 配额永久耗尽 / 平台不匹配等）：直接失败，避免空耗配额
+                if code in ("10001", "10003", "10009", "10010", "10011", "20001"):
+                    return _geocode_error(info, code, retry_exhausted=True)
+                # 限流 / 瞬时错误：重试（指数退避）
+                last_failure = (info, code)
+                if attempt < max_retries - 1:
+                    time.sleep(min(0.3 * (2 ** attempt), 2.0))
+                    continue
+                return _geocode_error(info, code, retry_exhausted=True)
 
-        # 🔴-2：传输/服务层错误（Key 失效 / 配额耗尽 / QPS 超限）必须上报 error，
-        # 绝不能伪装成 found=False（那会被误判为"地址不存在" → 整表误判无效且无护栏拦截）
-        if data.get("status") != "1":
-            return json.dumps(
-                {
-                    "status": "error",
-                    "message": (
-                        f"高德地图 API 调用失败：{data.get('info', '未知错误')}"
-                        f"（infocode={data.get('infocode', '?')}）。本条地址未完成地图核验，"
-                        f"请勿据此判定该地址无效，应判为「不确定」。"
-                    ),
-                    "source": "高德地图地理编码API",
-                },
-                ensure_ascii=False,
-            )
-
-        geocodes = data.get("geocodes") or []
-        if not geocodes:
-            return json.dumps(
-                {
+            # status == "1" 正常返回
+            geocodes = data.get("geocodes") or []
+            if not geocodes:
+                # 高德正常返回但"未找到"：不是技术失败，不重试，供上层 web_search 交叉验证
+                result = {
                     "status": "success",
                     "found": False,
                     "message": f"高德地图未找到该地址：{address}",
                     "source": "高德地图地理编码API",
-                },
-                ensure_ascii=False,
+                }
+                json_result = json.dumps(result, ensure_ascii=False)
+                _geocode_cache[cache_key] = json_result
+                return json_result
+
+            # 🔴-3：暴露唯一性判定所需字段，避免模型误判"有效地址"
+            # （标准二要求"只能匹配到一个地点"，高德返回 count>1 时应判"不确定"）
+            match_count = int(data.get("count", len(geocodes)) or len(geocodes))
+            geocode_info = geocodes[0]
+            location = geocode_info.get("location", "")
+            level = geocode_info.get("level", "")
+
+            # 生成高德地图可跳转链接
+            #  - map_url：搜索直达页（按地址名搜索）
+            #  - marker_url：精确定位到坐标的 marker 页（供审核依据精确跳转）
+            from urllib.parse import quote
+            addr_query = geocode_info.get("formatted_address", address)
+            map_url = f"https://ditu.amap.com/search?query={quote(addr_query)}" if location else ""
+            marker_url = (
+                f"https://uri.amap.com/marker?position={location}"
+                f"&name={quote(addr_query)}&src=address-audit-agent"
+                f"&coordinate=gaode&callnative=0"
+                if location
+                else ""
             )
 
-        # 🔴-3：暴露唯一性判定所需字段，避免模型误判"有效地址"
-        # （标准二要求"只能匹配到一个地点"，高德返回 count>1 时应判"不确定"）
-        match_count = int(data.get("count", len(geocodes)) or len(geocodes))
-        geocode_info = geocodes[0]
-        location = geocode_info.get("location", "")
-        level = geocode_info.get("level", "")
+            # 解析结构化地址信息
+            result = {
+                "status": "success",
+                "found": True,
+                "match_count": match_count,
+                "is_unique": match_count == 1,
+                "other_candidates": [g.get("formatted_address", "") for g in geocodes[1:4]],
+                "formatted_address": geocode_info.get("formatted_address", address),
+                "location": location,
+                "map_url": map_url,
+                "marker_url": marker_url,
+                "level": level,
+                "level_desc": _level_description(level),
+                "province": geocode_info.get("province", ""),
+                "city": geocode_info.get("city", ""),
+                "district": geocode_info.get("district", ""),
+                "street": geocode_info.get("street", ""),
+                "number": geocode_info.get("number", ""),
+                "source": "高德地图地理编码API",
+            }
+            json_result = json.dumps(result, ensure_ascii=False)
+            _geocode_cache[cache_key] = json_result
+            return json_result
 
-        # 生成高德地图可跳转链接
-        #  - map_url：搜索直达页（按地址名搜索）
-        #  - marker_url：精确定位到坐标的 marker 页（供审核依据精确跳转）
-        from urllib.parse import quote
-        addr_query = geocode_info.get("formatted_address", address)
-        map_url = f"https://ditu.amap.com/search?query={quote(addr_query)}" if location else ""
-        marker_url = (
-            f"https://uri.amap.com/marker?position={location}"
-            f"&name={quote(addr_query)}&src=address-audit-agent"
-            f"&coordinate=gaode&callnative=0"
-            if location
-            else ""
-        )
+        except Exception as e:
+            # 网络层异常（超时 / 连接重置 / TLS 失败等）：重试
+            last_failure = ("网络异常", str(e)[:120])
+            if attempt < max_retries - 1:
+                time.sleep(min(0.3 * (2 ** attempt), 2.0))
+                continue
+            return _geocode_error("网络异常", str(e)[:120], retry_exhausted=True)
 
-        # 解析结构化地址信息
-        result = {
-            "status": "success",
-            "found": True,
-            "match_count": match_count,
-            "is_unique": match_count == 1,
-            "other_candidates": [g.get("formatted_address", "") for g in geocodes[1:4]],
-            "formatted_address": geocode_info.get("formatted_address", address),
-            "location": location,
-            "map_url": map_url,
-            "marker_url": marker_url,
-            "level": level,
-            "level_desc": _level_description(level),
-            "province": geocode_info.get("province", ""),
-            "city": geocode_info.get("city", ""),
-            "district": geocode_info.get("district", ""),
-            "street": geocode_info.get("street", ""),
-            "number": geocode_info.get("number", ""),
+    # 兜底（理论上不可达）
+    kind, code = last_failure or ("未知错误", "?")
+    return _geocode_error(kind, code, retry_exhausted=True)
+
+
+def _geocode_error(kind: str, detail: str, retry_exhausted: bool = True) -> str:
+    """构造 geocode 技术性失败结果：携带降级信号，提示调用方改用 web_search。"""
+    return json.dumps(
+        {
+            "status": "error",
+            "degraded": True,
+            "reason": f"{kind}({detail})",
             "source": "高德地图地理编码API",
-        }
-        json_result = json.dumps(result, ensure_ascii=False)
-        _geocode_cache[cache_key] = json_result
-        return json_result
-
-    except Exception as e:
-        return json.dumps(
-            {"status": "error", "message": f"高德地图 API 调用失败：{str(e)}"},
-            ensure_ascii=False,
-        )
+            "message": (
+                f"高德地图 API 核验失败（{kind}，{detail}）"
+                + ("，已重试 3 次仍失败" if retry_exhausted else "")
+                + "。本条地址的地图核验因技术性故障未完成，"
+                + "**请勿据此判为「无效地址」或「不确定」**；"
+                + "请改用 web_search（联网搜索）对该地址进行交叉验证："
+                + "若联网搜索能找到该地址在公开信息中的可靠提及，则依据搜索结果审慎判定"
+                + "（有效/无效/不确定均可，但须引用来源网页 URL）；"
+                + "若联网搜索也无可靠结果，则审核结论应为「审核失败」，并在「审核依据」中注明"
+                + "①地图 API 失败的具体原因 ②已尝试联网搜索但无可靠结果 ③下一步建议"
+                + "（更换有效的高德 Key / 稍后重试 / 转人工核验）。"
+            ),
+        },
+        ensure_ascii=False,
+    )
 
 
 def _level_description(level: str) -> str:
