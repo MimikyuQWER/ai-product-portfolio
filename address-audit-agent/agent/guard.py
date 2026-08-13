@@ -131,12 +131,21 @@ class EvidenceCollector:
         return "unknown"
 
     def _extract_urls(self, raw: dict) -> list[str]:
-        """从工具结果中提取所有 URL"""
+        """从工具结果中提取所有 URL
+
+        注意：web_search 的结果在 raw["results"]（列表），而 geocode 的定位链接
+        在 raw["map_url"] / raw["marker_url"]（字符串字段，无 results 键）。
+        两者都要采集，否则 Rule B 会把真实的地图链接误判为"编造"。
+        """
         urls = []
         for item in raw.get("results", []):
             url = item.get("url", "").strip()
             if url:
                 urls.append(url)
+        for key in ("map_url", "marker_url"):
+            u = raw.get(key)
+            if isinstance(u, str) and u.strip():
+                urls.append(u.strip())
         return urls
 
 
@@ -317,30 +326,34 @@ class ResultGuard:
         return None
 
     def _check_rule_d(self, llm_output: str) -> str | None:
-        """Rule D: 输出格式必须包含合法的四列表格"""
+        """Rule D: 输出格式必须包含合法的审核结果表格（五列或六列均可）"""
         # 检查是否有 Markdown 表格结构
         lines = llm_output.split("\n")
         table_lines = [l for l in lines if l.strip().startswith("|")]
         if len(table_lines) < 2:
-            return "输出未包含审核结果表格，请按四列表格格式输出（序号 | 地址 | 审核结果 | 审核依据）。"
+            return "输出未包含审核结果表格，请按表格格式输出（含「序号 / 地址 / 审核结果 / 审核依据 / 审核信息源」列，批量场景再加「姓名」列）。"
 
         # 检查表头
         header = table_lines[0]
-        header_parts = [p.strip().lower() for p in header.split("|") if p.strip()]
-        required = ["序号", "地址", "审核结果"]
+        header_parts = [p.strip() for p in header.split("|") if p.strip()]
+        has_name = any("姓名" in p for p in header_parts)
+        required = ["序号", "审核结果"]
         for req in required:
-            if req not in header_parts and not any(req in p for p in header_parts):
-                return f"表格缺少'{req}'列，请按四列表格格式输出（序号 | 地址 | 审核结果 | 审核依据）。"
+            if not any(req in p for p in header_parts):
+                return f"表格缺少'{req}'列，请按表格格式输出（序号 | 地址 | 审核结果 | 审核依据 | 审核信息源）。"
+        if not any("地址" in p for p in header_parts) and not has_name:
+            return "表格缺少'地址'（或'姓名'）列，请包含地址列。"
 
-        # 检查数据行的审核结果是否为四类之一
-        data_lines = [l for l in table_lines if not _is_separator(l) and l != table_lines[0]]
+        # 判定列索引：六列（含姓名）在第 4 列，五列在第 3 列
+        verdict_col = 3 if has_name else 2
+        data_lines = [l for l in table_lines[1:] if not _is_separator(l)]
         for line in data_lines:
             parts = [p.strip() for p in line.split("|") if p.strip()]
-            if len(parts) >= 3:
-                verdict = _clean_verdict(parts[2])
+            if len(parts) > verdict_col:
+                verdict = _clean_verdict(parts[verdict_col])
                 if verdict and verdict not in VALID_VERDICTS:
                     return (
-                        f"'{parts[2]}' 不是有效的审核结果。请使用：有效地址、无效地址、不确定、不符合地址格式。"
+                        f"'{parts[verdict_col]}' 不是有效的审核结果。请使用：有效地址、无效地址、不确定、不符合地址格式。"
                     )
 
         return None

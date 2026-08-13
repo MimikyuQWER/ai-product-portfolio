@@ -84,8 +84,9 @@ pip install -r requirements.txt
 
 ```bash
 cp .env.example .env
-# 编辑 .env，将 LLM_API_KEY 替换为你的 DeepSeek 或 OpenAI Key
-# 🗺️ 高德地图 Key 已预配，无需修改
+# 编辑 .env，将 LLM_API_KEY 替换为你的 DeepSeek 或 OpenAI Key（必填）
+# 🗺️ 高德地图 Key 已预配在 .env.example 中，开箱即用，无需修改；
+#    若该 Key 提示不可用 / 配额耗尽，再到 https://lbs.amap.com/ 申请「Web 服务」类型 Key 替换即可。
 ```
 
 **你只需要一个 AI API Key：**
@@ -95,7 +96,7 @@ cp .env.example .env
 | `LLM_API_KEY` | [platform.deepseek.com](https://platform.deepseek.com/) | 注册送 500 万 token |
 | （备选）OpenAI | [platform.openai.com](https://platform.openai.com/) | 新用户 $5 额度 |
 
-高德地图和 Bing Search 已预配，开箱即用。
+高德地图 Key 已预配在 `.env.example` 中（开箱即用）；若该 Key 不可用，再到 lbs.amap.com 免费申请「Web 服务」类型 Key 替换。联网搜索不填则自动回退到免费 DuckDuckGo，填入 Bing Key 则优先用 Bing。
 
 ### 4. 启动
 

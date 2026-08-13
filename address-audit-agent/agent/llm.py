@@ -7,12 +7,27 @@ import os
 import json
 import logging
 from typing import Any
+from pathlib import Path
 from dotenv import load_dotenv
 from openai import OpenAI
 
+# 加载用户个人 .env（优先级最高）
 load_dotenv()
+# 兜底：若用户未创建 .env，则从 .env.example 载入预配 Key（如高德），实现开箱即用
+_ENV_EXAMPLE = Path(__file__).resolve().parent.parent / ".env.example"
+if _ENV_EXAMPLE.exists():
+    load_dotenv(_ENV_EXAMPLE, override=False)
 
 logger = logging.getLogger(__name__)
+
+
+class LLMCallError(Exception):
+    """LLM 调用失败（网络/鉴权/服务端错误）。
+
+    旧实现会把失败吞掉、返回一个伪造的「AI 服务不可用」文本，导致上层（start / 质量预审 /
+    Agent 主循环）把它当成正常回复继续处理，出现死代码降级分支（🟠-14）。现改为显式抛出，
+    由各调用点决定如何优雅降级。
+    """
 
 
 class LLMService:
@@ -60,20 +75,13 @@ class LLMService:
             response = self.client.chat.completions.create(**kwargs)
         except Exception as e:
             logger.warning("LLM API 调用失败：%s", e)
-            return LLMResponse(
-                content=f"抱歉，AI 服务暂时不可用，请稍后重试。（错误详情：{e}）",
-                tool_calls=None,
-                finish_reason="error",
-            )
+            # 显式上抛，由调用方决定降级策略（🟠-14 修复）
+            raise LLMCallError(f"LLM 调用失败：{e}") from e
 
         # 保护：空 choices 列表
         if not response.choices:
             logger.warning("LLM 返回空 choices 列表")
-            return LLMResponse(
-                content="抱歉，AI 返回了空响应，请重试。",
-                tool_calls=None,
-                finish_reason="error",
-            )
+            raise LLMCallError("LLM 返回了空响应（无 choices）")
 
         choice = response.choices[0]
 

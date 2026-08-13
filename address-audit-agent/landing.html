@@ -336,7 +336,7 @@
     <div>
       <div class="hero-tags">
         <span class="hero-tag">金融 / 法律 / 强合规</span>
-        <span class="hero-tag green">开箱即用 · 无需配置</span>
+        <span class="hero-tag green">免费 Key 即可运行</span>
       </div>
       <h1>每一次地址验证<br><mark>有据可查</mark></h1>
       <p class="hero-desc">
@@ -492,7 +492,7 @@
 <section class="cta" id="try">
   <div class="container">
     <h2>4 步跑起来</h2>
-    <p>高德地图 Key 已预配，你只需要一个免费的 AI API Key（5 分钟搞定）。</p>
+    <p>填入你的 AI API Key（约 5 分钟），高德地图 Key 已预配，开箱即用。</p>
     <br>
     <div style="background:#1e293b;color:#e2e8f0;border-radius:8px;padding:18px 24px;font-family:'Geist Mono','JetBrains Mono',monospace;font-size:0.82rem;line-height:1.9;text-align:left;max-width:540px;margin:0 auto;">
       <div><span style="color:#94a3b8;"># 1. 克隆仓库</span></div>
@@ -504,10 +504,16 @@
       <div style="margin-top:8px;"><span style="color:#94a3b8;"># 3. 配置（只需改一行 Key）</span></div>
       <div>cp .env.example .env</div>
       <div style="color:#94a3b8;">编辑 .env，将 LLM_API_KEY 替换为你的 Key</div>
-      <div style="color:#fbbf24;">🗺️ 高德地图 Key 已配好，无需修改</div>
+      <div style="color:#fbbf24;">🗺️ 高德地图 Key 已预配，开箱即用（如需替换见下方说明）</div>
       <div style="margin-top:8px;"><span style="color:#94a3b8;"># 4. 启动</span></div>
       <div>python -m streamlit run app.py</div>
     </div>
+    <p style="font-size:0.82rem;color:var(--ink-muted);max-width:560px;margin:1rem auto 0;line-height:1.7;text-align:left;">
+      🗺️ <strong>关于高德地图 Key：</strong>项目已预配一个共享 Key，克隆后即可直接使用。若提示 Key 不可用或配额耗尽，
+      请前往 <a href="https://lbs.amap.com/" target="_blank" style="color:#818cf8;">lbs.amap.com</a> 控制台
+      → 创建「Web 服务」类型 Key，复制后替换 <code>.env.example</code> 中的 <code>AMAP_API_KEY</code> 一行
+      （或写入你自己的 <code>.env</code> 文件）即可切换为你自己的 Key。
+    </p>
     <p style="font-size:0.8rem;color:var(--ink-muted);margin-top:1rem;">
       需 Python 3.10+ · 浏览器自动打开 http://localhost:8501
     </p>
@@ -543,9 +549,9 @@
 
 <script>
   const steps = [
-    { title: '输入地址', desc: '在底部输入框粘贴要验证的地址。Agent 会检查格式是否完整，信息不够会自动追问。', code: '北京市海淀区中关村大街1号' },
-    { title: '上传文件（可选）', desc: '点击输入框旁的➕，上传 Excel 表格或地址截图。支持 .xlsx .csv .png .jpg 格式。' },
-    { title: '查看报告', desc: '审核完成后展开 📊 报告摘要。每条结果都附带可点击的来源链接，可以人工二次核实。' },
+    { title: '输入地址', desc: '在底部输入框粘贴要验证的地址，回车即开始审核。Agent 会检查格式是否完整，信息不够会自动追问。', code: '北京市海淀区中关村大街1号' },
+    { title: '上传文件 / 截图（可选）', desc: '点击输入框旁的➕，上传 Excel 表格或地址截图。解析后会先展示数据预览，点击「开始审核」才正式核验，避免无谓消耗。' },
+    { title: '查看报告', desc: '审核完成后，对话里只显示审核概要，点击概要即可在右侧展开详细表格。每条结果都附带可点击的来源链接，可下载 CSV / MD 留档。' },
   ];
   let currentStep = 0;
 

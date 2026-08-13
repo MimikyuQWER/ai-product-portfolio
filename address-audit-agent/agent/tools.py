@@ -11,10 +11,15 @@ import json
 import base64
 import httpx
 from io import BytesIO
+from pathlib import Path
 from typing import Any
 from dotenv import load_dotenv
 
 load_dotenv()
+# 兜底：若用户未创建 .env，则从 .env.example 载入预配 Key（如高德），实现开箱即用
+_ENV_EXAMPLE = Path(__file__).resolve().parent.parent / ".env.example"
+if _ENV_EXAMPLE.exists():
+    load_dotenv(_ENV_EXAMPLE, override=False)
 
 # Streamlit Cloud: read secrets from st.secrets, fallback to env vars
 def _get_config(key: str, default: str = "") -> str:
@@ -67,7 +72,7 @@ TOOL_DEFINITIONS = [
         "type": "function",
         "function": {
             "name": "parse_excel",
-            "description": "解析上传的Excel文件，提取其中的客户姓名和地址信息。支持 .xlsx 和 .xls 格式。",
+            "description": "解析上传的 Excel/CSV 文件，提取其中的客户姓名和地址信息。支持 .xlsx 和 .csv 格式。",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -135,7 +140,8 @@ def geocode(address: str) -> str:
         )
 
     try:
-        # 从地址中提取城市名作为 city 参数，提高准确率
+        # 高德地理编码：直接传完整地址字符串（无需单独提取 city 参数，
+        # 高德服务端会自动解析省/市/区/街道/门牌号各级信息）
         url = "https://restapi.amap.com/v3/geocode/geo"
         params: dict[str, Any] = {
             "key": api_key,
@@ -145,7 +151,24 @@ def geocode(address: str) -> str:
         response = httpx.get(url, params=params, timeout=10.0)
         data = response.json()
 
-        if data.get("status") != "1" or not data.get("geocodes"):
+        # 🔴-2：传输/服务层错误（Key 失效 / 配额耗尽 / QPS 超限）必须上报 error，
+        # 绝不能伪装成 found=False（那会被误判为"地址不存在" → 整表误判无效且无护栏拦截）
+        if data.get("status") != "1":
+            return json.dumps(
+                {
+                    "status": "error",
+                    "message": (
+                        f"高德地图 API 调用失败：{data.get('info', '未知错误')}"
+                        f"（infocode={data.get('infocode', '?')}）。本条地址未完成地图核验，"
+                        f"请勿据此判定该地址无效，应判为「不确定」。"
+                    ),
+                    "source": "高德地图地理编码API",
+                },
+                ensure_ascii=False,
+            )
+
+        geocodes = data.get("geocodes") or []
+        if not geocodes:
             return json.dumps(
                 {
                     "status": "success",
@@ -156,22 +179,38 @@ def geocode(address: str) -> str:
                 ensure_ascii=False,
             )
 
-        geocode_info = data["geocodes"][0]
+        # 🔴-3：暴露唯一性判定所需字段，避免模型误判"有效地址"
+        # （标准二要求"只能匹配到一个地点"，高德返回 count>1 时应判"不确定"）
+        match_count = int(data.get("count", len(geocodes)) or len(geocodes))
+        geocode_info = geocodes[0]
         location = geocode_info.get("location", "")
         level = geocode_info.get("level", "")
 
-        # 生成高德地图可跳转链接（搜索直达，非仅坐标标记）
+        # 生成高德地图可跳转链接
+        #  - map_url：搜索直达页（按地址名搜索）
+        #  - marker_url：精确定位到坐标的 marker 页（供审核依据精确跳转）
         from urllib.parse import quote
         addr_query = geocode_info.get("formatted_address", address)
         map_url = f"https://ditu.amap.com/search?query={quote(addr_query)}" if location else ""
+        marker_url = (
+            f"https://uri.amap.com/marker?position={location}"
+            f"&name={quote(addr_query)}&src=address-audit-agent"
+            f"&coordinate=gaode&callnative=0"
+            if location
+            else ""
+        )
 
         # 解析结构化地址信息
         result = {
             "status": "success",
             "found": True,
+            "match_count": match_count,
+            "is_unique": match_count == 1,
+            "other_candidates": [g.get("formatted_address", "") for g in geocodes[1:4]],
             "formatted_address": geocode_info.get("formatted_address", address),
             "location": location,
             "map_url": map_url,
+            "marker_url": marker_url,
             "level": level,
             "level_desc": _level_description(level),
             "province": geocode_info.get("province", ""),
@@ -193,75 +232,162 @@ def geocode(address: str) -> str:
 
 
 def _level_description(level: str) -> str:
-    """将高德返回的 level 代码转为中文说明"""
+    """将高德返回的 level 代码转为中文说明（对齐高德官方枚举，避免"未知精度级别"误导模型）"""
     mapping = {
         "兴趣点": "精确匹配到具体地点（最高精度）",
-        "门牌号": "精确匹配到门牌号",
+        "门址": "精确匹配到门牌号（最高精度之一）",
+        "单元号": "精确匹配到楼栋/单元",
+        "道路交叉路口": "匹配到路口级别",
         "道路": "匹配到道路级别，具体门牌号可能不精确",
+        "热点商圈": "匹配到商圈级别",
+        "村庄": "仅匹配到村庄级，缺门牌号",
+        "乡镇": "仅匹配到乡镇级",
         "区县": "仅匹配到区县级，地址可能不完整",
+        "开发区": "仅匹配到开发区级",
         "城市": "仅匹配到城市级，地址信息严重不足",
+        "省": "仅匹配到省级",
         "省份": "仅匹配到省级",
+        "国家": "仅匹配到国家级",
     }
     return mapping.get(level, f"未知精度级别：{level}")
 
 
+# 浏览器 UA（免费网页搜索源需要，否则易被拒）
+_UA = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+    "(KHTML, like Gecko) Chrome/120.0 Safari/537.36"
+)
+
+
 def web_search(query: str) -> str:
     """
-    联网搜索（Bing Web Search API）
-    文档：https://learn.microsoft.com/en-us/bing/search-apis/bing-web-search/
+    联网搜索，多级回退（保证国内网络环境下不超时、有结果）：
+      1. Bing Web Search API（若配置了 BING_SEARCH_KEY）
+      2. Bing 国内版网页搜索（cn.bing.com，免费、国内直连、速度快）
+      3. 百度搜索（免费、国内可达；结果为百度跳转链接，点击仍可直达原文）
+      4. DuckDuckGo（免费，但国内通常不可达，仅作兜底）
 
     返回 JSON 字符串，包含：
     - status: "success" | "error"
     - results: [{title, url, snippet}, ...]
-    - source: "Bing Web Search API"
+    - source: 实际命中的搜索源
     """
     api_key = _get_config("BING_SEARCH_KEY")
+    if api_key and api_key != "your-bing-key":
+        out = _bing_api_search(query, api_key)
+        if out:
+            return out
 
-    # Fallback: use Bing if configured, otherwise try DuckDuckGo (free, no key needed)
-    if not api_key or api_key == "your-bing-key":
-        return _duckduckgo_search(query)
+    # 免费回退链：取第一个「有结果」的源；都没有结果则返回第一个成功响应（空结果也是证据）
+    first_success: str | None = None
+    for fn in (_bing_cn_search, _baidu_search, _duckduckgo_search):
+        try:
+            out = fn(query)
+            data = json.loads(out)
+            if data.get("status") != "success":
+                continue
+            if first_success is None:
+                first_success = out
+            if data.get("total", 0) > 0:
+                return out
+        except Exception:
+            continue
 
+    if first_success is not None:
+        return first_success
+    return json.dumps(
+        {"status": "error", "message": "联网搜索暂不可用（各搜索源均无响应）", "source": "web_search"},
+        ensure_ascii=False,
+    )
+
+
+def _bing_api_search(query: str, api_key: str) -> str | None:
+    """Bing Web Search API（需 Key）；失败返回 None 以便回退"""
     try:
         url = "https://api.bing.microsoft.com/v7.0/search"
         headers = {"Ocp-Apim-Subscription-Key": api_key}
-        params: dict[str, Any] = {
-            "q": query,
-            "count": 5,
-            "mkt": "zh-CN",
-        }
-
-        response = httpx.get(url, headers=headers, params=params, timeout=10.0)
+        params: dict[str, Any] = {"q": query, "count": 5, "mkt": "zh-CN"}
+        response = httpx.get(url, headers=headers, params=params, timeout=8.0)
+        # 🟠-13：非 2xx（如 Key 失效返回 401/403）应触发回退链，而非返回一份「success 但 0 结果」
+        # 的伪证据（否则会误导上层把"坏 Key"当成"无结果"处理）。
+        if response.status_code != 200:
+            return None
         data = response.json()
-
-        results = []
-        for item in data.get("webPages", {}).get("value", []):
-            results.append(
-                {
-                    "title": item.get("name", ""),
-                    "url": item.get("url", ""),
-                    "snippet": item.get("snippet", ""),
-                }
-            )
-
+        results = [
+            {"title": i.get("name", ""), "url": i.get("url", ""), "snippet": i.get("snippet", "")}
+            for i in data.get("webPages", {}).get("value", [])
+        ]
         return json.dumps(
-            {
-                "status": "success",
-                "results": results,
-                "total": len(results),
-                "source": "Bing Web Search API",
-            },
+            {"status": "success", "results": results, "total": len(results), "source": "Bing Web Search API"},
             ensure_ascii=False,
         )
+    except Exception:
+        return None
 
-    except Exception as e:
-        return json.dumps(
-            {"status": "error", "message": f"搜索 API 调用失败：{str(e)}"},
-            ensure_ascii=False,
-        )
+
+def _bing_cn_search(query: str) -> str:
+    """Bing 国内版网页搜索（免费、无需 Key、国内直连，实测 ~0.6s）"""
+    import re as _re
+    from urllib.parse import quote as _quote
+
+    resp = httpx.get(
+        f"https://cn.bing.com/search?q={_quote(query)}",
+        headers={"User-Agent": _UA},
+        timeout=5.0,
+        follow_redirects=True,
+    )
+    html = resp.text
+    results = []
+    for block in _re.findall(r'<li class="b_algo".*?</li>', html, _re.DOTALL):
+        m = _re.search(r'<h2[^>]*><a[^>]*href="([^"]+)"[^>]*>(.*?)</a>', block, _re.DOTALL)
+        if not m:
+            continue
+        url = m.group(1)
+        title = _re.sub(r"<[^>]+>", "", m.group(2)).strip()
+        snip_m = _re.search(r"<p[^>]*>(.*?)</p>", block, _re.DOTALL)
+        snippet = _re.sub(r"<[^>]+>", "", snip_m.group(1)).strip() if snip_m else ""
+        if url and title:
+            results.append({"title": title, "url": url, "snippet": snippet})
+        if len(results) >= 5:
+            break
+    return json.dumps(
+        {"status": "success", "results": results, "total": len(results), "source": "Bing 国内版网页搜索"},
+        ensure_ascii=False,
+    )
+
+
+def _baidu_search(query: str) -> str:
+    """百度搜索（免费、国内可达；结果为百度跳转链接，点击仍可直达原文）"""
+    import re as _re
+    from urllib.parse import quote as _quote
+
+    resp = httpx.get(
+        f"https://www.baidu.com/s?wd={_quote(query)}",
+        headers={"User-Agent": _UA},
+        timeout=5.0,
+        follow_redirects=True,
+    )
+    html = resp.text
+    results = []
+    for m in _re.finditer(
+        r'<h3[^>]*class="[^"]*t[^"]*"[^>]*>\s*<a[^>]*href="([^"]+)"[^>]*>(.*?)</a>',
+        html,
+        _re.DOTALL,
+    ):
+        url = m.group(1)
+        title = _re.sub(r"<[^>]+>", "", m.group(2)).strip()
+        if url and title:
+            results.append({"title": title, "url": url, "snippet": ""})
+        if len(results) >= 5:
+            break
+    return json.dumps(
+        {"status": "success", "results": results, "total": len(results), "source": "百度搜索"},
+        ensure_ascii=False,
+    )
 
 
 def _duckduckgo_search(query: str) -> str:
-    """DuckDuckGo 免费搜索（无需 API Key，fallback 方案）"""
+    """DuckDuckGo 免费搜索（无需 Key；国内通常不可达，仅作最后兜底，超时 4s 快速失败）"""
     import re
     from html.parser import HTMLParser
 
@@ -289,8 +415,8 @@ def _duckduckgo_search(query: str) -> str:
         resp = httpx.get(
             "https://lite.duckduckgo.com/lite/",
             params={"q": query},
-            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"},
-            timeout=10.0,
+            headers={"User-Agent": _UA},
+            timeout=4.0,
         )
         html = resp.text
         parser = DDGParser()
@@ -298,10 +424,14 @@ def _duckduckgo_search(query: str) -> str:
 
         for r in parser.results:
             if r["url"]:
-                pat = re.escape(r["url"]) + r'.*?<span class="result-snippet">(.*?)</span>'
-                m = re.search(pat, html, re.DOTALL)
-                if m:
-                    r["snippet"] = re.sub(r"<[^>]+>", "", m.group(1)).strip()
+                try:
+                    pat = re.escape(r["url"]) + r'.*?<span class="result-snippet">(.*?)</span>'
+                    m = re.search(pat, html, re.DOTALL)
+                    if m:
+                        r["snippet"] = re.sub(r"<[^>]+>", "", m.group(1)).strip()
+                except re.error:
+                    # URL 含正则特殊字符导致匹配失败，跳过 snippet 提取即可
+                    pass
 
         results = parser.results[:5]
         return json.dumps(
@@ -314,6 +444,13 @@ def _duckduckgo_search(query: str) -> str:
             {"status": "error", "message": f"搜索失败：{str(e)}", "source": "DuckDuckGo"},
             ensure_ascii=False,
         )
+
+
+# 列名候选词表：Excel / CSV 共用同一份，避免两边解析口径不一致（🟠-17 修复）
+_NAME_CANDIDATES = ["姓名", "客户名称", "公司名称", "name", "客户", "联系人", "UID", "客户UID"]
+_ADDR_CANDIDATES = [
+    "地址", "详细地址", "联系地址", "address", "addr", "公司地址", "注册地址", "客户地址"
+]
 
 
 def parse_excel(file_base64: str) -> str:
@@ -358,12 +495,9 @@ def parse_excel(file_base64: str) -> str:
         headers = [str(h).strip() if h else "" for h in rows[0]]
         data_rows = rows[1:]
 
-        # 智能匹配列名（支持中英文常见写法）
-        name_col = _find_column(headers, ["姓名", "客户名称", "公司名称", "name", "客户", "联系人"])
-        addr_col = _find_column(
-            headers,
-            ["地址", "详细地址", "联系地址", "address", "addr", "公司地址", "注册地址"],
-        )
+        # 智能匹配列名（支持中英文常见写法；与 _parse_csv 共用候选词表）
+        name_col = _find_column(headers, _NAME_CANDIDATES)
+        addr_col = _find_column(headers, _ADDR_CANDIDATES)
 
         if addr_col is None:
             return json.dumps(
@@ -449,12 +583,9 @@ def _parse_csv(file_bytes: bytes) -> str:
             ensure_ascii=False,
         )
 
-    # 使用与 Excel 解析相同的列匹配逻辑
-    name_col = _find_column(headers, ["姓名", "客户名称", "公司名称", "name", "客户", "联系人", "UID", "客户UID"])
-    addr_col = _find_column(
-        headers,
-        ["地址", "详细地址", "联系地址", "address", "addr", "公司地址", "注册地址", "客户地址"],
-    )
+    # 使用与 Excel 解析相同的列匹配逻辑（共用候选词表）
+    name_col = _find_column(headers, _NAME_CANDIDATES)
+    addr_col = _find_column(headers, _ADDR_CANDIDATES)
 
     if addr_col is None:
         return json.dumps(
