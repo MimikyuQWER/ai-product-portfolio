@@ -21,7 +21,7 @@
 | 🌐 联网搜索 | Bing 搜索交叉验证，查找地址在公开信息中的记录 |
 | 💬 智能追问 | 信息不完整时主动提问，引导用户补充 |
 | 📁 批量处理 | 上传 Excel 表格，逐条审核并汇总报告 |
-| 📊 结构化输出 | 四列表格：序号、地址、审核结果、审核依据（含链接） |
+| 📊 结构化输出 | 批量六列 / 单条五列表格：序号、地址、审核结果、审核依据、审核信息源（含链接）；批量额外含「姓名」列 |
 
 ## 🏗️ Agent 架构
 
@@ -65,51 +65,54 @@
 - ⚠️ **不确定** — 部分信息有效但关键信息缺失
 - 🚫 **不符合地址格式** — 明显编造的文本
 
-## 🚀 快速开始
+## 🚀 快速开始（Windows）
 
-### 1. 克隆项目
+> 以下所有命令都在 **PowerShell** 中执行：按下 `Win` 键，输入 `powershell`，回车即可打开。
 
-```bash
+### 准备工作（只需做一次）
+1. **安装 Python 3.10 或更高版本**：访问 https://www.python.org/downloads/ 下载安装包，**安装时务必勾选 “Add Python to PATH”**，其余一路下一步。
+2. **获取一个 AI API Key（二选一即可）**：
+   - DeepSeek：https://platform.deepseek.com/ 注册后「新建 API Key」
+   - OpenAI：https://platform.openai.com/ 注册后获取 Key
+   > 高德地图 Key 已内置在配置模板中，无需你申请。
+
+### 第一步：下载代码
+在 PowerShell 中输入：
+```powershell
 git clone https://github.com/MimikyuQWER/ai-product-portfolio.git
 cd ai-product-portfolio/address-audit-agent
 ```
 
-### 2. 安装依赖
-
-```bash
+### 第二步：安装依赖
+在 PowerShell 中输入：
+```powershell
 pip install -r requirements.txt
 ```
+看到 `Successfully installed ...` 即成功。若提示 `pip` 不是命令，说明 Python 没勾选 PATH，请重新安装并勾选。
 
-### 3. 配置 API Key
-
-```bash
-cp .env.example .env
-# 编辑 .env，将 LLM_API_KEY 替换为你的 DeepSeek 或 OpenAI Key（必填）
-# 🗺️ 高德地图 Key 已预配在 .env.example 中，开箱即用，无需修改；
-#    若该 Key 提示不可用 / 配额耗尽，再到 https://lbs.amap.com/ 申请「Web 服务」类型 Key 替换即可。
+### 第三步：填入你自己的 AI API Key
+在 PowerShell 中输入：
+```powershell
+copy .env.example .env
+notepad .env
 ```
+在打开的记事本里，把这一行：
+```
+LLM_API_KEY=替换为你的Key
+```
+改成你自己的真实 Key（例如 `LLM_API_KEY=sk-xxxx`），**保存并关闭记事本**。其余配置保持不动。
 
-**你只需要一个 AI API Key：**
-
-| Key | 注册地址 | 免费额度 |
-|-----|---------|---------|
-| `LLM_API_KEY` | [platform.deepseek.com](https://platform.deepseek.com/) | 注册送 500 万 token |
-| （备选）OpenAI | [platform.openai.com](https://platform.openai.com/) | 新用户 $5 额度 |
-
-高德地图 Key 已预配在 `.env.example` 中（开箱即用）；若该 Key 不可用，再到 lbs.amap.com 免费申请「Web 服务」类型 Key 替换。联网搜索不填则自动回退到免费 DuckDuckGo，填入 Bing Key 则优先用 Bing。
-
-### 4. 启动
-
-**Web 界面（推荐）：**
-```bash
+### 第四步：启动应用
+在 PowerShell 中输入：
+```powershell
 python -m streamlit run app.py
 ```
+启动后浏览器会自动打开 `http://localhost:8501` 。若没有自动打开，手动复制该地址到浏览器地址栏。
 
-**命令行：**
-```bash
-python examples/demo.py "北京市海淀区中关村大街1号"
-python examples/demo.py  # 交互模式
-```
+### 第五步：开始使用
+- 在输入框粘贴地址文本，或上传 Excel / 截图，点击「开始审核」。
+- 审核完成后可下载 CSV / Markdown / 追踪日志(JSON)。
+- 命令行模式（可选）：`python examples/demo.py "北京市海淀区中关村大街1号"`
 
 ## 🤖 Coze 商店部署
 

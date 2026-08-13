@@ -5,10 +5,12 @@
 
 import json
 import re
+import uuid
+import datetime
 from pathlib import Path
 from .llm import LLMService, LLMCallError
 from .tools import TOOL_DEFINITIONS, execute_tool
-from .guard import ResultGuard
+from .guard import ResultGuard, VALID_VERDICTS
 
 
 def _looks_like_audit_table(text: str) -> bool:
@@ -63,6 +65,15 @@ class AddressAuditAgent:
         # 进度回调：前端注册后，审核过程中每次 step_log 变化都会实时推送（签名为 fn(step_log)）
         self.progress_callback = None
 
+        # 审计追踪：每轮审核的过程结构化记录，落盘 outputs/audit_trace_*.json，前端可下载
+        # （KYC/AML 场景要求每条结论可回溯；这是 prompt 之外、确定性的工程化取证层）
+        self._trace_session_id = uuid.uuid4().hex[:12]
+        self.trace_runs: list[dict] = []        # 一次会话内所有审核轮次（单条/批量每批一条）
+        self.last_trace_json: str = ""           # 最近一次落盘的完整 JSON 文本，供前端下载
+        self.last_trace_path: str = ""           # 最近一次落盘文件路径
+        self._current_run: dict | None = None    # 当前轮次 trace 容器
+        self._last_guard_result = None           # 最近一次 ResultGuard 结果（写入 trace 的 final）
+
     # ================================================================
     # 公开方法
     # ================================================================
@@ -79,7 +90,7 @@ class AddressAuditAgent:
         预审拦截仅针对文件 / 截图批量上传场景，由 prepare_excel_audit + confirm_and_audit 工程化约束。
         """
         self.messages.append({"role": "user", "content": user_input})
-        return self._run_agent_loop()
+        return self._run_agent_loop(mode="single", input_text=user_input)
 
     def prepare_excel_audit(self, file_bytes: bytes, filename: str) -> tuple[bool, str]:
         """解析 Excel/CSV 并生成「数据质量预审报告」预览，不调用任何外部工具。
@@ -305,7 +316,10 @@ class AddressAuditAgent:
             f"{self._cap_note if chunk_num == total_chunks else ''}"
         )
         self.messages = base + [{"role": "user", "content": chunk_ctx}]
-        chunk_out = self._run_agent_loop()
+        chunk_out = self._run_agent_loop(
+            mode="batch_chunk",
+            input_text=f"批量审核 第{chunk_num}/{total_chunks}批（{len(chunk)}条）",
+        )
         self._match_chunk(chunk, self._extract_table_rows(chunk_out), self._result_by_idx, self._extra_rows)
         self._audit_idx += 1
         return self._audit_idx < len(self._chunks)
@@ -538,6 +552,7 @@ class AddressAuditAgent:
         verified_output, guard_result = self.guard.check_and_retry(
             final_content, list(self.messages)
         )
+        self._last_guard_result = guard_result  # 供审计追踪写入 final
         if guard_result.passed:
             self.step_log[-1] = {"step": "guard", "status": "done", "text": "结果验证通过 ✓"}
         else:
@@ -588,12 +603,89 @@ class AddressAuditAgent:
             except Exception:
                 pass
 
-    def _run_agent_loop(self) -> str:
+    # ================================================================
+    # 审计追踪（Audit Trail）：结构化的「每轮交互」取证记录
+    # 与 step_log（仅用于前端实时进度展示、会话结束即丢失）解耦——
+    # trace 落盘为 JSON，可下载、可回溯，满足 KYC/AML「每条结论可审计」要求。
+    # ================================================================
+
+    def _trace_run_start(self, mode: str, meta: dict | None = None) -> dict:
+        """开始一轮审核 trace（单条对话 = 一轮；批量每批 = 一轮）。"""
+        run = {
+            "run_id": uuid.uuid4().hex[:10],
+            "mode": mode,                       # "single" / "batch_chunk"
+            "started_at": datetime.datetime.now().isoformat(timespec="seconds"),
+            "meta": meta or {},
+            "steps": [],                       # 每个工具调用的结构化记录
+            "final": {},
+        }
+        self.trace_runs.append(run)
+        self._current_run = run
+        return run
+
+    def _trace_tool(self, tool_name: str, args: dict, raw: str, status: str, latency_ms: float) -> None:
+        """记录一次工具调用的原始返回 + 错误码 + 是否降级。"""
+        if self._current_run is None:
+            return
+        try:
+            parsed = json.loads(raw) if isinstance(raw, str) else (raw or {})
+        except Exception:
+            parsed = {"_raw": raw}
+        rec = {
+            "tool": tool_name,
+            "input": args,
+            "status": status,                  # success / skipped / error
+            "latency_ms": round(latency_ms, 1),
+            "response": parsed,                # 工具真实返回（含 infocode / reason / degraded）
+        }
+        if isinstance(parsed, dict):
+            # 错误码扁平化，便于回溯「高德限流 10021 / Key失效 10001」等
+            rec["error_code"] = parsed.get("infocode") or parsed.get("code") or parsed.get("reason")
+            rec["degraded"] = bool(parsed.get("degraded", False))
+        self._current_run["steps"].append(rec)
+
+    def _trace_run_end(self, final_content: str, guard_result=None) -> None:
+        """收尾本轮 trace：写入最终结论与护栏结果，并落盘。"""
+        if self._current_run is None:
+            return
+        verdicts = sorted({v for v in VALID_VERDICTS if v in (final_content or "")})
+        self._current_run["ended_at"] = datetime.datetime.now().isoformat(timespec="seconds")
+        self._current_run["final"] = {
+            "verdicts": verdicts,
+            "guard_passed": bool(guard_result.passed) if guard_result else None,
+            "guard_violations": [str(x) for x in (guard_result.violations if guard_result else [])],
+            "guard_warnings": [str(x) for x in (guard_result.warnings if guard_result else [])],
+        }
+        self._persist_trace()
+
+    def _persist_trace(self) -> None:
+        """把整个会话的 trace 落盘为单个 JSON 文件（每轮追加；批量多批合并为一个文件）。"""
+        try:
+            out_dir = Path(__file__).resolve().parent.parent / "outputs"
+            out_dir.mkdir(exist_ok=True)
+            ts = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            path = out_dir / f"audit_trace_{self._trace_session_id}_{ts}.json"
+            payload = {
+                "session_id": self._trace_session_id,
+                "generated_at": datetime.datetime.now().isoformat(timespec="seconds"),
+                "runs": self.trace_runs,
+            }
+            text = json.dumps(payload, ensure_ascii=False, indent=2)
+            path.write_text(text, encoding="utf-8")
+            self.last_trace_json = text
+            self.last_trace_path = str(path)
+        except Exception:
+            # 追踪落盘失败绝不影响审核主流程
+            pass
+
+    def _run_agent_loop(self, mode: str = "single", input_text: str = "") -> str:
         """
         ReAct Agent 循环
         LLM 可以多次调用工具，直到给出最终文本回复
+        mode / input_text 仅用于审计追踪标注（单条 / 批量每批）。
         """
         self.step_log = []  # 每轮审核重置进度日志，避免跨轮累积（B5）
+        self._trace_run_start(mode, {"input": input_text[:500]})
 
         max_iterations = 10  # 防止死循环
         max_tool_rounds = max_iterations - 1  # 最后一轮留给文字总结
@@ -609,6 +701,7 @@ class AddressAuditAgent:
                 self.step_log.append({"step": "error", "status": "error", "text": msg})
                 self._emit_progress()
                 self.messages.append({"role": "assistant", "content": msg})
+                self._trace_run_end(msg)
                 return msg
             self.step_log[-1]["status"] = "done"
             self.step_log[-1]["text"] = "文本理解完成" if not response.has_tool_calls else "AI 决定调用工具验证"
@@ -641,15 +734,27 @@ class AddressAuditAgent:
 
                 # 并行执行（geocode + web_search 独立，节省 ~1.5s）
                 from concurrent.futures import ThreadPoolExecutor, as_completed
+                import time as _time
+
+                def _run_one(tc):
+                    _t0 = _time.perf_counter()
+                    _res = execute_tool(tc.name, tc.arguments)
+                    _dt = (_time.perf_counter() - _t0) * 1000.0
+                    return tc, _res, _dt
+
                 with ThreadPoolExecutor(max_workers=4) as pool:
                     futures = {
-                        pool.submit(execute_tool, tc.name, tc.arguments): tc
+                        pool.submit(_run_one, tc): tc
                         for tc in response.tool_calls
                     }
                     results_by_tc = {}
                     for f in as_completed(futures):
-                        tc = futures[f]
-                        results_by_tc[tc] = f.result()
+                        tc, _res, _dt = f.result()
+                        results_by_tc[tc] = _res
+                        # 审计追踪：记录每次工具调用的原始返回 + 错误码 + 耗时
+                        _r = _safe_json(_res)
+                        _st = _r.get("status", "error") if isinstance(_r, dict) else "error"
+                        self._trace_tool(tc.name, tc.arguments, _res, _st, _dt)
 
                 # 按原始顺序收集结果并标记日志（用正确的日志索引，不用 [-1]）
                 for tool_call in response.tool_calls:
@@ -699,6 +804,7 @@ class AddressAuditAgent:
                 # 超时/强制总结的最终报告也过 ResultGuard（B8）
                 final_content = self._apply_guard(final_content)
                 self.messages.append({"role": "assistant", "content": final_content})
+                self._trace_run_end(final_content, self._last_guard_result)
                 return final_content
 
             # 文字回复 → 最终输出
@@ -710,6 +816,7 @@ class AddressAuditAgent:
             # ResultGuard：仅在输出包含审核结果时才验证，闲聊消息直接放行
             final_content = self._apply_guard(final_content)
             self.messages.append({"role": "assistant", "content": final_content})
+            self._trace_run_end(final_content, self._last_guard_result)
             return final_content
 
         # 超时：追加终止消息到 history 后再返回
@@ -717,6 +824,7 @@ class AddressAuditAgent:
                               "text": "审核超时（已达最大工具调用次数）。建议：减少单次提交的地址数量，或尝试更简洁的地址描述。"})
         timeout_msg = "审核过程超时，请简化地址信息后重试。"
         self.messages.append({"role": "assistant", "content": timeout_msg})
+        self._trace_run_end(timeout_msg, self._last_guard_result)
         return timeout_msg
 
 

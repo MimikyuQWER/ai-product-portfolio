@@ -40,6 +40,9 @@ class ToolEvidence:
     level: str | None = None
     found: bool | None = None
     raw_result: dict | None = None
+    province: str | None = None          # geocode 返回的省（用于 Rule F 行政区划一致性）
+    city: str | None = None              # geocode 返回的城市
+    search_results: list[dict] = field(default_factory=list)  # web_search 的标题/摘要/链接（用于 Rule E 相关性）
 
     @property
     def is_valid(self) -> bool:
@@ -91,6 +94,9 @@ class EvidenceCollector:
                 level=raw.get("level"),
                 found=raw.get("found"),
                 raw_result=raw,
+                province=raw.get("province") or None,
+                city=raw.get("city") or None,
+                search_results=[r for r in (raw.get("results") or []) if isinstance(r, dict)],
             )
             evidence_list.append(ev)
 
@@ -203,6 +209,16 @@ class ResultGuard:
         rule_d = self._check_rule_d(llm_output)
         if rule_d:
             violations.append(rule_d)
+
+        # ---- Rule E: 联网搜索结果强相关性（工程化校验，prompt 之外的硬约束）----
+        rule_e_v, rule_e_w = self._check_rule_e(llm_output, evidence)
+        violations.extend(rule_e_v)
+        warnings.extend(rule_e_w)
+
+        # ---- Rule F: 行政区划一致性（地图核验省份 vs 结论提及省份）----
+        rule_f_v, rule_f_w = self._check_rule_f(llm_output, evidence)
+        violations.extend(rule_f_v)
+        warnings.extend(rule_f_w)
 
         return GuardResult(
             passed=len(violations) == 0,
@@ -374,6 +390,85 @@ class ResultGuard:
                 found.add(v)
         return found
 
+    # ---- Rule E: 联网搜索结果强相关性 ----
+    def _check_rule_e(
+        self, llm_output: str, evidence: list[ToolEvidence]
+    ) -> tuple[list[str], list[str]]:
+        """Rule E: 引用的 web_search 结果必须与待核地址强相关。
+
+        做法：从 geocode 返回的规范化地址（formatted_address）抽取地址 token，
+        逐条检查 web_search 结果的标题+摘要是否命中任一 token。
+        - 命中 0 个 token → 低相关结果；
+        - 模型结论**引用**了低相关结果的 URL → 违规（用无关材料作证）；
+        - 仅存在低相关结果但未被引用 → 警告（透明化，供人工复核）。
+        """
+        addr_tokens: set[str] = set()
+        for e in evidence:
+            if e.tool_name == "geocode" and isinstance(e.raw_result, dict):
+                fa = e.raw_result.get("formatted_address") or e.raw_result.get("address") or ""
+                if fa:
+                    addr_tokens |= _tokenize_address(fa)
+        if not addr_tokens:
+            return [], []  # 无地址参照（如地图全失败降级场景），无法判定相关性，跳过
+
+        low_rel_urls: list[str] = []
+        for e in evidence:
+            if e.tool_name != "web_search":
+                continue
+            for r in e.search_results:
+                text = f"{r.get('title', '')} {r.get('snippet', '')}"
+                if not text.strip():
+                    continue
+                if not any(tok in text for tok in addr_tokens):
+                    u = r.get("url", "")
+                    if u and u not in low_rel_urls:
+                        low_rel_urls.append(u)
+
+        if not low_rel_urls:
+            return [], []
+
+        warnings = [
+            f"联网搜索结果中有 {len(low_rel_urls)} 条与待核地址无关键词重合（可能无关），"
+            f"建议仅引用与地址直接相关的来源：{', '.join(u for u in low_rel_urls[:3] if u)}"
+        ]
+        # 若模型在结论中引用了无关结果 → 硬性违规
+        cited = set(URL_PATTERN.findall(llm_output))
+        for u in low_rel_urls:
+            if u and any(u in c or c in u for c in cited):
+                return [
+                    f"审核结论引用了与地址无强相关的搜索结果（{u}），"
+                    f"请移除或替换为与地址直接相关的来源网页。"
+                ], warnings
+        return [], warnings
+
+    # ---- Rule F: 行政区划一致性 ----
+    def _check_rule_f(
+        self, llm_output: str, evidence: list[ToolEvidence]
+    ) -> tuple[list[str], list[str]]:
+        """Rule F: 结论提及的省份应与地图核验返回的省份一致。
+
+        仅当 geocode 成功返回 province 且结论文本明确提及一个「不同」省份时才告警
+        （避免多地址批量场景的误报）。属软校验（警告），不阻断输出。
+        """
+        geo_provs = {e.province for e in evidence if e.tool_name == "geocode" and e.province}
+        if not geo_provs:
+            return [], []
+        out_provs = _extract_provinces(llm_output)
+        if not out_provs:
+            return [], []
+        # 归一化：避免「北京市」与「北京」被误判为冲突（取最长匹配优先）
+        norm = lambda s: max(s, key=len) if s else ""
+        geo_norm = {norm({p for p in _PROVINCES if p in gp}) for gp in geo_provs}
+        geo_norm = {x for x in geo_norm if x}
+        conflict = {norm({p for p in _PROVINCES if p in op}) for op in out_provs}
+        conflict = {x for x in conflict if x} - geo_norm
+        if conflict:
+            return [], [
+                f"审核依据中提及的省份 {sorted(conflict)} 与地图核验返回的省份 {sorted(geo_provs)} 不一致，"
+                f"请复核是否存在地址归属地判断错误。"
+            ]
+        return [], []
+
     def _build_correction(self, result: GuardResult) -> str:
         """构造修正指令"""
         lines = ["## 审核结果验证未通过，请修正以下问题后重新输出："]
@@ -388,6 +483,59 @@ class ResultGuard:
 
 
 # ---- Helpers ----
+
+# 省级行政区名称（用于 Rule F 省份一致性判断；含直辖市、自治区、特别行政区）
+_PROVINCES = [
+    "北京市", "天津市", "上海市", "重庆市",
+    "河北省", "山西省", "内蒙古自治区", "辽宁省", "吉林省", "黑龙江省",
+    "江苏省", "浙江省", "安徽省", "福建省", "江西省", "山东省", "河南省",
+    "湖北省", "湖南省", "广东省", "广西壮族自治区", "海南省", "四川省",
+    "贵州省", "云南省", "西藏自治区", "陕西省", "甘肃省", "青海省",
+    "宁夏回族自治区", "新疆维吾尔自治区", "台湾省",
+    "香港特别行政区", "澳门特别行政区",
+    # 短称（用于匹配结论中「浙江省」「江苏」等写法）
+    "北京", "天津", "上海", "重庆", "河北", "山西", "内蒙古", "辽宁", "吉林",
+    "黑龙江", "江苏", "浙江", "安徽", "福建", "江西", "山东", "河南", "湖北",
+    "湖南", "广东", "广西", "海南", "四川", "贵州", "云南", "西藏", "陕西",
+    "甘肃", "青海", "宁夏", "新疆", "台湾", "香港", "澳门",
+]
+
+# 地址切分分隔符（省/市/区/路/号/栋…）：用于把规范化地址拆成可匹配的 token
+_ADDR_DELIM = re.compile(r"[省市区县旗镇乡村街道路街大道号栋幢室单元层组弄里小区广场大厦花园苑公寓省直辖县、，,。\s]+")
+
+# 过于通用的单字/短词，作为 token 噪声应剔除（避免「路」「号」等造成假相关）
+_ADDR_STOP = {"省", "市", "区", "县", "镇", "乡", "村", "路", "街", "号", "栋", "幢",
+              "室", "单元", "层", "组", "弄", "里", "小区", "广场", "大厦", "花园",
+              "苑", "公寓", "大道", "街道", "号室", "栋室"}
+
+
+def _tokenize_address(addr: str) -> set[str]:
+    """把规范化地址拆成有意义的关键词 token（省/市/区/路名/门牌号等）。"""
+    if not addr:
+        return set()
+    tokens: set[str] = set()
+    # 完整串也作为 token（兜底，覆盖「中关村大街1号」这类连写）
+    tokens.add(addr.strip())
+    for part in _ADDR_DELIM.split(addr):
+        part = part.strip()
+        if len(part) >= 2 and part not in _ADDR_STOP:
+            tokens.add(part)
+    # 再按 2~4 字滑动窗口补充（捕获「海淀区」「中关村」等子串）
+    clean = re.sub(r"\s+", "", addr)
+    for n in (2, 3, 4):
+        for i in range(len(clean) - n + 1):
+            tok = clean[i:i + n]
+            if tok not in _ADDR_STOP:
+                tokens.add(tok)
+    return tokens
+
+
+def _extract_provinces(text: str) -> set[str]:
+    """从文本中提取出现的省份级行政区名称（剔除被更长名称包含的短称，如「北京」⊂「北京市」）。"""
+    found = {p for p in _PROVINCES if p in text}
+    # 去掉是其他成员子串的短称，避免「北京」与「北京市」被误判为冲突
+    return {p for p in found if not any(p != q and p in q for q in found)}
+
 
 def _mentions_next_step(text: str) -> bool:
     """判断审核依据是否提及失败原因/下一步（用于"审核失败"结论的软校验）"""

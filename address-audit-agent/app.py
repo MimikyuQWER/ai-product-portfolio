@@ -269,7 +269,15 @@ def render_audit_result(content: str, uid: str = ""):
     csv_bytes = None
     if rows_data:
         csv_bytes = pd.DataFrame(rows_data).to_csv(index=False, encoding="utf-8-sig").encode("utf-8-sig")
-    c1, c2 = st.columns([1, 1])
+
+    # 审计追踪 JSON：每轮交互的工具原始返回 + 错误码 + 耗时，落盘可下载（KYC/AML 可回溯）
+    trace_json = ""
+    try:
+        _agent = st.session_state.get("agent")
+        trace_json = getattr(_agent, "last_trace_json", "") or ""
+    except Exception:
+        trace_json = ""
+    c1, c2, c3 = st.columns([1, 1, 1])
     with c1:
         st.download_button(
             "📥 下载 CSV",
@@ -287,6 +295,18 @@ def render_audit_result(content: str, uid: str = ""):
             mime="text/markdown",
             key=f"{u}dl_md_{content_hash}",
         )
+    with c3:
+        st.download_button(
+            "📑 下载追踪日志(JSON)",
+            trace_json.encode("utf-8") if trace_json else b"",
+            file_name=f"audit_trace_{content_hash}.json",
+            mime="application/json",
+            key=f"{u}dl_trace_{content_hash}",
+            disabled=not trace_json,
+            help="含每步工具原始返回、错误码（如高德限流 infocode=10021）、是否降级、耗时，便于回溯查证",
+        )
+    if trace_json:
+        st.caption("📑 本轮已生成审计追踪日志（JSON），每步工具调用与失败原因均可回溯 ↓")
 
 st.set_page_config(
     page_title="地址信息审核助手",

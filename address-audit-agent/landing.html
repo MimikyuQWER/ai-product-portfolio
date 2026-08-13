@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>地址审核 AGENT — Harness 级地址真实性验证</title>
+<title>地址审核 AGENT — 生产级地址真实性验证</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
 
@@ -177,7 +177,7 @@
   section { padding: 5rem 0; }
   .section-header { margin-bottom: 2.5rem; }
   .section-header h2 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
-  .section-header p { font-size: 0.95rem; color: var(--ink-muted); max-width: 560px; }
+  .section-header p { font-size: 0.95rem; color: var(--ink-muted); max-width: 620px; }
 
   /* ---- Difference ---- */
   .diff { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
@@ -300,11 +300,125 @@
     text-decoration: underline;
   }
 
+  /* ============================================================
+     生产级工程优化（AI 产品经理视角）—— 新增模块
+     ============================================================ */
+  .reliability { background: var(--surface-alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .rel-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .rel-card {
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    padding: 1.75rem; background: var(--bg); display: flex; flex-direction: column;
+    transition: border-color 150ms ease, transform 150ms ease;
+  }
+  .rel-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .rel-card .pm-tag {
+    font-size: 0.68rem; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;
+    font-family: 'Geist Mono', monospace;
+  }
+  .rel-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.6rem; }
+  .rel-card .pm { font-size: 0.84rem; color: var(--ink-muted); line-height: 1.65; }
+  .rel-card .design {
+    margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px dashed var(--border);
+    font-size: 0.8rem; color: var(--ink); line-height: 1.6;
+  }
+  .rel-card .design b { color: var(--accent); }
+
+  /* 界面示意（依据真实代码还原，非截图占位） */
+  .mock {
+    margin-top: 1rem; border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--surface); padding: 0.9rem 1rem; font-family: 'Geist Mono', monospace; font-size: 0.74rem;
+  }
+  .mock-bar {
+    font-family: 'Geist', sans-serif; font-size: 0.78rem; font-weight: 600;
+    color: var(--ink); margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.4rem;
+  }
+  .step-line { padding: 0.16rem 0; color: var(--ink-muted); opacity: 0.32; transition: opacity .3s ease; }
+  .step-line .ico { display: inline-block; width: 1.2em; }
+  .step-line.done { opacity: 0.7; }
+  .step-line.done .ico { color: var(--success); }
+  .step-line.active { opacity: 1; font-weight: 600; color: var(--ink); }
+  .step-line.active .ico { color: var(--accent); }
+  .spin { display: inline-block; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* 降级流程图 */
+  .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; font-family: 'Geist', sans-serif; }
+  .flow .box {
+    border: 1px solid var(--border); border-radius: 6px; padding: 0.4rem 0.6rem;
+    background: var(--bg); font-size: 0.72rem; font-weight: 500;
+  }
+  .flow .box.ok { border-color: var(--success); color: var(--success); }
+  .flow .box.warn { border-color: var(--warning); color: var(--warning); }
+  .flow .box.fail { border-color: var(--danger); color: var(--danger); }
+  .flow .arrow { color: var(--ink-muted); font-size: 0.95rem; padding: 0 0.1rem; }
+  .flow .col { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+
+  /* 报告状态卡示意 */
+  .report-card {
+    border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg);
+    padding: 0.9rem 1rem; font-family: 'Geist', sans-serif;
+  }
+  .report-counts { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 0.7rem; font-size: 0.8rem; }
+  .report-counts b { font-size: 1.05rem; }
+  .report-counts .c-valid { color: var(--success); }
+  .report-counts .c-uncertain { color: var(--warning); }
+  .report-counts .c-invalid { color: var(--danger); }
+  .report-counts .c-failed { color: var(--danger); }
+  .report-btn {
+    display: inline-block; background: var(--accent); color: #fff; font-size: 0.74rem;
+    font-weight: 600; padding: 0.35rem 0.7rem; border-radius: 6px; margin: 0.2rem 0.3rem 0.2rem 0;
+  }
+  .report-dl { display: inline-block; border: 1px solid var(--border); color: var(--ink); font-size: 0.72rem;
+    padding: 0.3rem 0.6rem; border-radius: 6px; margin: 0.2rem 0.3rem 0.2rem 0; }
+
+  /* JSON 审计追踪样例 */
+  .trace-sample {
+    background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 1rem 1.1rem;
+    font-family: 'Geist Mono', monospace; font-size: 0.7rem; line-height: 1.65;
+    overflow: auto; max-height: 300px; margin-top: 1rem;
+  }
+  .trace-sample .k { color: #818cf8; }
+  .trace-sample .s { color: #86efac; }
+  .trace-sample .n { color: #fbbf24; }
+  .trace-sample .b { color: #fca5a5; }
+
+  .journey-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+
+  /* 工作流示意：上传 → 识别 → 预审 → 终审 */
+  .flow-pipeline { display: flex; align-items: stretch; flex-wrap: wrap; }
+  .flow-stage {
+    flex: 1 1 200px; border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 0.9rem 1rem; background: var(--bg); display: flex; flex-direction: column;
+  }
+  .flow-stage .stage-no {
+    font-family: 'Geist Mono', monospace; font-size: 0.66rem; font-weight: 700; color: var(--accent); margin-bottom: 0.4rem;
+  }
+  .flow-stage h5 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .flow-stage .mini {
+    font-family: 'Geist Mono', monospace; font-size: 0.7rem; color: var(--ink-muted);
+    line-height: 1.55; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.5rem 0.6rem; flex: 1;
+  }
+  .flow-stage .mini .hl { color: var(--accent); }
+  .flow-stage .mini .warn { color: var(--warning); }
+  .flow-arrow { display: flex; align-items: center; color: var(--ink-muted); font-size: 1.1rem; padding: 0 0.35rem; }
+  .flow-note { font-size: 0.82rem; color: var(--ink-muted); line-height: 1.7; margin-top: 1.25rem; }
+  .flow-note b { color: var(--ink); }
+  .mini table.report-mini { width: 100%; border-collapse: collapse; margin-bottom: 0.4rem; }
+  .mini table.report-mini th, .mini table.report-mini td {
+    text-align: left; padding: 0.22rem 0.35rem; font-size: 0.62rem; border-bottom: 1px solid var(--border);
+    font-family: 'Geist', sans-serif;
+  }
+  .mini table.report-mini th { color: var(--ink-muted); font-weight: 600; }
+  .mini table.report-mini .v-valid { color: var(--success); font-weight: 600; }
+  .mini table.report-mini .v-uncertain { color: var(--warning); font-weight: 600; }
+
   /* ---- Responsive ---- */
   @media (max-width: 860px) {
     .hero .container { grid-template-columns: 1fr; gap: 2rem; }
     .hero-visual { order: -1; }
-    .feature-row, .how-grid, .diff-grid, .principle-grid { grid-template-columns: 1fr; }
+    .feature-row, .how-grid, .diff-grid, .principle-grid, .rel-grid, .journey-grid { grid-template-columns: 1fr; }
     .feature-card { border-right: none; border-bottom: 1px solid var(--border); }
     .container { padding: 0 1.25rem; }
     nav { padding: 0.6rem 1.25rem; }
@@ -318,7 +432,6 @@
 <body>
 
 <!-- Background texture overlay -->
-
 
 <nav>
   <a href="#" class="nav-brand">
@@ -378,8 +491,8 @@
 <section class="diff" id="diff">
   <div class="container">
     <div class="section-header">
-      <h2>和通用 AI 网页版有何不同？</h2>
-      <p>同样的基座模型，不同的可靠性。区别在于harness 约束和系统设计。</p>
+      <h2>与通用AI的区别</h2>
+      <p>同样的基座模型，不同的可靠性。差异来自工程化约束与系统设计。</p>
     </div>
     <div class="diff-grid">
       <div class="diff-card">
@@ -396,7 +509,7 @@
         <ul>
           <li>五级审核标准，四类判定结果——规则明确且一致，每次回答遵循同一套框架</li>
           <li>项目级记忆——审核规则、对话上下文不会因新会话丢失，打开即用</li>
-          <li>每条结论附带可点击链接——来源是高德 API 或 Bing 搜索的真实返回，harness 层自动拦截编造内容</li>
+          <li>每条结论附带可点击链接——来源是高德 API 或 Bing 搜索的真实返回，工程层自动拦截编造内容</li>
           <li>上传表格或截图即得结构化报告，每一步工具调用有完整日志</li>
         </ul>
       </div>
@@ -408,8 +521,8 @@
 <section id="features">
   <div class="container">
     <div class="section-header">
-      <h2>Agent设计原理</h2>
-      <p>LLM 推理负责判断，harness 代码负责验证。每一层各司其职。</p>
+      <h2>工作原理</h2>
+      <p>LLM 负责推理判断，工程代码负责验证约束。各层各司其职。</p>
     </div>
     <div class="feature-row">
       <div class="feature-card">
@@ -432,12 +545,225 @@
   </div>
 </section>
 
+<!-- ============================================================
+     生产级工程优化（AI 产品经理视角）—— 核心新增
+     ============================================================ -->
+<section class="reliability" id="reliability">
+  <div class="container">
+    <div class="section-header">
+      <h2>生产级可靠性</h2>
+      <p>通用对话模型与可投产系统的差距不在模型，而在工程化约束。以下三项，是 Agent 区别于"提示词套壳"的关键设计。</p>
+    </div>
+    <div class="rel-grid">
+
+      <!-- 亮点 1：响应时间可控 -->
+      <div class="rel-card">
+        <div class="pm-tag">PRODUCT · 响应时间</div>
+        <h3>① 响应时间可控</h3>
+        <p class="pm">
+          用户一次上传 30 条地址，如果串行跑、或一次性阻塞调用，界面会干等几十秒、体验归零。
+          我们把它当作一个<strong>产品可用性问题</strong>而非单纯性能问题来设计。
+        </p>
+        <div class="mock">
+          <div class="mock-bar">📦 批量审核进度（分块逐批）</div>
+          <div class="step-line"><span class="ico">▣</span> 第 1/6 批 完成（5 条）✓</div>
+          <div class="step-line"><span class="ico">▣</span> 第 2/6 批 完成（5 条）✓</div>
+          <div class="step-line active"><span class="ico spin">◌</span> 第 3/6 批 审核中…（并行调用高德+搜索）</div>
+          <div class="step-line"><span class="ico">□</span> 第 4/6 批 等待</div>
+          <div class="step-line"><span class="ico">□</span> 第 5/6 批 等待</div>
+          <div class="step-line"><span class="ico">□</span> 第 6/6 批 等待</div>
+        </div>
+        <div class="design">
+          <b>设计巧思：</b>① 按 5 条/批分块，全量处理不丢数据；② 每批在独立 <code>rerun</code> 中<strong>并行</strong>调用高德+联网搜索（省 ~1.5s/条）；③ 联网搜索走 4 级回退链（Bing API → Bing 国内版 ~0.6s → 百度 → DDG 兜底）；④ 每批实时显示「第 X/N 批」，进程永远可见、界面永不冻结。
+        </div>
+      </div>
+
+      <!-- 亮点 2：进度透明化 -->
+      <div class="rel-card">
+        <div class="pm-tag">PRODUCT · 信任</div>
+        <h3>② 进度透明化</h3>
+        <p class="pm">
+          黑盒是信任杀手。用户不是等一个最终结果，而是<strong>看着它一步步得出结论</strong>——
+          这既降低等待焦虑，也便于在出错时定位卡在哪一步。
+        </p>
+        <div class="mock">
+          <div class="mock-bar">🔍 AI 审核进行中（实时进度）</div>
+          <div class="live-progress">
+            <div class="step-line"><span class="ico">🧠</span> AI 分析中地址结构…</div>
+            <div class="step-line"><span class="ico">🗺️</span> 调用 高德地图地址核验…</div>
+            <div class="step-line"><span class="ico">🌐</span> 调用 联网搜索交叉验证…</div>
+            <div class="step-line"><span class="ico">🛡️</span> 结果验证门（ResultGuard）校验…</div>
+            <div class="step-line"><span class="ico">📑</span> 生成审核报告…</div>
+          </div>
+        </div>
+        <div class="design">
+          <b>设计巧思：</b>每个工具调用通过 <code>progress_callback</code> 实时推送到前端，
+          渲染成带图标的步骤流。技术故障、限流重试、降级搜索都会<strong>原样显示给用户</strong>，
+          而不是默默吞掉——透明即信任。
+        </div>
+      </div>
+
+      <!-- 亮点 3：报错重跑与降级 -->
+      <div class="rel-card">
+        <div class="pm-tag">PRODUCT · 准确性</div>
+        <h3>③ 报错重跑与降级</h3>
+        <p class="pm">
+          高德共享 Key 有 QPS 限流，偶发"API 失败"。普通方案会直接给出错误结论；
+          我们把"工具可能出错"当作<strong>一等公民</strong>来处理。
+        </p>
+        <div class="mock">
+          <div class="mock-bar">🔁 工具失败时的兜底链路</div>
+          <div class="flow">
+            <div class="box">高德核验</div>
+            <span class="arrow">—失败(重试≤3)—→</span>
+            <div class="box">联网搜索</div>
+            <span class="arrow">—仍失败—→</span>
+            <div class="box fail">审核失败</div>
+          </div>
+          <div class="flow" style="margin-top:.5rem;">
+            <div class="box ok">✓ 任一步成功</div>
+            <span class="arrow">→</span>
+            <div class="box">据此判定 有效/无效/不确定</div>
+          </div>
+        </div>
+        <div class="design">
+          <b>设计巧思：</b>① 单次失败自动<strong>重试 ≤3 次</strong>（指数退避）；② 仍失败则<strong>降级</strong>到联网搜索交叉验证；
+          ③ 两级工具皆不可用 → 结论明确判为「<b>审核失败</b>」并写明失败原因+下一步（换 Key/转人工），
+          而非模糊地判「不确定」。技术故障与"地址本身存疑"被<strong>严格区分</strong>。
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     工作流示意：上传 → 识别 → 预审 → 终审（依据真实 UI 逻辑还原）
+     ============================================================ -->
+<section id="flow">
+  <div class="container">
+    <div class="section-header">
+      <h2>工作流示意</h2>
+      <p>上传图片或表格后，Agent 按"识别 → 预审 → 终审"三段处理。预审留在主对话框、可追问补信息；终审在右侧抽屉、可下载留档。</p>
+    </div>
+    <div class="flow-pipeline">
+      <div class="flow-stage">
+        <div class="stage-no">01 · 上传</div>
+        <h5>上传数据</h5>
+        <div class="mini">📤 拖入或选择文件<br>· 地址截图 (png/jpg)<br>· Excel / CSV<br>· 单条地址直接输入</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-stage">
+        <div class="stage-no">02 · 识别</div>
+        <h5>结构化识别</h5>
+        <div class="mini">🔍 截图 → <span class="hl">OCR 文字</span><br>📋 表格 → <span class="hl">行列解析</span><br>输出：序号 / 姓名 / 地址<br><span class="warn">⚠ 识别不全则标红</span></div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-stage">
+        <div class="stage-no">03 · 预审</div>
+        <h5>数据质量预审</h5>
+        <div class="mini">📋 第 1 步 · 数据质量预审报告<br>完整度：<span class="warn">4/6 级</span><br>缺失：门牌号、收件人<br>[ 开始终审 ] [ 补充信息 ]</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-stage">
+        <div class="stage-no">04 · 终审</div>
+        <h5>最终审计报告</h5>
+        <div class="mini">
+          <table class="report-mini">
+            <tr><th>#</th><th>地址</th><th>结果</th></tr>
+            <tr><td>1</td><td>中关村大街1号</td><td class="v-valid">有效</td></tr>
+            <tr><td>2</td><td>西湖区</td><td class="v-uncertain">不确定</td></tr>
+          </table>
+          [ 打开终审报告（右侧）]
+        </div>
+      </div>
+    </div>
+    <p class="flow-note">
+      <b>两段式设计：</b>预审报告留在主对话框，模型评估数据完整度并追问"应有但缺失"的信息，用户补充后再终审，避免对残缺数据直接下结论；终审报告在右侧抽屉展开，含六列明细（序号｜姓名｜地址｜审核结果｜审核依据｜审核信息源），支持 CSV / MD / 审计追踪 JSON 下载。
+    </p>
+  </div>
+</section>
+
+<!-- ============================================================
+     一个地址的审核旅程（界面示意 + 可下载副产物）
+     ============================================================ -->
+<section id="journey">
+  <div class="container">
+    <div class="section-header">
+      <h2>审核全流程</h2>
+      <p>从输入到可审计交付物，每一步都留痕、可回溯。</p>
+    </div>
+    <div class="journey-grid">
+
+      <!-- 左：报告状态卡 + 下载 -->
+      <div>
+        <div class="report-card">
+          <div class="mock-bar">📑 第 2 步 · 最终审核报告</div>
+          <div class="report-counts">
+            <span class="c-valid"><b>2</b> 有效</span>
+            <span class="c-uncertain"><b>1</b> 不确定</span>
+            <span class="c-invalid"><b>1</b> 无效</span>
+            <span class="c-failed"><b>0</b> 审核失败</span>
+          </div>
+          <span class="report-btn">📑 打开终审报告（右侧弹窗）</span>
+          <div style="margin-top:.5rem;">
+            <span class="report-dl">📥 下载 CSV</span>
+            <span class="report-dl">📄 下载明细(MD)</span>
+            <span class="report-dl">📑 下载追踪日志(JSON)</span>
+          </div>
+          <div style="font-size:.72rem;color:var(--ink-muted);margin-top:.6rem;font-family:'Geist',sans-serif;">
+            📑 本轮已生成审计追踪日志（JSON），每步工具调用与失败原因均可回溯 ↓
+          </div>
+        </div>
+
+        <div class="trace-sample">
+<span class="k">"runs"</span>: [
+  {
+    <span class="k">"mode"</span>: <span class="s">"single"</span>,
+    <span class="k">"steps"</span>: [
+      { <span class="k">"tool"</span>: <span class="s">"geocode"</span>, <span class="k">"status"</span>: <span class="s">"success"</span>,
+        <span class="k">"latency_ms"</span>: <span class="n">312.4</span>,
+        <span class="k">"response"</span>: { <span class="k">"found"</span>: <span class="b">true</span>, <span class="k">"level"</span>: <span class="s">"门址"</span> } },
+      { <span class="k">"tool"</span>: <span class="s">"web_search"</span>, <span class="k">"status"</span>: <span class="s">"success"</span>,
+        <span class="k">"latency_ms"</span>: <span class="n">586.1</span>, <span class="k">"error_code"</span>: <span class="b">null</span> }
+    ],
+    <span class="k">"final"</span>: { <span class="k">"verdicts"</span>: [<span class="s">"有效地址"</span>], <span class="k">"guard_passed"</span>: <span class="b">true</span> }
+  }
+]
+<span style="color:#64748b;">// 高德限流时：status=error, degraded=true, error_code="10021" 一并留存</span>
+        </div>
+      </div>
+
+      <!-- 右：说明 -->
+      <div>
+        <h4 style="font-size:1rem;font-weight:600;margin-bottom:.6rem;">可审计：产品特性而非附加功能</h4>
+        <p style="font-size:.86rem;color:var(--ink-muted);line-height:1.7;margin-bottom:1rem;">
+          在客户身份识别场景，"结论如何得出"与"结论是什么"同等重要。Agent 每轮交互落盘一份结构化审计追踪：
+          工具调用、原始返回、错误码（如高德限流 <code>infocode=10021</code>）、是否降级、耗时，全部写入
+          <code>audit_trace_*.json</code>，可一键下载。
+        </p>
+        <p style="font-size:.86rem;color:var(--ink-muted);line-height:1.7;margin-bottom:.6rem;">
+          另在提示词之外增加两道规则脚本做硬约束：
+        </p>
+        <ul style="font-size:.86rem;color:var(--ink-muted);line-height:1.7;padding-left:1.1rem;">
+          <li><b style="color:var(--ink);">Rule E · 搜索相关性：</b>引用与地址零关键词重合的网页作证据，判违规并要求替换。</li>
+          <li><b style="color:var(--ink);">Rule F · 行政区划一致：</b>结论省份与地图核验省份冲突时告警，防止张冠李戴。</li>
+        </ul>
+        <p style="font-size:.82rem;color:var(--ink-muted);line-height:1.7;margin-top:1rem;">
+          提示词定意图，规则脚本兜底，两者解耦，换模型不影响核心可靠性。
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- Design Principles -->
 <section class="principles">
   <div class="container">
     <div class="section-header">
-      <h2>不是提示词套壳产物</h2>
-      <p>不依赖单一提示词，而是系统提示词 + harness 代码双重约束。</p>
+      <h2>系统级约束</h2>
+      <p>不依赖单一提示词，而是系统提示词 + 工程代码双重约束。</p>
     </div>
     <div class="principle-grid">
       <div class="principle-card">
@@ -551,7 +877,7 @@
   const steps = [
     { title: '输入地址', desc: '在底部输入框粘贴要验证的地址，回车即开始审核。Agent 会检查格式是否完整，信息不够会自动追问。', code: '北京市海淀区中关村大街1号' },
     { title: '上传文件 / 截图（可选）', desc: '点击输入框旁的➕，上传 Excel 表格或地址截图。解析后会先展示数据预览，点击「开始审核」才正式核验，避免无谓消耗。' },
-    { title: '查看报告', desc: '审核完成后，对话里只显示审核概要，点击概要即可在右侧展开详细表格。每条结果都附带可点击的来源链接，可下载 CSV / MD 留档。' },
+    { title: '查看报告', desc: '审核完成后，对话里只显示审核概要，点击概要即可在右侧展开详细表格。每条结果都附带可点击的来源链接，可下载 CSV / MD / 审计追踪 JSON 留档。' },
   ];
   let currentStep = 0;
 
@@ -584,6 +910,20 @@
   document.getElementById('btn-prev').onclick = () => { if (currentStep > 0) { currentStep--; renderStep(); } };
   document.getElementById('onboarding').addEventListener('click', function(e) { if (e.target === this) closeOnboarding(); });
   document.querySelectorAll('a[href^="#"]').forEach(a => { a.addEventListener('click', function(e) { const t = document.querySelector(this.getAttribute('href')); if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); } }); });
+
+  // 进度透明化：实时步骤流循环高亮（界面示意动画）
+  (function animateProgress() {
+    const lines = document.querySelectorAll('.live-progress .step-line');
+    if (!lines.length) return;
+    let i = 0;
+    setInterval(() => {
+      lines.forEach((l, idx) => {
+        l.classList.toggle('active', idx === i);
+        l.classList.toggle('done', idx < i);
+      });
+      i = (i + 1) % lines.length;
+    }, 1100);
+  })();
 </script>
 </body>
 </html>

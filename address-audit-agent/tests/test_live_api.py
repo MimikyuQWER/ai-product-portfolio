@@ -354,6 +354,52 @@ def test_match_chunk_no_mismatch():
 
 
 # ============================================================
+# T10：ResultGuard Rule E/F（离线，无需 API）—— 覆盖「规则脚本」工程化约束
+# ============================================================
+def test_guard_rule_e_f():
+    print("\n===== T10 ResultGuard Rule E/F（相关性 + 行政区划一致性）=====")
+    import json as _json
+    from agent.guard import ResultGuard, EvidenceCollector
+
+    geo = {"status": "success", "found": True, "formatted_address": "北京市海淀区中关村大街1号",
+           "location": "116.3,39.9", "level": "门址", "province": "北京市", "city": "北京市",
+           "map_url": "u", "marker_url": "u"}
+    ws = {"status": "success", "results": [
+        {"title": "中关村大街1号 某科技公司", "url": "https://example.com/a",
+         "snippet": "位于北京市海淀区中关村大街1号"},
+        {"title": "火星省月球市幻想路新闻", "url": "https://example.com/mars",
+         "snippet": "火星省月球市幻想路999号开盘"},
+    ], "source": "Bing"}
+
+    messages = [
+        {"role": "tool", "tool_call_id": "t1", "content": _json.dumps(geo, ensure_ascii=False)},
+        {"role": "tool", "tool_call_id": "t2", "content": _json.dumps(ws, ensure_ascii=False)},
+    ]
+    g = ResultGuard(llm_chat_fn=lambda m, tools=None: type("R", (), {"content": ""})())
+
+    # 场景1：引用无关结果 URL → 违规
+    out1 = ("| 序号 | 地址 | 审核结果 | 审核依据 | 审核信息源 |\n|---|---|---|---|---|\n"
+            "| 1 | 北京市海淀区中关村大街1号 | 有效地址 | 依据搜索 | https://example.com/mars |")
+    r1 = g.check(out1, messages)
+    check("T10a 引用无关搜索结果 → 违规（Rule E）", len(r1.violations) >= 1)
+
+    # 场景2：引用相关结果 URL → 无违规（仅低相关警告）
+    out2 = out1.replace("https://example.com/mars", "https://example.com/a")
+    r2 = g.check(out2, messages)
+    check("T10b 引用相关搜索结果 → 无违规（Rule E）", len(r2.violations) == 0)
+
+    # 场景3：省份冲突（geocode 北京 vs 结论浙江）→ 警告（Rule F）
+    out3 = ("| 序号 | 地址 | 审核结果 | 审核依据 | 审核信息源 |\n|---|---|---|---|---|\n"
+            "| 1 | 浙江省杭州市西湖区 | 有效地址 | 浙江省杭州市 | https://example.com/a |")
+    r3 = g.check(out3, messages)
+    check("T10c 省份与地图核验冲突 → 警告（Rule F）", any("省份" in w for w in r3.warnings))
+
+    # 场景4：输出含北京市（与 geocode 同省）→ 不误报（Rule F 自匹配）")
+    r4 = g.check(out2, messages)
+    check("T10d 同省不误报（Rule F 自匹配）", not any("省份" in w for w in r4.warnings))
+
+
+# ============================================================
 # 主流程
 # ============================================================
 def main():
@@ -361,7 +407,7 @@ def main():
     for fn in (test_frontend_helpers, test_direct_audit, test_file_upload_flow,
                test_ocr_quality, test_progress_callback, test_web_search_fallback,
                test_file_multi_batch, test_geocode_robustness, test_match_chunk_no_mismatch,
-               test_geocode_retry_degrade):
+               test_geocode_retry_degrade, test_guard_rule_e_f):
         try:
             fn()
         except Exception as e:
