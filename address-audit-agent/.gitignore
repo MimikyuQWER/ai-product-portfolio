@@ -5,8 +5,12 @@
 __pycache__/
 *.pyc
 
-# 本地审核产物（可本地保留，无需入库）
+# 本地审核产物（含审计追踪 JSON，可能含敏感数据，禁止入库）
+outputs/
 audit_output/
+
+# WorkBuddy 内部目录（记忆/缓存，禁止入库）
+.workbuddy/
 
 # 系统文件
 .DS_Store
