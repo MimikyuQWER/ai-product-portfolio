@@ -799,7 +799,7 @@
         <div class="how-step-number">02</div>
         <h4>上传表格</h4>
         <p>把 Excel 或 CSV 拖进去，Agent 逐条审核。支持批量处理。</p>
-        <p style="font-size:0.78rem;color:var(--ink-muted);margin-top:0.5rem;line-height:1.5;">没数据？先下载示例 <a href="https://raw.githubusercontent.com/MimikyuQWER/ai-product-portfolio/main/address-audit-agent/examples/test_addresses.csv" target="_blank" rel="noopener" style="color:#4f46e5;font-weight:600;">test_addresses.csv</a>，上传即看效果。</p>
+        <p style="font-size:0.78rem;color:var(--ink-muted);margin-top:0.5rem;line-height:1.5;">没数据？先下载示例 <a href="examples/test_addresses.csv" download="test_addresses.csv" target="_blank" rel="noopener" style="color:#4f46e5;font-weight:600;">test_addresses.csv</a>，上传即看效果。</p>
       </div>
       <div class="how-step">
         <div class="how-step-number">03</div>
@@ -836,7 +836,7 @@
       <div>python -m streamlit run app.py</div>
     </div>
     <p style="font-size:0.86rem;color:var(--ink-muted);max-width:560px;margin:1rem auto 0;line-height:1.7;text-align:center;">
-      没有测试数据？下载示例 <a href="https://raw.githubusercontent.com/MimikyuQWER/ai-product-portfolio/main/address-audit-agent/examples/test_addresses.csv" target="_blank" rel="noopener" style="color:#4f46e5;font-weight:600;">test_addresses.csv</a>（含 30+ 条真实格式与故意无效地址），启动后在输入框旁点 ➕ 上传即可看完整审核流程。
+      没有测试数据？下载示例 <a href="examples/test_addresses.csv" download="test_addresses.csv" target="_blank" rel="noopener" style="color:#4f46e5;font-weight:600;">test_addresses.csv</a>（含 30+ 条真实格式与故意无效地址），启动后在输入框旁点 ➕ 上传即可看完整审核流程。
     </p>
     <p style="font-size:0.82rem;color:var(--ink-muted);max-width:560px;margin:1rem auto 0;line-height:1.7;text-align:left;">
       🗺️ <strong>关于高德地图 Key：</strong>项目已预配一个共享 Key，克隆后即可直接使用。若提示 Key 不可用或配额耗尽，
@@ -880,7 +880,7 @@
 <script>
   const steps = [
     { title: '输入地址', desc: '在底部输入框粘贴要验证的地址，回车即开始审核。Agent 会检查格式是否完整，信息不够会自动追问。', code: '北京市海淀区中关村大街1号' },
-    { title: '上传文件 / 截图（可选）', desc: '点击输入框旁的➕，上传 Excel 表格或地址截图。解析后会先展示数据预览，点击「开始审核」才正式核验，避免无谓消耗。没有数据？下载示例 <a href="https://raw.githubusercontent.com/MimikyuQWER/ai-product-portfolio/main/address-audit-agent/examples/test_addresses.csv" target="_blank" rel="noopener" style="color:#4f46e5;font-weight:600;">test_addresses.csv</a>（含 30+ 条真实与无效地址），上传即可看完整审核流程。' },
+    { title: '上传文件 / 截图（可选）', desc: '点击输入框旁的➕，上传 Excel 表格或地址截图。解析后会先展示数据预览，点击「开始审核」才正式核验，避免无谓消耗。没有数据？下载示例 <a href="examples/test_addresses.csv" download="test_addresses.csv" target="_blank" rel="noopener" style="color:#4f46e5;font-weight:600;">test_addresses.csv</a>（含 30+ 条真实与无效地址），上传即可看完整审核流程。' },
     { title: '查看报告', desc: '审核完成后，对话里只显示审核概要，点击概要即可在右侧展开详细表格。每条结果都附带可点击的来源链接，可下载 CSV / MD / 审计追踪 JSON 留档。' },
   ];
   let currentStep = 0;
