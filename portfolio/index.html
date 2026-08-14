@@ -233,7 +233,7 @@
     </div>
 
     <div class="highlight-box audit">
-      <strong>实际使用中团队认可的设计：预审报告环节。</strong>Agent 在调用任何外部 API 之前，先向用户展示数据摘要——共多少条、每条完整度评估（缺省/市/区/街道/门牌号）、哪些明显无效、是否需要使用者补充信息或做核对——<strong>用户确认后才进入正式审核</strong>。这个设计避免了大量无效 API 调用和 Token 浪费，也保持了审核员对流程的控制感。
+      <strong>一个设计：预审报告环节。</strong>如果上传的文件数据量较大，为了成本和任务完成率考虑，Agent 在调用外部 API、正式开始流程之前，先向用户展示数据质量摘要——共多少条、每条完整度评估（缺省/市/区/街道/门牌号）、哪些明显无效、是否需要使用者补充信息或做核对——<strong>用户确认后才进入正式审核</strong>。这个设计避免了大量无效 API 调用和 Token 浪费，也保持了审核员对流程的控制感，并能及时察觉数据提取的完整性。
     </div>
 
     <div class="narrative">
@@ -255,12 +255,12 @@
     <div class="project-context">Harness 工程化实践 · <strong>量化投资 + AI 产品 + 知识库</strong> · 6 个 Skill + 代码硬约束体系</div>
 
     <div class="narrative">
-      <p>在日常使用 AI 的过程中，逐渐形成了一套 <strong>Harness 工程化</strong>思路：提示词约束是软性的——LLM 会静默违反规则、编造数据、跳过验证步骤。真正的可靠性来自工程代码的硬约束：定义输入输出规格 → 程序化校验结果 → 不符合要求打回重跑。不依赖 AI 自觉，而是让代码做最终把关。这套思想贯穿地址审核 Agent 的 ResultGuard（输出前四道关卡自动拦截不合规结果）和量化策略的版本管理（禁止重写回测引擎、强制从档案读取指标）。在此基础上，将日常高频场景的行为规范沉淀为 6 个结构化 Skill，固化流程、消除歧义。同一个模型，有这套 Harness 约束和没有的表现差异，远大于不同模型之间的差距。</p>
+      <p>在日常使用 AI 的过程中，形成的一套 <strong>Harness 工程化</strong>思路：提示词约束是软性的——LLM 会静默违反规则、编造数据、跳过验证步骤。真正的可靠性来自工程代码的硬约束：定义输入输出规格 → 程序化校验结果 → 不符合要求打回重跑。不依赖 AI 自觉，而是让代码做最终把关。这套思想贯穿地址审核 Agent 的 ResultGuard（输出前四道关卡自动拦截不合规结果）和量化策略的版本管理（禁止重写回测引擎、强制从档案读取指标）。在此基础上，将日常高频场景的行为规范沉淀为 6 个结构化 Skill，固化流程、消除歧义。同一个模型，有这套 Harness 约束和没有的表现差异，远大于不同模型之间的差距。</p>
     </div>
 
     <div class="highlight-box skill">
       <strong>三个领域的 Skill 体系：</strong><br>
-      ① <strong>量化投资</strong>——factor-backtest 覆盖因子研究→回测→版本管理完整链路，统一计算口径（几何年化、ddof=1），所有结果从版本档案读取不重算，严禁编造数据；cn-investment-research 提供个股五层分析、DCF 估值（中债利率）、可转债双低策略，AKShare（免费优先）+ iFinD MCP（付费兜底）双数据源<br>
+      ① <strong>量化投资</strong>——factor-backtest ，配合本地搭建的量化回测系统引擎，结合skill能力覆盖因子研究→回测→版本管理完整链路，统一计算口径（几何年化、ddof=1），所有结果从版本档案读取不重算，严禁编造数据；cn-investment-research 提供个股五层分析、DCF 估值（中债利率）、可转债双低策略，AKShare（免费优先）+ iFinD MCP（付费兜底）双数据源<br>
       ② <strong>AI 产品开发</strong>——harness-engineering 沉淀了 Agent 集群设计原则、Context 工程方法论、评测体系搭建流程，源自米哈游多 Agent 集群实战 + Anthropic/OpenAI 官方 Harness 实践<br>
       ③ <strong>知识库管理</strong>——wiki-material-ingest（研报 PDF/PPTX 双工具对比择优入库）、wiki-page-writer（结构化页面编写 + 内容溯源反编造）、feishu-qa-detector（飞书笔记自动检测疑问句 + 知识库答疑）
     </div>
@@ -283,14 +283,14 @@
     <div class="project-context">159 页 Markdown · <strong>量化金融 + AI 产品</strong>双领域 · AI 可检索、可维护、可溯源</div>
 
     <div class="narrative">
-      <p>AI 的知识不能只靠每次对话的上下文——对话结束就清零。于是搭建了一套<strong>结构化个人知识库</strong>，让 AI 能跨 session 持续积累和检索知识。不是简单的笔记堆砌，而是有 Schema、有索引、有溯源机制的工程系统。</p>
+      <p>AI 的知识不能只靠每次对话的上下文——对话结束就清零。于是搭建了一套<strong>结构化个人知识库</strong>，人机共学让 AI 能跨 session 持续积累和检索知识。不是简单的笔记堆砌，而是有 Schema、有索引、有溯源机制的工程系统。</p>
     </div>
 
     <div class="highlight-box skill">
       <strong>三层知识体系：</strong><br>
-      ① <strong>数据流入层</strong>——飞书知识库每日增量同步（SHA-256 去重）+ PDF/PPTX 研报 MarkItDown/pdfplumber 双工具对比择优转换 → 存入 raw/<br>
-      ② <strong>结构化层</strong>——4 种页面类型（Entity/Judgment/Pattern/Observation），统一 frontmatter 元数据，[[wikilink]] 交叉引用图<br>
-      ③ <strong>检索层</strong>——渐进式披露设计（大纲索引 50 行掌握全貌 → 详细内容 → raw/ 原始材料），时效性标记自动提醒过期数据
+      ① <strong>数据流入层</strong>——接入飞书CLI，人在云文档做知识管理、笔记摘抄，AI打通飞书知识库每日扫描新增的内容并同步（SHA-256 去重）+ 结合本地存储的PDF/PPTX 研报 MarkItDown/pdfplumber 双工具对比择优转换 → 存入 raw/<br>
+      ② <strong>结构化层</strong>——4 种页面类型（Entity/Judgment/Pattern/Observation），做好知识分类，统一 frontmatter 元数据，[[wikilink]] 交叉引用图<br>
+      ③ <strong>检索层</strong>——渐进式披露设计（大纲索引 50 行掌握全貌 → 详细内容 → raw/ 原始材料），时效性标记可提醒过期数据，防止信息失真
     </div>
 
     <div class="narrative">
