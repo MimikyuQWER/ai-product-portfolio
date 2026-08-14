@@ -7,7 +7,7 @@
 [![Portfolio](https://img.shields.io/badge/🎯_作品展示页-在线体验-2563eb)](https://mimikyuqwer.github.io/ai-product-portfolio/)
 [![VUR Demo](https://img.shields.io/badge/🎭_虚拟用户访谈-秒开体验-15803d)](https://mimikyuqwer.github.io/ai-product-portfolio/visual_user_research/%E8%99%9A%E6%8B%9F%E4%BA%BAdemoV7.html)
 
-复旦大学 · 腾讯微信支付风控 + 米哈游原神国际化 实习期间独立完成的 AI 产品项目。
+复旦大学 · 腾讯微信支付风控 + 米哈游原神国际化 实习期间完成的 AI 产品项目。
 
 ---
 

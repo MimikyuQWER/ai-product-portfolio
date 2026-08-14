@@ -60,7 +60,7 @@ const doc = new Document({
           new TextRun({ text: "米哈游 · 原神国际化", size: 20, font: "Microsoft YaHei", color: "2563eb" }),
         ] }),
       new Paragraph({ alignment: AlignmentType.CENTER, spacing: { after: 400 },
-        children: [new TextRun({ text: "以下两个项目均在实习期间独立完成，已在实际业务中投入使用。Demo 版本已去除敏感业务信息，保留完整产品设计逻辑。", size: 18, font: "Microsoft YaHei", color: "888888", italics: true })] }),
+        children: [new TextRun({ text: "以下两个项目均在实习期间完成。Demo 版本已去除敏感业务信息，保留完整产品设计逻辑。", size: 18, font: "Microsoft YaHei", color: "888888", italics: true })] }),
 
       // ═══════════ PROJECT 1 ═══════════
       new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun("项目一 · 虚拟用户访谈平台")] }),
@@ -133,7 +133,7 @@ const doc = new Document({
       // ── Footer note ──
       new Paragraph({ spacing: { before: 300 }, alignment: AlignmentType.CENTER,
         border: { top: { style: BorderStyle.SINGLE, size: 1, color: "cccccc", space: 8 } },
-        children: [new TextRun({ text: "两个项目均已在实际业务中投入使用。Demo 版本已去除敏感业务信息，保留完整产品设计逻辑。", size: 18, font: "Microsoft YaHei", color: "999999", italics: true })] }),
+        children: [new TextRun({ text: "Demo 版本已去除敏感业务信息，保留完整产品设计逻辑。", size: 18, font: "Microsoft YaHei", color: "999999", italics: true })] }),
     ]
   }]
 });
