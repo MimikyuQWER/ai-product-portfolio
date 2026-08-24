@@ -1,97 +1,59 @@
 # 张逸帆 · AI 产品作品集
 
-> **🌐 在线体验 → [mimikyuqwer.github.io/ai-product-portfolio](https://mimikyuqwer.github.io/ai-product-portfolio/)**
->
-> 点击上方链接即可查看作品展示页，无需克隆仓库。
+复旦大学 2026 届硕士，求职方向为 AI 产品经理。作品集包含两项在实习团队实际使用的 AI 产品，以及两项个人工程项目；重点呈现我如何识别业务瓶颈、把人的判断标准转译为 AI 工作流，并通过评测、审计、溯源和安全降级提高结果可靠性。
 
-[![Portfolio](https://img.shields.io/badge/🎯_作品展示页-在线体验-2563eb)](https://mimikyuqwer.github.io/ai-product-portfolio/)
-[![VUR Demo](https://img.shields.io/badge/🎭_虚拟用户访谈-秒开体验-15803d)](https://mimikyuqwer.github.io/ai-product-portfolio/visual_user_research/%E8%99%9A%E6%8B%9F%E4%BA%BAdemoV7.html)
+**[打开在线作品集总览](https://mimikyuqwer.github.io/ai-product-portfolio/portfolio/index.html)**
 
-复旦大学 · 腾讯微信支付风控 + 米哈游原神国际化 实习期间完成的 AI 产品项目。
+## 推荐浏览路线
 
----
+| 项目 | 先看什么 | 如何体验 |
+|---|---|---|
+| 01 · 虚拟用户访谈平台 | [项目介绍页](https://mimikyuqwer.github.io/ai-product-portfolio/visual_user_research/landing.html) | [打开交互 Demo](https://mimikyuqwer.github.io/ai-product-portfolio/visual_user_research/虚拟人demoV7.html)，无需安装 |
+| 02 · 地址信息审核 Agent | [项目演示页](https://mimikyuqwer.github.io/ai-product-portfolio/address-audit-agent/landing.html) | 在线看完整流程；本地应用按 [README](address-audit-agent/README.md) 启动 |
+| 03 · 每日 AI 资讯日报 | [在线体验 Demo](https://mimikyuqwer.github.io/ai-product-portfolio/daily-news-demo/) | 浏览、编辑、撤销、恢复和导出均可直接体验 |
+| 04 · 本地结构化知识库 | [架构与工程说明](knowledge-wiki-system/README.md) | 阅读 [设计思路](knowledge-wiki-system/设计思路详解.md)、[Schema](knowledge-wiki-system/SCHEMA.md) 与 [脱敏样例](knowledge-wiki-system/samples/README.md) |
 
-## 🎭 虚拟用户访谈平台
+## 01 · 虚拟用户访谈平台
 
-**米哈游 · 原神国际化用户研究** | 纯前端单文件 · 离线可用 · 无需部署
+在米哈游原神国际化用户研究场景中，用回收的访谈结果与 BI 数据为真实受访者建立 AI 数字分身。专业用研团队调教分析 Skill、产出中间层研报，业务方和管理层可以直接向数字分身发起对话，获取一手用户洞察。
 
-用 28 位基于真实玩家数据建模的 AI 数字分身，替代传统跨国用户访谈的排期瓶颈。
+核心设计包括三级回答体系（原文可答、证据可推演、证据不足直说不编造）、端到端与过程评测体系，以及独立审计 Agent。项目基于真实玩家数据建模，已作为访谈前的情景预演工具在用研团队实际使用。公开 Demo 已脱敏。
 
-| 入口 | 说明 |
-|------|------|
-| [🌐 在线体验 Demo](https://mimikyuqwer.github.io/ai-product-portfolio/visual_user_research/%E8%99%9A%E6%8B%9F%E4%BA%BAdemoV7.html) | GitHub Pages 直接打开，秒开即用 |
-| [📄 产品介绍页](https://mimikyuqwer.github.io/ai-product-portfolio/visual_user_research/landing.html) | 三级回答体系 + 品质保障设计 |
+## 02 · 地址信息审核 Agent
 
----
+面向微信支付等金融法律 KYC 场景，把审核员原本逐条使用地图和搜索引擎核验地址的流程，重构为 LLM + 高德地图 + 联网搜索三重交叉验证的 ReAct Agent。项目从提示词实验迭代为完整审核系统，准确率由约 80% 提升到约 95%，单条审核效率提升约 3 倍。
 
-## 📍 地址信息审核 Agent
+设计重点不是让模型直接给结论，而是先输出预审报告：展示数据摘要、完整度、明显无效项与待补信息，用户确认后才调用外部工具。最终依据 5 条量化标准输出可追溯审核报告。项目已在腾讯金融业务团队作为客户 KYC 审核辅助工具实际使用；公开版本仅含脱敏样例。
 
-**腾讯 · 微信支付 KYC 风控** | Python + Streamlit · ReAct Agent
+## 03 · 每日 AI 资讯日报
 
-LLM + 高德地图 + 联网搜索三重交叉验证，单条地址审核效率提升约 3 倍，准确率约 95%。
+将 RSS 与网站信息源的抓取、字段标准化、去重、正文清洗、图片本地化和 AI 中文摘要连接成完整链路，最终形成每天 5–10 分钟可以读完的结构化日报。作品集公开 18 个固定内容快照与 401 张本地新闻图片，以稳定复现优先。
 
-```bash
-cd address-audit-agent
-pip install -r requirements.txt
-python -m streamlit run app.py
-# 🔑 高德地图 Key 已预配，你只需填入自己的 DeepSeek/OpenAI API Key
+在线版可以直接切换日期、阅读目录、编辑 Markdown、保存浏览器草稿、撤销 / 重做、恢复原始快照，并导出 Markdown 或独立 HTML。AI 润色属于可选的本地能力：基础体验不需要 API Key，也不会覆盖固定快照。
+
+本地运行：
+
+```powershell
+cd daily-news-main/demo
+npm install
+npm run demo
 ```
 
-| 入口 | 说明 |
-|------|------|
-| [📄 产品介绍页](https://mimikyuqwer.github.io/ai-product-portfolio/address-audit-agent/landing.html) | 架构图 + 审核五标准 + 效果对比 |
-| [📖 完整文档](address-audit-agent/README.md) | 快速开始 + Agent 架构 + 部署指南 |
-| [📋 迭代记录](address-audit-agent/SPEC.md) | 每次重大变更的可追溯记录 |
+启动后访问 `http://127.0.0.1:4173`。直接双击源码目录中的 `index.html` 会显示启动提示，而不是空白页。
+
+## 04 · 本地结构化知识库系统
+
+159 页 Markdown，覆盖量化金融与 AI 产品两个领域。系统不是笔记堆砌，而是由数据流入层、结构化层和检索层组成的工程体系：素材经过去重和质量检查进入只读原始层，再按 Entity / Judgment / Pattern / Observation 四类 Schema 沉淀，并通过索引、wikilink、时效标记和渐进式披露供 AI 检索。
+
+核心约束是每条事实性陈述必须可溯源到原文；不确定内容标记“待补充”，不允许用常识填空。仓库公开架构文档、同步与入库脚本以及四类脱敏样例，不包含个人知识正文、账号凭证或金融数据配置。
+
+## 仓库边界
+
+- 两个实习项目均已脱敏，保留产品逻辑、交互与可靠性设计。
+- AI 日报在线版使用固定快照；抓取器、数据库、调度器和发布账号不在公开 Demo 中。
+- 知识库仅公开工程规范、工具与脱敏样例。
+- 需要模型、地图或搜索服务的完整能力，均由使用者在本地自行配置密钥。
 
 ---
 
-## 📰 每日 AI 资讯聚合系统
-
-**PrismFlowAgent（流光）** | Node.js + React + Fastify · Docker 部署
-
-基于 RSS 订阅 + AI 摘要的每日资讯自动生成与推送系统。
-
-```bash
-cd daily-news-main
-npm install && npm --prefix frontend install
-JWT_SECRET=local-dev-secret PORT=3456 npm run dev
-```
-
----
-
-## 🚀 面试官快速体验
-
-| 项目 | 体验方式 | 时间 |
-|------|----------|------|
-| 虚拟用户访谈 | [在线秒开](https://mimikyuqwer.github.io/ai-product-portfolio/visual_user_research/%E8%99%9A%E6%8B%9F%E4%BA%BAdemoV7.html) | 0 秒 |
-| 地址审核 Agent | `pip install` + `streamlit run`（需 Python） | 2 分钟 |
-| 每日 AI 资讯 | `npm install` + Docker | 10 分钟 |
-
----
-
-张逸帆 · 复旦大学 · 2026
-
----
-
-## 🤖 AI 开发基础设施
-
-### Claude Code Skills — 日常 AI 协作的工程底座
-
-在以上项目开发过程中沉淀了 **6 个自建 Claude Code Skill**，覆盖量化投资、AI 产品开发、知识库管理三个领域。每个 Skill 本质是一套结构化的行为约束——定义 AI 在特定场景下该做什么、不该做什么、如何验证——确保 AI 输出可复现、可溯源。
-
-| Skill | 领域 | 一句话 |
-|-------|------|--------|
-| [factor-backtest](skills/factor-backtest/SKILL.md) | 量化投资 | 因子研究→回测→版本管理完整链路，统一计算口径，不可变结果存档 |
-| [cn-investment-research](skills/cn-investment-research/SKILL.md) | 量化投资 | A股/债券/衍生品投研分析，AKShare+iFinD 双数据源，中金研报格式 |
-| [harness-engineering](skills/harness-engineering/SKILL.md) | AI 产品 | Agent 集群设计 + Context 工程 + 评测体系，来自米哈游实战 + 官方实践 |
-| [wiki-material-ingest](skills/wiki-material-ingest/SKILL.md) | 知识库 | 研报 PDF/PPTX 双工具对比择优 → Markdown 入库 |
-| [wiki-page-writer](skills/wiki-page-writer/SKILL.md) | 知识库 | 结构化 Wiki 页面编写规范，强制内容溯源反编造 |
-| [feishu-qa-detector](skills/feishu-qa-detector/SKILL.md) | 知识库 | 飞书笔记自动检测疑问句，知识库 + 实时数据回答 |
-
-详见 [skills/README.md](skills/README.md)。
-
-### 📚 结构化个人知识库
-
-159 页 Markdown，量化金融 + AI 产品双领域，AI 可检索可维护。飞书知识库每日增量同步 + 研报自动转换入库。渐进式披露设计（大纲索引 → 详情 → 原始材料）让 AI 在 50 行内掌握任意页面骨架。
-
-详见 [knowledge-wiki-system/README.md](knowledge-wiki-system/README.md)。
+© 2026 张逸帆 · 复旦大学 · AI 产品作品集

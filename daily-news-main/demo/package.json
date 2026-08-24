@@ -1,0 +1,36 @@
+{
+  "name": "ai-daily-news-demo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "面向校招展示的 AI 资讯日报离线快照 Demo",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "node server.mjs --dev",
+    "build": "tsc -b && vite build",
+    "start": "node server.mjs",
+    "demo": "npm run build && npm start",
+    "test": "node --test tests/*.test.mjs",
+    "check": "npm run build && npm test"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "dotenv": "latest",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-markdown": "latest",
+    "rehype-raw": "latest",
+    "rehype-sanitize": "^6.0.0",
+    "remark-gfm": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "typescript": "latest"
+  }
+}

@@ -4,6 +4,49 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>张逸帆 · AI 产品作品集</title>
+<meta name="description" content="复旦大学 AI 产品经理作品集：虚拟用户访谈平台、地址信息审核 Agent、每日 AI 资讯日报与本地结构化知识库系统。">
+<meta property="og:title" content="张逸帆 · AI 产品作品集">
+<meta property="og:description" content="复旦大学 AI 产品经理 · 腾讯微信支付风控 + 米哈游原神国际化实习。4 个项目覆盖用户研究、KYC Agent、信息产品与人机共读知识工程。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mimikyuqwer.github.io/ai-product-portfolio/">
+<meta property="og:locale" content="zh_CN">
+<meta name="theme-color" content="#f8f9fb">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "张逸帆",
+  "jobTitle": "AI Product Manager",
+  "alumniOf": "复旦大学",
+  "worksFor": ["腾讯", "米哈游"],
+  "knowsAbout": ["LLM", "AI Agent", "产品设计", "评测体系", "用户研究", "KYC 风控"],
+  "url": "https://mimikyuqwer.github.io/ai-product-portfolio/",
+  "hasPart": [
+    {
+      "@type": "CreativeWork",
+      "name": "虚拟用户访谈平台",
+      "description": "基于真实玩家数据建模 28 位 AI 数字分身，替代传统跨国用户访谈的排期瓶颈，三级回答体系 + 黄金评测集 + 独立审计 Agent",
+      "url": "https://mimikyuqwer.github.io/ai-product-portfolio/visual_user_research/landing.html"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "地址信息审核 Agent",
+      "description": "LLM + 高德地图 + 联网搜索三重交叉验证的 ReAct Agent，地址审核准确率约 95%，效率提升约 3 倍",
+      "url": "https://mimikyuqwer.github.io/ai-product-portfolio/address-audit-agent/landing.html"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "每日 AI 资讯日报",
+      "description": "将多来源 AI 资讯整理为可阅读、可编辑、可导出的固定快照日报"
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "本地结构化知识库系统",
+      "description": "面向人机共读的结构化知识协议、渐进式检索与可溯源知识工作流"
+    }
+  ]
+}
+</script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -17,7 +60,6 @@
     --border-light: #eff0f4;
     --radius: 8px;
     --radius-lg: 12px;
-    /* Project accents */
     --vur-blue: #2563eb;
     --vur-blue-light: #eff4ff;
     --audit-gold: #b8860b;
@@ -26,85 +68,140 @@
     --skill-purple-light: #f5f3ff;
   }
 
+  html { scroll-behavior: smooth; }
+
   body {
     font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
     background: var(--bg);
     color: var(--ink);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    font-size: 14.5px;
+    font-size: 15px;
   }
 
-  .container { max-width: 780px; margin: 0 auto; padding: 0 24px; }
+  .container { max-width: 820px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Top Nav ── */
+  .nav {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(255,255,255,0.94);
+    border-bottom: 1px solid var(--border-light);
+  }
+  .nav-inner {
+    max-width: 820px; margin: 0 auto; padding: 0 24px;
+    display: flex; align-items: center; gap: 22px;
+    height: 48px; overflow-x: auto; white-space: nowrap;
+  }
+  .nav-brand { font-size: 13px; font-weight: 500; color: var(--ink); margin-right: auto; }
+  .nav a {
+    font-size: 13px; color: var(--ink-3); text-decoration: none;
+    transition: color 0.15s;
+  }
+  .nav a:hover { color: var(--ink); }
 
   /* ── Header ── */
-  .header { padding: 60px 0 40px; }
-  .header-name {
-    font-size: 28px; font-weight: 700;
-    letter-spacing: -0.015em; margin-bottom: 10px;
+  .header { padding: 56px 0 32px; }
+  .header-kicker {
+    font-size: 12.5px; font-weight: 500; letter-spacing: 0.08em;
+    color: var(--ink-3); text-transform: uppercase; margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 34px; font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.25; margin-bottom: 10px;
     text-wrap: balance;
   }
-  .header-school { font-size: 14.5px; color: var(--ink-3); margin-bottom: 10px; }
-  .header-companies { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .header-role { font-size: 16px; color: var(--ink-2); margin-bottom: 14px; }
+  .header-companies { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
   .company-badge {
     font-size: 12.5px; font-weight: 600; padding: 5px 12px;
     border-radius: 999px;
   }
   .company-badge.tencent { background: #ecfdf3; color: #15803d; }
   .company-badge.mihoyo { background: #eff4ff; color: #2563eb; }
+  .header-links { display: flex; gap: 16px; font-size: 13px; margin-bottom: 26px; }
+  .header-links a { color: var(--ink-3); text-decoration: none; text-underline-offset: 3px; }
+  .header-links a:hover { color: var(--ink); text-decoration: underline; }
 
   .header-summary {
-    font-size: 14px; color: var(--ink-2);
-    line-height: 1.75; padding: 16px 20px;
+    font-size: 14.5px; color: var(--ink-2);
+    line-height: 1.9; padding: 20px 24px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
   }
   .header-summary strong { color: var(--ink); }
+  .header-summary p { margin: 0; text-indent: 2em; }
+  .header-summary p + p { margin-top: 10px; }
 
-  /* ── Divider ── */
-  .divider {
-    height: 1px; background: var(--border-light);
-    margin: 36px 0;
+  /* ── Project Card ── */
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 34px 36px;
+    margin-bottom: 28px;
   }
-
-  /* ── Project Section ── */
-  .project { margin-bottom: 48px; }
-
-  .project-title {
-    font-size: 20px; font-weight: 700;
-    letter-spacing: -0.01em; margin-bottom: 4px;
-    text-wrap: balance;
+  .project-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .project-dot { width: 10px; height: 10px; border-radius: 50%; flex: none; align-self: center; }
+  .project-dot.vur { background: var(--vur-blue); }
+  .project-dot.audit { background: var(--audit-gold); }
+  .project-dot.skill { background: var(--skill-purple); }
+  h2 {
+    font-size: 21px; font-weight: 700;
+    letter-spacing: -0.01em; text-wrap: balance;
   }
   .project-context {
-    font-size: 13px; color: var(--ink-3); margin-bottom: 20px;
+    font-size: 13px; color: var(--ink-3); margin: 6px 0 16px;
   }
   .project-context strong { color: var(--ink-2); font-weight: 600; }
 
-  /* ── Narrative ── */
-  .narrative { margin-bottom: 22px; }
+  .narrative { margin-bottom: 18px; }
   .narrative p, .narrative li {
-    font-size: 14px; color: var(--ink-2); line-height: 1.8;
+    font-size: 14.5px; color: var(--ink-2); line-height: 1.9;
   }
-  .narrative ul { padding-left: 18px; }
-  .narrative li { margin-bottom: 6px; }
+  .narrative p { margin: 0 0 12px; text-indent: 2em; }
+  .narrative p:last-child { margin-bottom: 0; }
+  .narrative ul, .narrative ol { padding-left: 28px; }
+  .narrative li { margin-bottom: 7px; padding-left: 4px; }
+
+  h3 {
+    font-size: 15px; font-weight: 600; color: var(--ink);
+    margin: 20px 0 10px;
+  }
 
   .highlight-box {
-    padding: 14px 18px;
+    padding: 18px 22px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    margin: 14px 0;
-    font-size: 13.5px; color: var(--ink-2); line-height: 1.75;
+    margin: 14px 0 18px;
+    font-size: 14px; color: var(--ink-2); line-height: 1.9;
   }
   .highlight-box.vur  { border-left: 3px solid var(--vur-blue);  background: var(--vur-blue-light); }
   .highlight-box.audit { border-left: 3px solid var(--audit-gold); background: var(--audit-gold-light); }
   .highlight-box.skill { border-left: 3px solid var(--skill-purple); background: var(--skill-purple-light); }
+  .highlight-box strong { color: var(--ink); }
+
+  .design-list { list-style: none; padding-left: 0 !important; margin-top: 8px; }
+  .design-list li {
+    padding: 9px 0 9px 26px; position: relative;
+    border-bottom: 1px dashed var(--border-light);
+    font-size: 14px; color: var(--ink-2); line-height: 1.85;
+  }
+  .design-list li:last-child { border-bottom: none; }
+  .design-list li::before {
+    content: ""; position: absolute; left: 4px; top: 15px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--vur-blue);
+  }
+  .design-list.audit li::before { background: var(--audit-gold); }
+  .design-list.skill li::before { background: var(--skill-purple); }
+  .design-list li strong { color: var(--ink); }
 
   /* ── Flow ── */
   .flow {
     display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
-    margin: 12px 0;
+    margin: 12px 0 16px;
   }
   .flow-step {
     padding: 6px 14px; background: var(--surface);
@@ -114,7 +211,7 @@
   .flow-arrow { font-size: 12px; color: var(--ink-3); }
 
   /* ── CTA ── */
-  .cta-row { display: flex; gap: 10px; margin-top: 18px; align-items: center; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; align-items: center; }
   .cta {
     display: inline-flex; align-items: center; gap: 6px;
     padding: 9px 20px; border-radius: 999px;
@@ -126,56 +223,73 @@
   .cta.primary:hover { background: #32353d; }
   .cta.ghost { background: var(--surface); border: 1px solid var(--border); color: var(--ink); }
   .cta.ghost:hover { background: #f5f5f8; }
+  .cta-note { font-size: 12.5px; color: var(--ink-3); }
 
   /* ── Footer ── */
   .footer {
-    padding: 36px 0 52px; margin-top: 8px;
+    padding: 36px 0 56px; margin-top: 8px;
     border-top: 1px solid var(--border-light);
-    font-size: 13px; color: var(--ink-3); line-height: 1.8;
+    font-size: 13px; color: var(--ink-3); line-height: 1.9;
   }
   .footer a { color: var(--ink-2); text-underline-offset: 3px; }
 
-  @media (max-width: 600px) {
-    .header { padding: 36px 0 28px; }
-    .header-name { font-size: 24px; }
-    .project-title { font-size: 18px; }
-    .container { padding: 0 18px; }
+  @media (max-width: 700px) {
+    .header { padding: 40px 0 26px; }
+    h1 { font-size: 27px; }
+    .project-card { padding: 22px 20px; }
+    .container, .nav-inner { padding: 0 16px; }
+    .nav-brand { display: none; }
   }
 </style>
 </head>
 <body>
-<div class="container">
+<nav class="nav" aria-label="页面导航">
+  <div class="nav-inner">
+    <span class="nav-brand">张逸帆 · AI 产品作品集</span>
+    <a href="#vur">虚拟用户访谈</a>
+    <a href="#audit">地址审核 Agent</a>
+    <a href="#daily">AI 资讯日报</a>
+    <a href="#wiki">结构化知识库</a>
+    <a href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank" rel="noopener">GitHub</a>
+  </div>
+</nav>
+
+<main class="container">
 
   <!-- ═══════════ HEADER ═══════════ -->
   <header class="header">
-    <div class="header-name">张逸帆</div>
-    <div class="header-school">复旦大学</div>
+    <p class="header-kicker">AI 产品作品集</p>
+    <h1>张逸帆</h1>
+    <p class="header-role">AI 产品经理 · 复旦大学 2026</p>
     <div class="header-companies">
       <span class="company-badge tencent">腾讯 · 微信支付风控</span>
       <span class="company-badge mihoyo">米哈游 · 原神国际化</span>
     </div>
+    <div class="header-links">
+      <a href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank" rel="noopener">GitHub 仓库</a>
+      <a href="https://github.com/MimikyuQWER/ai-product-portfolio#readme" target="_blank" rel="noopener">阅读与启动指南</a>
+    </div>
     <div class="header-summary">
-      在以上两段实习中完成两个 AI 产品项目。<strong>虚拟用户访谈平台</strong>面向原神海外玩家用户调研场景，用基于真实玩家数据建模的AI数字分身嵌入业务流程，帮助一线团队和高层管理者了解真实玩家画像；<strong>地址审核 Agent</strong>面向微信支付等金融法律 KYC 场景，通过 LLM + 高德地图 + 联网搜索三重交叉验证，将地址审核效率提升约 3 倍，准确率达95%+。以下 Demo 已去除敏感业务信息，保留完整的产品设计与交互逻辑。
+      <p>在以上两段实习中独立完成两个 AI 产品项目，均在业务团队实际投入使用。<strong>虚拟用户访谈平台</strong>面向原神海外玩家用户调研场景，用基于真实玩家数据建模的 AI 数字分身嵌入业务流程，帮助一线团队和高层管理者了解真实玩家画像；<strong>地址审核 Agent</strong>面向微信支付等金融法律 KYC 场景，通过 LLM + 高德地图 + 联网搜索三重交叉验证，将地址审核效率提升约 3 倍，准确率达 95%+。以下 Demo 已去除敏感业务信息，保留完整的产品设计与交互逻辑。</p>
+      <p>作品集同时收录两个个人工程项目：<strong>每日 AI 资讯日报</strong>验证从信息聚合到阅读、编辑与导出的完整内容工作流；<strong>结构化知识库系统</strong>将长期知识沉淀设计成有 Schema、有索引、有时效标记和溯源机制的人机协作系统。</p>
     </div>
   </header>
 
-  <div class="divider"></div>
-
   <!-- ═══════════ PROJECT 1: VUR ═══════════ -->
-  <section class="project">
-    <div class="project-title">虚拟用户访谈平台</div>
-    <div class="project-context">米哈游 · <strong>原神国际化用户研究</strong> · 纯前端单文件 · 离线可用</div>
+  <section class="project-card" id="vur" aria-labelledby="vur-title">
+    <div class="project-head">
+      <span class="project-dot vur" aria-hidden="true"></span>
+      <h2 id="vur-title">虚拟用户访谈平台</h2>
+    </div>
+    <p class="project-context">米哈游 · <strong>原神国际化用户研究</strong> · 纯前端单文件 · 离线可用</p>
 
     <div class="narrative">
       <p><strong>传统模式：</strong>真人访谈真人 → 受人力与语言限制速度慢 → 专业用研团队分析写报告 → 报告完成后原始数据不再利用 → 业务团队只能看到「二手信息」。</p>
-    </div>
-
-    <div class="narrative">
       <p><strong>AI 时代的机遇：</strong>AI 访谈产品提升了效率与产出量，但用研团队面对激增的访谈数据，<strong>分析能力成为新瓶颈</strong>。</p>
     </div>
 
     <div class="highlight-box vur">
-      <strong>本项目的思路：</strong>AI访谈真人 - 用回收的访谈结果与 BI 数据为真实受访者建立 <strong>AI 数字分身</strong>——专业用研团队调教分析 Skill、产出中间层研报 → 激活数据资产 → 业务方和管理层直接对数字分身发起对话，获取一手用户洞察。目标闭环：AI 访谈真人 → 数据回收 → 用研产出报告并持续调优 → 数字分身作为资产持续迭代。
+      <strong>本项目的思路：</strong>AI 访谈真人 - 用回收的访谈结果与 BI 数据为真实受访者建立 <strong>AI 数字分身</strong>——专业用研团队调教分析 Skill、产出中间层研报 → 激活数据资产 → 业务方和管理层直接对数字分身发起对话，获取一手用户洞察。目标闭环：AI 访谈真人 → 数据回收 → 用研产出报告并持续调优 → 数字分身作为资产持续迭代。
     </div>
 
     <div class="narrative">
@@ -193,28 +307,31 @@
       </div>
     </div>
 
-    <div class="highlight-box vur">
-      <strong>三个核心设计：</strong><br>
-      ① <strong>三级回答体系</strong>——原文可答 → 证据可推演 → 证据不足直说不编造，保证AI每条回答可追溯、可验证，减少黑盒不信任感<br>
-      ② <strong>端到端+过程评测体系</strong>——建立黄金评测集，从结果端和每个中间环节设计验收标准，每次迭代保证黄金评测集效果不退步<br>
-      ③ <strong>独立审计 Agent</strong>——主 Agent 回答后由独立审计 Agent 二次评估，bad case 分类归档、针对性调优
-    </div>
+    <h3>三个核心设计</h3>
+    <ul class="design-list">
+      <li><strong>三级回答体系</strong>——原文可答 → 证据可推演 → 证据不足直说不编造，保证 AI 每条回答可追溯、可验证，减少黑盒不信任感</li>
+      <li><strong>端到端 + 过程评测体系</strong>——建立黄金评测集，从结果端和每个中间环节设计验收标准，每次迭代保证黄金评测集效果不退步</li>
+      <li><strong>独立审计 Agent</strong>——主 Agent 回答后由独立审计 Agent 二次评估，bad case 分类归档、针对性调优</li>
+    </ul>
 
     <div class="narrative">
-      <p>基于上千名真实玩家的访谈与 BI 数据 1:1 建模，每位虚拟玩家包含 20+ 档案字段（UID、付费金额、游戏时长、流失原因等）。支持 7 维度筛选（国家/性别/年龄/平台/付费等级/所属游戏/冒险等级），覆盖美国、英国、日本、俄罗斯等区域。</p>
+      <p>基于上千名真实玩家的访谈与 BI 数据 1:1 建模，每位虚拟玩家包含 20+ 档案字段（UID、付费金额、游戏时长、流失原因等）。支持 7 维度筛选（国家/性别/年龄/平台/付费等级/所属游戏/冒险等级），覆盖美国、英国、日本、俄罗斯等区域。已在米哈游用研团队作为访谈前的情景预演工具实际使用。</p>
     </div>
 
     <div class="cta-row">
-      <a class="cta ghost" href="../visual_user_research/landing.html" target="_blank">项目介绍页</a>
-      <a class="cta primary" href="../visual_user_research/虚拟人demoV7.html" target="_blank">打开 Demo</a>
-      <span style="font-size:12.5px;color:var(--ink-3);">纯前端 · 双击即开 · 离线可用</span>
+      <a class="cta ghost" href="../visual_user_research/landing.html" target="_blank" rel="noopener">项目介绍页</a>
+      <a class="cta primary" href="../visual_user_research/虚拟人demoV7.html" target="_blank" rel="noopener">打开 Demo</a>
+      <span class="cta-note">纯前端 · 双击即开 · 离线可用</span>
     </div>
   </section>
 
   <!-- ═══════════ PROJECT 2: ADDRESS AUDIT ═══════════ -->
-  <section class="project">
-    <div class="project-title">地址信息审核 Agent</div>
-    <div class="project-context">腾讯 · <strong>微信支付 KYC 风控</strong> · Python + Streamlit · ReAct Agent 架构</div>
+  <section class="project-card" id="audit" aria-labelledby="audit-title">
+    <div class="project-head">
+      <span class="project-dot audit" aria-hidden="true"></span>
+      <h2 id="audit-title">地址信息审核 Agent</h2>
+    </div>
+    <p class="project-context">腾讯 · <strong>微信支付 KYC 风控</strong> · Python + Streamlit · ReAct Agent 架构</p>
 
     <div class="narrative">
       <p>微信支付在个人客户身份识别（KYC）环节，需要核验客户提交的居住或联系地址是否真实存在。传统做法是审核员逐条在百度地图和搜索引擎上交叉比对——<strong>一条地址平均耗时 3-5 分钟，批量审核数百条地址时效率极低，且不同审核员的判断标准不统一</strong>。项目初期只是一个大模型提示词实验，经过多轮数据驱动的迭代后，演进为一个完整的 ReAct Agent 系统。<strong>该方法论具有通用性</strong>，同样可扩展到商户资质审核、法律文书地址核验、企业注册信息验证等场景。</p>
@@ -225,105 +342,120 @@
     </div>
 
     <div class="narrative">
-      <p>迭代过程中积累的核心经验——<strong>判断标准定义越细致，模型判断越准确</strong>——最终沉淀为 5 条量化审核标准：完整度≥6 级、可搜索核实、定位准确、门牌号可查、特定地点豁免。每条标准都包含正反面示例和边界 case（如「门牌号符合常见规范≠真实存在」「附近/旁边等模糊方位词→判不确定」），并给模型保留「不确定」的输出余地，严禁编造和假设推断。这些标准后来被重构为 ReAct Agent 的 System Prompt。</p>
+      <p>迭代过程中积累的核心经验——<strong>判断标准定义越细致，模型判断越准确</strong>——最终沉淀为 5 条量化审核标准，每条都包含正反面示例和边界 case，并给模型保留「不确定」的输出余地，严禁编造和假设推断：</p>
+      <ul class="design-list audit">
+        <li><strong>完整度 ≥ 6 级</strong>——省/市/区/街道/门牌号逐级评估</li>
+        <li><strong>可搜索核实</strong>——关键要素能在公开渠道检索到</li>
+        <li><strong>定位准确</strong>——地图坐标与地址描述一致</li>
+        <li><strong>门牌号可查</strong>——注意「门牌号符合常见规范 ≠ 真实存在」</li>
+        <li><strong>特定地点豁免</strong>——「附近/旁边」等模糊方位词 → 判不确定</li>
+      </ul>
+      <p>这些标准后来被重构为 ReAct Agent 的 System Prompt。</p>
     </div>
 
     <div class="narrative">
-      <p>技术架构上，Agent 按 ReAct 模式（Think → Act → Observe → Answer）执行。每条地址先由 LLM 做格式和完整度初判，信息不足时主动追问；确认后并行调用高德地图 geocode 和 Bing 搜索进行交叉验证；最终对照 5 标准输出四列审核报告（序号、地址、结论、依据+可点击链接）。支持单条输入和 Excel 批量上传，审核结果汇总为结构化表格。</p>
+      <p>技术架构上，Agent 按 ReAct 模式（Think → Act → Observe → Answer）执行。每条地址先由 LLM 做格式和完整度初判，信息不足时主动追问；确认后并行调用高德地图 geocode 和 Bing 搜索进行交叉验证；最终对照 5 标准输出四列审核报告（序号、地址、结论、依据 + 可点击链接）。支持单条输入和 Excel 批量上传，审核结果汇总为结构化表格。</p>
     </div>
 
     <div class="highlight-box audit">
-      <strong>一个设计：预审报告环节。</strong>如果上传的文件数据量较大，为了成本和任务完成率考虑，Agent 在调用外部 API、正式开始流程之前，先向用户展示数据质量摘要——共多少条、每条完整度评估（缺省/市/区/街道/门牌号）、哪些明显无效、是否需要使用者补充信息或做核对——<strong>用户确认后才进入正式审核</strong>。这个设计避免了大量无效 API 调用和 Token 浪费，也保持了审核员对流程的控制感，并能及时察觉数据提取的完整性。
+      <strong>实际使用中团队认可的设计：预审报告环节。</strong>Agent 在调用任何外部 API 之前，先向用户展示数据摘要——共多少条、每条完整度评估（缺省/市/区/街道/门牌号）、哪些明显无效、是否需要使用者补充信息或做核对——<strong>用户确认后才进入正式审核</strong>。这个设计避免了大量无效 API 调用和 Token 浪费，也保持了审核员对流程的控制感。
     </div>
 
     <div class="narrative">
-      <p>当前 Demo 版本使用示例数据展示审核流程与判断逻辑，核心 Agent 架构与生产版本一致。</p>
+      <p>已在腾讯金融业务团队作为客户 KYC 审核辅助工具实际使用，处理过真实地址数据。当前 Demo 版本使用示例数据展示审核流程与判断逻辑，核心 Agent 架构与生产版本一致。</p>
     </div>
 
     <div class="cta-row">
-      <a class="cta primary" href="../address-audit-agent/landing.html" target="_blank">项目介绍页</a>
-      <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank">GitHub 仓库</a>
-      <span style="font-size:12.5px;color:var(--ink-3);">克隆后 pip install + 填入 AI Key 即用</span>
+      <a class="cta primary" href="../address-audit-agent/landing.html" target="_blank" rel="noopener">项目演示</a>
+      <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio/tree/main/address-audit-agent" target="_blank" rel="noopener">完整启动说明</a>
+      <span class="cta-note">演示页离线可看 · 完整应用按 README 启动</span>
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <!-- ═══════════ SECTION: SKILLS ═══════════ -->
-  <section class="project">
-    <div class="project-title">AI 开发基础设施</div>
-    <div class="project-context">Harness 工程化实践 · <strong>量化投资 + AI 产品 + 知识库</strong> · 6 个 Skill + 代码硬约束体系</div>
+  <!-- ═══════════ PROJECT 3: AI DAILY ═══════════ -->
+  <section class="project-card" id="daily" aria-labelledby="daily-title">
+    <div class="project-head">
+      <span class="project-dot skill" aria-hidden="true"></span>
+      <h2 id="daily-title">每日 AI 资讯日报</h2>
+    </div>
+    <p class="project-context">18 个固定内容快照 · <strong>React + TypeScript</strong> · 阅读、编辑、导出一体</p>
 
     <div class="narrative">
-      <p>在日常使用 AI 的过程中，形成的一套 <strong>Harness 工程化</strong>思路：提示词约束是软性的——LLM 会静默违反规则、编造数据、跳过验证步骤。真正的可靠性来自工程代码的硬约束：定义输入输出规格 → 程序化校验结果 → 不符合要求打回重跑。不依赖 AI 自觉，而是让代码做最终把关。这套思想贯穿地址审核 Agent 的 ResultGuard（输出前四道关卡自动拦截不合规结果）和量化策略的版本管理（禁止重写回测引擎、强制从档案读取指标）。在此基础上，将日常高频场景的行为规范沉淀为 6 个结构化 Skill，固化流程、消除歧义。同一个模型，有这套 Harness 约束和没有的表现差异，远大于不同模型之间的差距。</p>
+      <p>AI 行业的信息更新很快，但内容分散在公司博客、Product Hunt、GitHub、论文平台和个人博客中。逐个平台浏览不仅耗时，同一事件还可能被不同渠道重复报道；大量一手信息是英文长文，收藏链接也不等于真正完成阅读和理解。</p>
+      <p><strong>本项目的判断：</strong>用户不是缺少信息，而是缺少一个稳定的“信息压缩和阅读入口”。因此将新闻聚合、去重、正文清洗、图片本地化和 AI 中文摘要连接成完整链路，最终输出一份每天 5-10 分钟可以读完、还能继续编辑和带走的结构化日报。</p>
     </div>
 
-    <div class="highlight-box skill">
-      <strong>三个领域的 Skill 体系：</strong><br>
-      ① <strong>量化投资</strong>——factor-backtest ，配合本地搭建的量化回测系统引擎，结合skill能力覆盖因子研究→回测→版本管理完整链路，统一计算口径（几何年化、ddof=1），所有结果从版本档案读取不重算，严禁编造数据；cn-investment-research 提供个股五层分析、DCF 估值（中债利率）、可转债双低策略，AKShare（免费优先）+ iFinD MCP（付费兜底）双数据源<br>
-      ② <strong>AI 产品开发</strong>——harness-engineering 沉淀了 Agent 集群设计原则、Context 工程方法论、评测体系搭建流程，源自米哈游多 Agent 集群实战 + Anthropic/OpenAI 官方 Harness 实践<br>
-      ③ <strong>知识库管理</strong>——wiki-material-ingest（研报 PDF/PPTX 双工具对比择优入库）、wiki-page-writer（结构化页面编写 + 内容溯源反编造）、feishu-qa-detector（飞书笔记自动检测疑问句 + 知识库答疑）
+    <div class="highlight-box vur">
+      <strong>完整产品链路：</strong>RSS / 网站信息源 → 抓取与字段标准化 → 去重、正文清洗、图片本地化 → AI 生成中文标题、摘要、价值说明和标签 → 日报阅读、编辑、导出与发布。作品集 Demo 保留最后一段“日报体验”和必要的轻量服务，不公开抓取器、数据库、调度器、发布账号与内部文档。
     </div>
+
+    <h3>三个核心设计</h3>
+    <ul class="design-list skill">
+      <li><strong>固定快照优先</strong>——公开 Demo 使用真实生成结果的固定快照，不在面试现场重新抓取新闻；18 个日期与 401 张新闻图片全部本地保存，稳定复现优先于“看起来实时”</li>
+      <li><strong>阅读与编辑合一</strong>——阅读模式用于快速浏览，编辑模式直接处理 Markdown；草稿按日期保存在当前浏览器，支持最多 5 步撤销 / 重做，并可随时恢复原始快照</li>
+      <li><strong>安全降级与原文保护</strong>——基础阅读、编辑和导出不依赖 API Key；AI 润色按二级标题分段处理，单章节失败就保留原文，结果只进入本地草稿，永远不覆盖固定快照</li>
+    </ul>
 
     <div class="narrative">
-      <p>约束分层实施：<strong>提示词定义边界</strong>（告诉 AI 规则是什么）→ <strong>Skill 固化流程</strong>（每个场景的输入输出和禁止项标准化）→ <strong>工程代码做最终校验</strong>（不通过则打回）。三个层次逐级兜底，而非把可靠性押注在任何单一环节。</p>
+      <p>日报结果可以一键复制 Markdown、下载 Markdown 或导出带完整样式的独立 HTML。桌面端采用“日期 - 正文 - 目录”三栏结构，窄屏下将日期切换为选择器和导航抽屉，让第一次接触项目的人先完成阅读，再按需要逐步进入编辑、导出和 AI 润色。</p>
     </div>
 
     <div class="cta-row">
-      <a class="cta ghost" href="../skills/README.md" target="_blank">Skills 总览</a>
-      <a class="cta primary" href="https://github.com/MimikyuQWER/ai-product-portfolio/tree/main/skills" target="_blank">GitHub 查看</a>
+      <a class="cta primary" href="../daily-news-demo/index.html" target="_blank" rel="noopener">在线体验 Demo</a>
+      <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio/tree/main/daily-news-main/demo" target="_blank" rel="noopener">启动与产品设计</a>
+      <span class="cta-note">网页可直接体验 · AI 润色需本地启动后配置</span>
     </div>
   </section>
 
-  <div class="divider"></div>
-
-  <!-- ═══════════ SECTION: KNOWLEDGE WIKI ═══════════ -->
-  <section class="project">
-    <div class="project-title">结构化知识库系统</div>
-    <div class="project-context">159 页 Markdown · <strong>量化金融 + AI 产品</strong>双领域 · AI 可检索、可维护、可溯源</div>
+  <!-- ═══════════ PROJECT 4: KNOWLEDGE WIKI ═══════════ -->
+  <section class="project-card" id="wiki" aria-labelledby="wiki-title">
+    <div class="project-head">
+      <span class="project-dot skill" aria-hidden="true"></span>
+      <h2 id="wiki-title">本地结构化知识库系统</h2>
+    </div>
+    <p class="project-context">159 页 Markdown · <strong>量化金融 + AI 产品双领域</strong> · AI 可检索、可维护、可溯源</p>
 
     <div class="narrative">
-      <p>AI 的知识不能只靠每次对话的上下文——对话结束就清零。于是搭建了一套<strong>结构化个人知识库</strong>，人机共学让 AI 能跨 session 持续积累和检索知识。不是简单的笔记堆砌，而是有 Schema、有索引、有溯源机制的工程系统。</p>
+      <p>AI 的知识不能只靠每次对话的上下文——对话结束就清零。于是搭建了一套结构化个人知识库，让 AI 能跨 session 持续积累和检索知识。不是简单的笔记堆砌，而是有 Schema、有索引、有溯源机制的工程系统。</p>
     </div>
 
     <div class="highlight-box skill">
       <strong>三层知识体系：</strong><br>
-      ① <strong>数据流入层</strong>——接入飞书CLI，人在云文档做知识管理、笔记摘抄，AI打通飞书知识库每日扫描新增的内容并同步（SHA-256 去重）+ 结合本地存储的PDF/PPTX 研报 MarkItDown/pdfplumber 双工具对比择优转换 → 存入 raw/<br>
-      ② <strong>结构化层</strong>——4 种页面类型（Entity/Judgment/Pattern/Observation），做好知识分类，统一 frontmatter 元数据，[[wikilink]] 交叉引用图<br>
-      ③ <strong>检索层</strong>——渐进式披露设计（大纲索引 50 行掌握全貌 → 详细内容 → raw/ 原始材料），时效性标记可提醒过期数据，防止信息失真
+      ① <strong>数据流入层</strong>——飞书知识库每日增量同步（SHA-256 去重）+ PDF/PPTX 研报 MarkItDown / pdfplumber 双工具对比择优转换 → 存入 raw/<br>
+      ② <strong>结构化层</strong>——4 种页面类型（Entity / Judgment / Pattern / Observation），统一 frontmatter 元数据，[[wikilink]] 交叉引用图<br>
+      ③ <strong>检索层</strong>——渐进式披露设计（大纲索引 50 行掌握全貌 → 详细内容 → raw/ 原始材料），时效性标记自动提醒过期数据
     </div>
 
     <div class="narrative">
-      <p>核心设计理念：<strong>每条事实性陈述必须可溯源到 raw/ 原文</strong>。不确定就标注「待补充」，不允许用常识填空。raw/ 目录对 AI 只读，防止编造内容污染原始素材。每次更新自动 git commit，形成可追溯的知识演进历史。</p>
+      <p><strong>核心设计理念：</strong>每条事实性陈述必须可溯源到 raw/ 原文。不确定就标注「待补充」，不允许用常识填空。raw/ 目录对 AI 只读，防止编造内容污染原始素材。每次更新自动 git commit，形成可追溯的知识演进历史。</p>
     </div>
 
     <div class="highlight-box skill">
       <strong>AI 协作闭环：</strong><br>
-      ① <strong>摄入</strong>——读研报/笔记 → 提取要点确认 → 结构化写入对应页面 → 更新索引<br>
-      ② <strong>沉淀</strong>——对话结束后提取新判断/事实/方法 → 写入 wiki → 检查与已有内容矛盾<br>
+      ① <strong>摄入</strong>——读研报 / 笔记 → 提取要点确认 → 结构化写入对应页面 → 更新索引<br>
+      ② <strong>沉淀</strong>——对话结束后提取新判断 / 事实 / 方法 → 写入 wiki → 检查与已有内容矛盾<br>
       ③ <strong>答疑</strong>——飞书笔记自动检测疑问句 → 查 wiki 框架性知识 + iFinD 实时数据 → 给出可溯源答案<br>
       ④ <strong>健康检查</strong>——定期扫描 inbox 积压、孤立页面、矛盾判断、过期数据
     </div>
 
     <div class="narrative">
-      <p>知识来源两条线：<strong>飞书知识库每日自动同步</strong>（SHA-256 增量去重，token 过期自动刷新） + <strong>本地研报 PDF/PPTX 双工具择优转换</strong>（MarkItDown + pdfplumber 对比评分，质量检查通过后入库）。飞书笔记中的疑问句被自动扫描识别后，优先从 wiki 结构化页面检索框架性知识，wiki 没覆盖的再从 raw/ 原始材料深挖，确保每一条回答可溯源、不编造。</p>
+      <p>知识来源两条线：<strong>飞书知识库每日自动同步</strong>（SHA-256 增量去重，token 过期自动刷新）+ <strong>本地研报 PDF/PPTX 双工具择优转换</strong>（MarkItDown + pdfplumber 对比评分，质量检查通过后入库）。飞书笔记中的疑问句被自动扫描识别后，优先从 wiki 结构化页面检索框架性知识，wiki 没覆盖的再从 raw/ 原始材料深挖，确保每一条回答可溯源、不编造。</p>
     </div>
 
     <div class="cta-row">
-      <a class="cta ghost" href="../knowledge-wiki-system/README.md" target="_blank">系统设计文档</a>
-      <a class="cta primary" href="https://github.com/MimikyuQWER/ai-product-portfolio/tree/main/knowledge-wiki-system" target="_blank">GitHub 查看</a>
+      <a class="cta primary" href="https://github.com/MimikyuQWER/ai-product-portfolio/tree/main/knowledge-wiki-system" target="_blank" rel="noopener">查看架构与工程说明</a>
+      <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio/blob/main/knowledge-wiki-system/设计思路详解.md" target="_blank" rel="noopener">设计思路详解</a>
+      <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio/tree/main/knowledge-wiki-system/samples" target="_blank" rel="noopener">查看脱敏样例</a>
+      <span class="cta-note">文档型工程案例 · 无需启动 Web 服务</span>
     </div>
   </section>
 
-  <div class="divider"></div>
-
   <!-- ═══════════ FOOTER ═══════════ -->
   <footer class="footer">
-    张逸帆 · 复旦大学 · AI 产品作品集 2026<br>
-    后两部分为日常 AI 协作的工程基础设施<br>
-    本地离线可运行 · <a href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank">GitHub</a> · <a href="mailto:zhangyifan@example.com">Email</a>
+    <p>张逸帆 · 复旦大学 · AI 产品作品集 2026</p>
+    <p>在线体验与本地启动方式均已写入 <a href="https://github.com/MimikyuQWER/ai-product-portfolio#readme" target="_blank" rel="noopener">仓库阅读指南</a> · <a href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank" rel="noopener">GitHub 仓库</a> · 联系方式见网申系统</p>
   </footer>
 
-</div>
+</main>
 </body>
 </html>

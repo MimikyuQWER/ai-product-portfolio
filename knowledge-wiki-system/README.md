@@ -114,3 +114,31 @@ L2 深层导航       → 指向 raw/ 原始材料 + [[关联页面]]
 3. **raw/ 目录只读**，AI 不能修改原始素材。
 4. **每次实质性更新后 git commit**，格式：`{操作}: {简述}`。
 5. **跨领域连接是好事**——知识网络的价值在连接处。
+
+---
+
+## 📦 本提交包包含内容（代码与架构层）
+
+> 上面的"架构总览 / 数据流入 / 结构化方法"是系统的**设计说明**。本目录同时附带了**真实可运行的工程代码与架构文档**（脱敏后），方便面试官直接阅读源码、理解实现，而非只有说明文字。
+
+| 文件 / 目录 | 类型 | 说明 |
+|------|------|------|
+| `SCHEMA.md` | 架构文档 | 4 种页面类型的 frontmatter 规范、目录结构、操作流程、版本管理、渐进式披露规则 |
+| `CLAUDE.md` | 架构文档 | AI Agent 维护该知识库的项目指令（快速操作映射表） |
+| `index.md` | 结构示意 | **已脱敏**的领域索引样例（真实系统含 150+ 篇 Markdown，因隐私未随包发布） |
+| `tools/` | **真实脚本** | 7 个可复用 Python/PowerShell 脚本（见 `tools/README.md`） |
+| `tools/sync_feishu.py` | 真实脚本 | 飞书知识库增量同步（OAuth、SHA-256 去重、headless 自动刷新 token），430 行 |
+| `tools/batch_enhance.py` 等 | 真实脚本 | 研报入库（MarkItDown/pdfplumber 双工具对比）、会话 Digest、单文件合并、定时任务部署 |
+| `references/` | 参考文档 | akshare / iFinD API 参考（不含凭证） |
+| `samples/` | **脱敏样例页** | 4 种页面类型（Entity/Judgment/Pattern/Observation）各一篇中性示例，展示正确 frontmatter 与三层披露结构 |
+
+### 隐私剔除说明（重要）
+
+真实系统位于本地 `C:\Users\张逸帆\knowledge-wiki\`，共 185 个文件，含 150+ 篇个人知识正文。出于隐私与作品集合规性考虑，**以下内容未随包发布**：
+
+- ❌ `.feishu_tokens.json`、飞书 OAuth 凭证
+- ❌ `tools/ifind_config.json`、iFinD 配置（含 API key，已被 `.gitignore` 排除）
+- ❌ 私人正文：`entities/`、`judgments/`、`patterns/`、`observations/`、`inbox/`、`raw/` 中的真实内容（含个人金融研究、暑期面试准备、网申简历等）
+- ❌ `__pycache__/`、`*.pyc` 等编译缓存
+
+包内仅保留**非敏感的工程代码、架构规范、以及脱敏样例页**，与量化引擎"展示架构+代码、不暴露私有内容"的口径一致。如需查看真实的 4 种页面长什么样，请见 `samples/` 目录。
