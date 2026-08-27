@@ -15,33 +15,38 @@
 
 ## 快速运行
 
-提交作品集时，建议直接把整个 `portfolio_demo` 文件夹复制或压缩发送。`vendor/` 中包含 Demo 需要的最小回测、契约、指标和因子评估代码，页面和后端不再依赖外层正式仓库；`site/`、`backend/`、`vendor/`、`requirements.txt` 和 `启动Demo.bat` 都属于交付内容。首次运行需要安装公开 Python 依赖，之后可离线运行。
+提交作品集时，建议直接把整个本文件夹（即包含 `site/`、`backend/`、`vendor/`、`requirements.txt`、`启动Demo.bat` 的文件夹）复制或压缩发送。`vendor/` 中包含 Demo 需要的最小回测、契约、指标和因子评估代码，页面和后端不再依赖外层正式仓库。
 
-在 Windows 上单独运行：
+### 方式 A：只看界面（零依赖，推荐先试）
+
+直接双击打开 `site/index.html`（产品功能页），或 `site/research.html`（专业投研工作台），或 `site/wealth.html`（手机 APP 版）。
+页面已**内置演示数据**，无需安装任何环境、无需联网，可离线浏览全部界面与七段流程展示。
+（此方式下“运行并归档”等需要后端计算的按钮不可用，仅作界面浏览。）
+
+### 方式 B：完整体验（含“运行并归档”真实后端）
+
+需要本机已安装 **Python 3.11+**，且安装时勾选 “Add python.exe to PATH”（Windows 自带 `py` 启动器也可）。
+
+最简单：双击根目录的 **`启动Demo.bat`**，它会自动完成——定位 Python → 首次运行建虚拟环境并安装依赖（约 1–2 分钟，需联网）→ 启动本地服务 → 自动打开浏览器 `http://127.0.0.1:8765/index.html`。
+若本机没有 Python，脚本会提示你先安装，并仍可改用方式 A 看界面。关闭弹出的后端窗口即可停止服务。
+
+手动等价命令（在文件夹根目录执行）：
 
 ```powershell
-cd portfolio_demo
 python -m venv .venv
 .venv\Scripts\python.exe -m pip install -r requirements.txt
 .venv\Scripts\python.exe -m backend.run_server
 ```
 
-也可以双击 `启动Demo.bat`（前提是已完成依赖安装），然后打开 `http://127.0.0.1:8765/index.html`。
+启动后打开 `http://127.0.0.1:8765/index.html`。进入研究工作台后，点击“运行并归档”，后端会调用统一回测入口，并在 `runs/<运行号>/` 写入七个阶段的 `input.json` 和 `output.json`。
 
-如果 Demo 仍放在本仓库中，也可以从仓库根目录执行：
-
-```powershell
-.venv\Scripts\python.exe -m portfolio_demo.backend.generate_demo
-.venv\Scripts\python.exe -m portfolio_demo.backend.run_server
-```
-
-然后打开 `http://127.0.0.1:8765/`。进入研究工作台后，点击“运行并归档”，后端会调用统一回测入口，并在 `runs/<运行号>/` 写入七个阶段的 `input.json` 和 `output.json`。
-
-如果只需要生成可归档的命令行运行产物，也可以执行：
+（可选）如需重新生成演示数据 `site/data/demo-run.json`，可额外执行：
 
 ```powershell
-.venv\Scripts\python.exe portfolio_demo\run_portfolio_fixed.py --output portfolio_demo\output_portfolio_fixed --seed 42
+.venv\Scripts\python.exe -m backend.generate_demo
 ```
+
+该文件已随仓库附带，通常无需重复生成。
 
 ## Demo 的实际链路
 
@@ -62,7 +67,7 @@ python -m venv .venv
 如果本机已经配置 iFinD，可以在本地运行：
 
 ```powershell
-.venv\Scripts\python.exe -m portfolio_demo.backend.run_ifind_smoke
+.venv\Scripts\python.exe -m backend.run_ifind_smoke
 ```
 
 适配器只读取历史指数收盘价，并在内存中转成月频 `DataBundle`，运行动量、低波和等权策略；输出文件是 `validation/ifind_smoke_report.json`，只保存接口元数据和派生指标，不保存原始价格、账号或 token。没有 iFinD 环境时，页面和默认 demo 不受影响。
@@ -70,11 +75,10 @@ python -m venv .venv
 ## 测试和检查
 
 ```powershell
-.venv\Scripts\python.exe -m pytest -q tests/test_demo_pipeline.py tests/test_demo_archive.py tests/test_backtest_runner.py tests/test_demo_server_cli.py tests/test_demo_validation_agent.py
-node --check portfolio_demo\site\app.js
-node --check portfolio_demo\site\research.js
-node --check portfolio_demo\site\assistant.js
-node --check portfolio_demo\site\wealth.js
+node --check site\app.js
+node --check site\research.js
+node --check site\assistant.js
+node --check site\wealth.js
 ```
 
 页面资源可以用任意本地静态服务器访问。作品集展示应明确说明：合成数据用于脱敏和可复现；iFinD 报告用于证明真实数据适配链路曾被冒烟验证；二者都不构成投资建议。
