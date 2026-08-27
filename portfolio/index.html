@@ -279,11 +279,11 @@
     </div>
     <div class="header-links">
       <a href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank" rel="noopener">GitHub 仓库</a>
-      <a href="https://github.com/MimikyuQWER/ai-product-portfolio#readme" target="_blank" rel="noopener">阅读与启动指南</a>
+      <a href="../README.md">阅读与启动指南</a>
     </div>
     <div class="header-summary">
-      <p>在以上两段实习中完成两个 AI 产品项目，均在业务团队实际投入使用。<strong>虚拟用户访谈平台</strong>面向原神海外玩家用户调研场景，用基于真实玩家数据建模的 AI 数字分身嵌入业务流程，帮助一线团队和高层管理者了解真实玩家画像；<strong>地址审核 Agent</strong>面向微信支付等金融法律 KYC 场景，通过 LLM + 高德地图 + 联网搜索三重交叉验证，将地址审核效率提升约 3 倍，准确率达 95%+。以下 Demo 已去除敏感业务信息，保留完整的产品设计与交互逻辑。</p>
-      <p>作品集同时收录三个个人项目：<strong>每日 AI 资讯日报</strong>验证从信息聚合到阅读、编辑与导出的完整内容工作流；<strong>结构化知识库系统</strong>将长期知识沉淀设计成有 Schema、有索引、有时效标记和溯源机制的人机协作系统；<strong>AI 量化策略投研系统</strong>把量化研究拆成数据、因子、综合、风控、策略、回测、记录七个可检查环节，强调 AI 辅助计算但不由 AI 做投资决策的人机协作边界。</p>
+      <p>在以上两段实习中独立完成两个 AI 产品项目，均在业务团队实际投入使用。<strong>虚拟用户访谈平台</strong>面向原神海外玩家用户调研场景，用基于真实玩家数据建模的 AI 数字分身嵌入业务流程，帮助一线团队和高层管理者了解真实玩家画像；<strong>地址审核 Agent</strong>面向微信支付等金融法律 KYC 场景，通过 LLM + 高德地图 + 联网搜索三重交叉验证，将地址审核效率提升约 3 倍，准确率达 95%+。以下 Demo 已去除敏感业务信息，保留完整的产品设计与交互逻辑。</p>
+      <p>作品集同时收录三个个人工程项目：<strong>每日 AI 资讯日报</strong>验证从信息聚合到阅读、编辑与导出的完整内容工作流；<strong>结构化知识库系统</strong>将长期知识沉淀设计成有 Schema、有索引、有时效标记和溯源机制的人机协作系统；<strong>AI 量化策略投研系统</strong>把量化研究拆成数据、因子、综合、风控、策略、回测、记录七个可检查环节，强调 AI 辅助计算但不由 AI 做投资决策的人机协作边界。</p>
     </div>
   </header>
 
@@ -323,11 +323,11 @@
     <ul class="design-list">
       <li><strong>三级回答体系</strong>——原文可答 → 证据可推演 → 证据不足直说不编造，保证 AI 每条回答可追溯、可验证，减少黑盒不信任感</li>
       <li><strong>端到端 + 过程评测体系</strong>——建立黄金评测集，从结果端和每个中间环节设计验收标准，每次迭代保证黄金评测集效果不退步</li>
-      <li><strong>前端交互打磨与 独立审计 Agent</strong>——主 Agent 回答后由独立审计 Agent 二次评估，bad case 分类归档、针对性调优</li>
+      <li><strong>独立审计 Agent</strong>——主 Agent 回答后由独立审计 Agent 二次评估，bad case 分类归档、针对性调优</li>
     </ul>
 
     <div class="narrative">
-      <p>基于数百名真实玩家的访谈与 BI 数据 1:1 建模，每位虚拟玩家包含 20+ 档案字段（UID、付费金额、游戏时长、流失原因等）。支持 7 维度筛选（国家/性别/年龄/平台/付费等级/所属游戏/冒险等级），覆盖美国、英国、日本、俄罗斯等区域。已在米哈游用研团队作为访谈前的情景预演工具实际使用。</p>
+      <p>基于上千名真实玩家的访谈与 BI 数据 1:1 建模，每位虚拟玩家包含 20+ 档案字段（UID、付费金额、游戏时长、流失原因等）。支持 7 维度筛选（国家/性别/年龄/平台/付费等级/所属游戏/冒险等级），覆盖美国、英国、日本、俄罗斯等区域。已在米哈游用研团队作为访谈前的情景预演工具实际使用。</p>
     </div>
 
     <div class="cta-row">
@@ -370,7 +370,7 @@
     </div>
 
     <div class="highlight-box audit">
-      <strong>人的参与度：预审报告环节。</strong>Agent 在调用外部 API 之前，先向用户展示数据摘要——共多少条、每条完整度评估（缺省/市/区/街道/门牌号）、哪些明显无效、是否需要使用者补充信息或做核对——<strong>用户确认后才进入正式审核</strong>。这个设计避免了大量无效 API 调用和 Token 浪费，也保持了审核员对流程的控制感。
+      <strong>实际使用中团队认可的设计：预审报告环节。</strong>Agent 在调用任何外部 API 之前，先向用户展示数据摘要——共多少条、每条完整度评估（缺省/市/区/街道/门牌号）、哪些明显无效、是否需要使用者补充信息或做核对——<strong>用户确认后才进入正式审核</strong>。这个设计避免了大量无效 API 调用和 Token 浪费，也保持了审核员对流程的控制感。
     </div>
 
     <div class="narrative">
@@ -378,7 +378,7 @@
     </div>
 
     <div class="cta-row">
-      <a class="cta primary" href="../address-audit-agent/landing.html" target="_blank" rel="noopener">项目演示</a>
+      <a class="cta primary" href="../address-audit-agent/landing.html" target="_blank" rel="noopener">离线项目演示</a>
       <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio/tree/main/address-audit-agent" target="_blank" rel="noopener">完整启动说明</a>
       <span class="cta-note">演示页离线可看 · 完整应用按 README 启动</span>
     </div>
@@ -413,9 +413,9 @@
     </div>
 
     <div class="cta-row">
-      <a class="cta primary" href="../daily-news-demo/index.html" target="_blank" rel="noopener">在线体验 Demo</a>
-      <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio/tree/main/daily-news-main/demo" target="_blank" rel="noopener">启动与产品设计</a>
-      <span class="cta-note">网页可直接体验 · AI 润色需本地启动后配置</span>
+      <a class="cta primary" href="https://github.com/MimikyuQWER/ai-product-portfolio/blob/main/daily-news-main/demo/README.md" target="_blank" rel="noopener">启动与体验指南</a>
+      <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio/blob/main/daily-news-main/demo/docs/PRODUCT_DESIGN.md" target="_blank" rel="noopener">产品设计说明</a>
+      <span class="cta-note">Node.js 20+ · npm install · npm run demo</span>
     </div>
   </section>
 
@@ -444,9 +444,10 @@
 
     <div class="highlight-box skill">
       <strong>AI 协作闭环：</strong><br>
-      ① <strong>摄入</strong>——读研报 / 飞书笔记 → AI读取本地和云空间后提取要点确认 → 结构化写入对应页面 → 更新索引<br>
+      ① <strong>摄入</strong>——读研报 / 笔记 → 提取要点确认 → 结构化写入对应页面 → 更新索引<br>
       ② <strong>沉淀</strong>——对话结束后提取新判断 / 事实 / 方法 → 写入 wiki → 检查与已有内容矛盾<br>
       ③ <strong>答疑</strong>——飞书笔记自动检测疑问句 → 查 wiki 框架性知识 + iFinD 实时数据 → 给出可溯源答案<br>
+      ④ <strong>健康检查</strong>——定期扫描 inbox 积压、孤立页面、矛盾判断、过期数据
     </div>
 
     <div class="narrative">
@@ -512,15 +513,14 @@
       <a class="cta primary" href="../quant-research-mvp/site/index.html" target="_blank" rel="noopener">产品功能页</a>
       <a class="cta ghost" href="../quant-research-mvp/site/research.html" target="_blank" rel="noopener">PC 工作台</a>
       <a class="cta ghost" href="../quant-research-mvp/site/wealth.html" target="_blank" rel="noopener">手机 APP 演示</a>
-      <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio/tree/main/quant-research-mvp" target="_blank" rel="noopener">仓库说明</a>
-      <span class="cta-note">静态页面可直接浏览 · 完整运行需本地服务</span>
+      <span class="cta-note">静态页面可双击打开 · 完整运行需本地服务</span>
     </div>
   </section>
 
   <!-- ═══════════ FOOTER ═══════════ -->
   <footer class="footer">
     <p>张逸帆 · 复旦大学 · AI 产品作品集 2026</p>
-    <p>在线体验与本地启动方式均已写入 <a href="https://github.com/MimikyuQWER/ai-product-portfolio#readme" target="_blank" rel="noopener">仓库阅读指南</a> · <a href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank" rel="noopener">GitHub 仓库</a> · 联系方式见网申系统</p>
+    <p>离线入口与本地启动方式均已写入 <a href="../README.md">阅读指南</a> · <a href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank" rel="noopener">GitHub 仓库</a> · 联系方式见网申系统</p>
   </footer>
 
 </main>
