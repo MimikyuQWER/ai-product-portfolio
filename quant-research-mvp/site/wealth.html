@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#f5f7fa" />
+  <title>策略研究 · 手机 APP 版</title>
+  <link rel="stylesheet" href="styles.css?v=24" />
+</head>
+<body class="wealth-surface">
+  <div class="wealth-app-shell">
+    <header class="wealth-app-header">
+      <a class="wealth-exit-link" href="index.html" aria-label="退出手机 APP 版并返回产品主页">退出</a>
+      <button id="wealth-back" class="wealth-icon-button" type="button" aria-label="返回上一页" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+      </button>
+      <div class="wealth-app-title">
+        <strong id="wealth-title">策略研究</strong>
+        <span id="wealth-subtitle">手机 APP 版</span>
+      </div>
+      <button id="wealth-guide-button" class="wealth-guide-button" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.8 9a2.4 2.4 0 1 1 3.1 2.3c-.9.4-1.4 1-1.4 2M12 17h.01"></path></svg><span>指引</span></button>
+      <button id="wealth-home" class="wealth-icon-button" type="button" aria-label="返回研究首页">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20h-5v-6H9v6H4Z" /></svg>
+      </button>
+    </header>
+
+    <main id="wealth-app" class="wealth-app" aria-live="polite">
+      <div class="wealth-loading" role="status"><span></span><p>正在读取研究数据</p></div>
+    </main>
+
+    <nav id="wealth-bottom-nav" class="wealth-bottom-nav" aria-label="财富端主导航">
+      <button type="button" data-root-route="home">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5 12 4l8 6.5V20h-5v-6H9v6H4Z" /></svg><span>研究</span>
+      </button>
+      <button type="button" data-root-route="library">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2Zm2 0v16m3-11h6m-6 4h6" /></svg><span>因子库</span>
+      </button>
+      <button type="button" data-root-route="strategies">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V9m7 10V5m7 14v-7M3 19h18" /></svg><span>策略</span>
+      </button>
+      <button type="button" data-root-route="records">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12v16H6Zm3 4h6m-6 4h6m-6 4h4" /></svg><span>记录</span>
+      </button>
+    </nav>
+  </div>
+
+  <button id="wealth-ai-button" class="wealth-ai-button" type="button" aria-haspopup="dialog"><span>AI</span><strong>研究解读</strong><em id="wealth-ai-count">2</em></button>
+  <div id="wealth-ai-drawer" class="wealth-ai-drawer" role="dialog" aria-modal="true" aria-labelledby="wealth-ai-title" hidden><div class="wealth-drawer-handle" aria-hidden="true"></div><div class="wealth-ai-drawer-head"><div><span>当前阶段</span><h2 id="wealth-ai-title">AI研究解读</h2></div><button type="button" data-close-ai>关闭</button></div><div id="wealth-ai-content"></div><div class="wealth-ai-actions"><button type="button" data-close-ai>暂不处理</button><button type="button" data-ai-apply>采纳建议</button></div></div>
+
+  <div id="wealth-guide" class="product-guide mobile-guide" role="dialog" aria-modal="true" aria-labelledby="wealth-guide-title" hidden><div class="product-guide-panel"><div class="product-guide-head"><div><span id="wealth-guide-progress">第 1 / 6 步</span><h2 id="wealth-guide-title">先确定研究范围</h2></div><button type="button" data-guide-close aria-label="关闭使用指引">关闭</button></div><div class="guide-tour-copy"><p id="wealth-guide-copy">先选择资产类型、标的范围、历史区间和交易成本，所有后续结果都会基于这组设置。</p></div><div class="product-guide-actions"><button type="button" class="button secondary" data-guide-prev>上一步</button><button type="button" class="button secondary" data-guide-close>跳过指引</button><button type="button" class="button" data-guide-next>下一步</button></div></div></div>
+  <div id="wealth-guide-spotlight" class="guide-spotlight" hidden aria-hidden="true"></div>
+
+  <div id="wealth-toast" class="wealth-toast" role="status" aria-live="polite" hidden></div>
+  <script src="assistant.js?v=24"></script>
+  <script src="wealth.js?v=24"></script>
+</body>
+</html>

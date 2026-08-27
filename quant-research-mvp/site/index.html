@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f3f0e8" />
+  <title>研究档案 · AI 投研 MVP Demo</title>
+  <link rel="stylesheet" href="styles.css?v=23" />
+</head>
+<body class="product-page">
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span>研究档案 / 本地量化 MVP</a>
+      <nav class="nav" aria-label="主导航">
+        <span class="nav-note">脱敏展示版</span>
+        <a class="active" href="index.html">产品功能</a>
+        <a href="research.html">研究工作台</a>
+        <a href="wealth.html">手机 APP 版</a>
+        <a href="design.html">设计思路</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="route-line"><span>产品功能 / 合成数据演示</span><strong>全部数值均为合成数据</strong></div>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <h1 id="hero-title">把一次量化研究，变成一条<strong>可复核的工作流</strong>。</h1>
+        <p class="hero-copy">这是一套面向量化研究的本地工作台：从研究配置、因子检验，到组合构建、风控调仓、回测和版本记录，所有关键步骤都有清晰的输入、输出和决策记录。</p>
+        <div class="hero-actions"><a class="button" href="research.html">进入研究工作台 <span aria-hidden="true">→</span></a><a class="text-link" href="design.html">为什么这样设计 <span aria-hidden="true">↗</span></a></div>
+        <p class="notice">页面使用确定性合成数据；不代表真实收益，也不构成投资建议。</p>
+      </div>
+      <aside class="result-sheet" aria-label="合成运行结果摘要">
+        <div class="sheet-top"><div><div class="sheet-code">合成运行 / 042</div><div class="sheet-title" id="sheet-strategy">横截面动量</div></div><div class="status">已准备</div></div>
+        <div class="sheet-body"><div class="sheet-main"><div><div class="sheet-value" id="sheet-value">暂无</div><div class="sheet-caption">最终净值 · 84 个月合成样本</div></div><div class="sheet-side">信号滞后 1 期<br />成本已进入净收益</div></div><div class="sheet-chart"><canvas id="sheet-chart" aria-label="策略净值示意图"></canvas></div></div>
+        <div class="sheet-foot"><span>输入 → 信号 → 权重 → 回测 → 记录</span><span class="mono" id="sheet-cost">演示成本</span></div>
+      </aside>
+    </section>
+
+    <section class="product-overview" aria-labelledby="overview-title">
+      <div class="section-head"><div><span class="section-label">产品功能</span><h2 id="overview-title">从一个想法，到一份可以复盘的研究结果。</h2></div><p class="section-intro">用户不需要在多个脚本、表格和聊天记录之间来回切换。系统把研究集中到一个工作流里，并在关键节点保留人工判断。</p></div>
+      <div class="overview-grid">
+        <article><span>01</span><h3>把想法变成研究方案</h3><p>输入研究主题、标的范围和信号方向，系统整理成数据范围、因子定义、样本区间和回测规则。</p><strong>输出：一份可确认的研究配置</strong></article>
+        <article><span>02</span><h3>把信号变成证据</h3><p>查看因子公式、经济意义、IC、ICIR、分组收益、多空收益、敏感性和样本外表现。</p><strong>输出：一份可比较的因子评估</strong></article>
+        <article><span>03</span><h3>把方案变成研究记录</h3><p>配置组合、风控、调仓和交易成本后运行回测，检查时间顺序与计算口径，并保存版本和决策。</p><strong>输出：一份可复现的回测档案</strong></article>
+      </div>
+    </section>
+
+    <section class="section" id="evidence" aria-labelledby="evidence-heading">
+      <div class="section-head"><div><h2 id="evidence-heading">七个环节，分别解决一个研究问题。</h2><p class="section-intro">点击流程节点，查看这一环节需要什么、会产出什么，以及它在真实投研中的作用。</p></div><p class="section-intro">本页介绍产品功能；架构原则、版本迭代和人机分工见 <a class="text-link" href="design.html">设计思路页</a>。</p></div>
+      <div class="evidence-rail" role="list" aria-label="研究流程">
+        <button class="evidence-step selected" type="button" data-evidence="data"><span class="step-no">01</span><span class="step-name">准备数据</span><span class="step-sub">提取与存储</span></button><button class="evidence-step" type="button" data-evidence="factor"><span class="step-no">02</span><span class="step-name">测试因子</span><span class="step-sub">先看单个信号</span></button><button class="evidence-step" type="button" data-evidence="composite"><span class="step-no">03</span><span class="step-name">改进综合</span><span class="step-sub">标准化与加权</span></button><button class="evidence-step" type="button" data-evidence="risk"><span class="step-no">04</span><span class="step-name">风控调仓</span><span class="step-sub">约束实际动作</span></button><button class="evidence-step" type="button" data-evidence="strategy"><span class="step-no">05</span><span class="step-name">迭代策略</span><span class="step-sub">保留版本理由</span></button><button class="evidence-step" type="button" data-evidence="backtest"><span class="step-no">06</span><span class="step-name">回测报告</span><span class="step-sub">收益风险同口径</span></button><button class="evidence-step" type="button" data-evidence="record"><span class="step-no">07</span><span class="step-name">版本记录</span><span class="step-sub">结果可复盘</span></button>
+      </div>
+      <div class="evidence-detail" aria-live="polite"><div><div class="detail-title" id="evidence-title">准备数据</div><p class="detail-copy" id="evidence-copy">先登记研究站在什么材料上。</p></div><div class="io-list"><div class="io-item"><div class="io-key">输入</div><div class="io-value" id="evidence-input">数据文件、日期范围、文件指纹</div></div><div class="io-item"><div class="io-key">输出</div><div class="io-value" id="evidence-output">可追踪的数据包</div></div><div class="io-item"><div class="io-key">现实意义</div><div class="io-value" id="evidence-meaning">别人知道当时用了什么</div></div></div></div>
+    </section>
+
+    <section class="section" id="comparison" aria-labelledby="comparison-heading">
+      <div class="section-head"><div><h2 id="comparison-heading">再看它能比较什么：标准策略也必须走同一条口径。</h2><p class="section-intro">同一份合成数据、同一套信号滞后、同一个成本模型，让策略差异来自研究假设，而不是来自不同脚本的隐藏口径。</p></div><p class="section-intro">示例策略参考公开研究：动量、低波、价值和趋势择时；详细来源和口径会在研究工作台中展开。</p></div>
+      <div class="comparison"><div class="strategy-list" id="strategy-list" aria-label="策略选择"></div><div class="comparison-main"><div class="comparison-top"><div><div class="comparison-title" id="comparison-title">横截面动量</div><div class="comparison-copy" id="comparison-copy">暂无</div></div><span class="status">可复核结果</span></div><div class="metric-table" aria-label="策略指标"><div class="metric-cell"><div class="metric-value" id="metric-ann">暂无</div><div class="metric-name">年化收益</div></div><div class="metric-cell"><div class="metric-value" id="metric-cum">暂无</div><div class="metric-name">累计结果</div></div><div class="metric-cell"><div class="metric-value" id="metric-sharpe">暂无</div><div class="metric-name">夏普</div></div><div class="metric-cell"><div class="metric-value" id="metric-dd">暂无</div><div class="metric-name">最大回撤</div></div></div><div class="nav-panel"><canvas id="strategy-chart" aria-label="策略与等权基准净值曲线"></canvas></div><div class="chart-legend"><span class="legend-strategy">当前策略净值</span><span class="legend-benchmark">等权基准</span><span>指标口径：月度收益、统一成本层</span></div></div></div>
+    </section>
+
+    <section class="run-band" id="run" aria-labelledby="run-heading">
+      <div class="section-head"><div><h2 id="run-heading">最后亲自跑一遍：结果和它的来路一起出现。</h2><p class="section-intro">点击后会调用本地 Demo 服务，重新运行选定策略，并生成一份独立的运行档案。</p></div><p class="section-intro">结果页会同时显示样本期数、信号滞后、交易成本、规则校验和运行号。</p></div>
+      <div class="run-grid"><div class="run-panel"><div class="run-panel-head"><span>运行 / 合成数据 042</span><span>仅限本地</span></div><h3>生成一次合成研究记录</h3><p>当前选择的策略会通过统一回测入口重新走完：数据 → 因子 → 综合 → 目标权重 → 风控调仓 → 滞后与成本 → 报告与记录。</p><button class="button" id="run-demo" type="button">运行这次研究 →</button><div class="run-state" id="run-state" aria-live="polite">等待运行。页面已经加载一份确定性结果。</div><div class="run-output"><h3>运行输出</h3><div class="run-output-row"><span>累计结果</span><strong id="run-cum">暂无</strong></div><div class="run-output-row"><span>年化收益</span><strong id="run-ann">暂无</strong></div><div class="run-output-row"><span>成本占比</span><strong id="run-cost">暂无</strong></div></div></div><div class="timeline" aria-label="运行步骤"><div class="timeline-item active"><strong>材料已准备</strong><span>合成数据已登记，随机种子和日期范围固定。</span></div><div class="timeline-item active"><strong>单因子已测试</strong><span>动量、低波和价值分别保留评估证据。</span></div><div class="timeline-item active"><strong>综合方案已记录</strong><span>正交化、标准化和权重方案不隐藏在脚本里。</span></div><div class="timeline-item active"><strong>策略已形成</strong><span>目标权重经过合法性检查，再进入统一回测入口。</span></div><div class="timeline-item active"><strong>风险已检查</strong><span>换手、交易成本、净值和回撤被同时记录。</span></div><div class="timeline-item active"><strong>报告已生成</strong><span>净值、持仓和绩效指标使用同一口径。</span></div><div class="timeline-item active"><strong>版本已归档</strong><span>配置、输入、输出和运行指纹可以被复盘。</span></div></div></div>
+    </section>
+
+    <section class="section" aria-labelledby="handoff-heading"><div class="section-head"><div><span class="section-label">两种使用形态</span><h2 id="handoff-heading">同一套研究能力，适配两类用户。</h2></div><p class="section-intro">后端的研究、回测、验证和归档逻辑保持一致；页面根据用户的专业程度和使用场景调整信息重点。</p></div><div class="handoff"><div class="handoff-item"><strong>专业研究工作台</strong><p>面向量化研究员和专业投资者。集中查看研究配置、因子证据、正交化、风控、回测质检和版本记录，由人逐步确认。</p></div><div class="handoff-item"><strong>手机 APP 版</strong><p>面向个人投资者。用更少的信息承载完整流程，AI 可以组织研究步骤，但研究方案和因子阶段仍由用户审批。</p></div><div class="handoff-item"><strong>AI 协作方式</strong><p>支持人主导、AI 协作，也支持 AI 主导、人审批。无论选择哪种方式，公式、参数、数据和结果都不会被静默修改。</p></div></div></section>
+  </main>
+  <footer class="site-footer"><span><strong>研究档案 / 本地量化 MVP</strong> · 脱敏作品集演示</span><span>本页面不构成投资建议 · <a href="wealth.html">查看手机 APP 版 ↗</a> · <a href="research.html">进入研究工作台 ↗</a></span></footer>
+  <script src="app.js"></script>
+</body>
+</html>

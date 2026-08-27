@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>张逸帆 · AI 产品作品集</title>
-<meta name="description" content="复旦大学 AI 产品经理作品集：虚拟用户访谈平台、地址信息审核 Agent、每日 AI 资讯日报与本地结构化知识库系统。">
+<meta name="description" content="复旦大学 AI 产品经理作品集：虚拟用户访谈平台、地址信息审核 Agent、每日 AI 资讯日报、本地结构化知识库系统与 AI 量化策略投研系统。">
 <meta property="og:title" content="张逸帆 · AI 产品作品集">
-<meta property="og:description" content="复旦大学 AI 产品经理 · 腾讯微信支付风控 + 米哈游原神国际化实习。4 个项目覆盖用户研究、KYC Agent、信息产品与人机共读知识工程。">
+<meta property="og:description" content="复旦大学 AI 产品经理 · 腾讯微信支付风控 + 米哈游原神国际化实习。5 个项目覆盖用户研究、KYC Agent、信息产品、人机共读知识工程与量化投研工作流。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mimikyuqwer.github.io/ai-product-portfolio/">
 <meta property="og:locale" content="zh_CN">
@@ -19,7 +19,7 @@
   "jobTitle": "AI Product Manager",
   "alumniOf": "复旦大学",
   "worksFor": ["腾讯", "米哈游"],
-  "knowsAbout": ["LLM", "AI Agent", "产品设计", "评测体系", "用户研究", "KYC 风控"],
+  "knowsAbout": ["LLM", "AI Agent", "产品设计", "评测体系", "用户研究", "KYC 风控", "量化金融", "投研工作流", "人机协作"],
   "url": "https://mimikyuqwer.github.io/ai-product-portfolio/",
   "hasPart": [
     {
@@ -43,6 +43,12 @@
       "@type": "CreativeWork",
       "name": "本地结构化知识库系统",
       "description": "面向人机共读的结构化知识协议、渐进式检索与可溯源知识工作流"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "AI 量化策略投研系统",
+      "description": "把量化研究拆为数据、因子、综合、风控、策略、回测、记录七阶段的双端工作台，强调人机审批边界与可审计研究链路",
+      "url": "https://mimikyuqwer.github.io/ai-product-portfolio/quant-research-mvp/site/index.html"
     }
   ]
 }
@@ -66,6 +72,8 @@
     --audit-gold-light: #fef9f0;
     --skill-purple: #7c3aed;
     --skill-purple-light: #f5f3ff;
+    --quant-teal: #0d9488;
+    --quant-teal-light: #e8f4f3;
   }
 
   html { scroll-behavior: smooth; }
@@ -146,6 +154,7 @@
   .project-dot.vur { background: var(--vur-blue); }
   .project-dot.audit { background: var(--audit-gold); }
   .project-dot.skill { background: var(--skill-purple); }
+  .project-dot.quant { background: var(--quant-teal); }
   h2 {
     font-size: 21px; font-weight: 700;
     letter-spacing: -0.01em; text-wrap: balance;
@@ -180,6 +189,7 @@
   .highlight-box.vur  { border-left: 3px solid var(--vur-blue);  background: var(--vur-blue-light); }
   .highlight-box.audit { border-left: 3px solid var(--audit-gold); background: var(--audit-gold-light); }
   .highlight-box.skill { border-left: 3px solid var(--skill-purple); background: var(--skill-purple-light); }
+  .highlight-box.quant { border-left: 3px solid var(--quant-teal); background: var(--quant-teal-light); }
   .highlight-box strong { color: var(--ink); }
 
   .design-list { list-style: none; padding-left: 0 !important; margin-top: 8px; }
@@ -196,6 +206,7 @@
   }
   .design-list.audit li::before { background: var(--audit-gold); }
   .design-list.skill li::before { background: var(--skill-purple); }
+  .design-list.quant li::before { background: var(--quant-teal); }
   .design-list li strong { color: var(--ink); }
 
   /* ── Flow ── */
@@ -250,6 +261,7 @@
     <a href="#audit">地址审核 Agent</a>
     <a href="#daily">AI 资讯日报</a>
     <a href="#wiki">结构化知识库</a>
+    <a href="#quant">量化投研系统</a>
     <a href="https://github.com/MimikyuQWER/ai-product-portfolio" target="_blank" rel="noopener">GitHub</a>
   </div>
 </nav>
@@ -270,8 +282,8 @@
       <a href="https://github.com/MimikyuQWER/ai-product-portfolio#readme" target="_blank" rel="noopener">阅读与启动指南</a>
     </div>
     <div class="header-summary">
-      <p>在以上两段实习中独立完成两个 AI 产品项目，均在业务团队实际投入使用。<strong>虚拟用户访谈平台</strong>面向原神海外玩家用户调研场景，用基于真实玩家数据建模的 AI 数字分身嵌入业务流程，帮助一线团队和高层管理者了解真实玩家画像；<strong>地址审核 Agent</strong>面向微信支付等金融法律 KYC 场景，通过 LLM + 高德地图 + 联网搜索三重交叉验证，将地址审核效率提升约 3 倍，准确率达 95%+。以下 Demo 已去除敏感业务信息，保留完整的产品设计与交互逻辑。</p>
-      <p>作品集同时收录两个个人工程项目：<strong>每日 AI 资讯日报</strong>验证从信息聚合到阅读、编辑与导出的完整内容工作流；<strong>结构化知识库系统</strong>将长期知识沉淀设计成有 Schema、有索引、有时效标记和溯源机制的人机协作系统。</p>
+      <p>在以上两段实习中完成两个 AI 产品项目，均在业务团队实际投入使用。<strong>虚拟用户访谈平台</strong>面向原神海外玩家用户调研场景，用基于真实玩家数据建模的 AI 数字分身嵌入业务流程，帮助一线团队和高层管理者了解真实玩家画像；<strong>地址审核 Agent</strong>面向微信支付等金融法律 KYC 场景，通过 LLM + 高德地图 + 联网搜索三重交叉验证，将地址审核效率提升约 3 倍，准确率达 95%+。以下 Demo 已去除敏感业务信息，保留完整的产品设计与交互逻辑。</p>
+      <p>作品集同时收录三个个人项目：<strong>每日 AI 资讯日报</strong>验证从信息聚合到阅读、编辑与导出的完整内容工作流；<strong>结构化知识库系统</strong>将长期知识沉淀设计成有 Schema、有索引、有时效标记和溯源机制的人机协作系统；<strong>AI 量化策略投研系统</strong>把量化研究拆成数据、因子、综合、风控、策略、回测、记录七个可检查环节，强调 AI 辅助计算但不由 AI 做投资决策的人机协作边界。</p>
     </div>
   </header>
 
@@ -311,11 +323,11 @@
     <ul class="design-list">
       <li><strong>三级回答体系</strong>——原文可答 → 证据可推演 → 证据不足直说不编造，保证 AI 每条回答可追溯、可验证，减少黑盒不信任感</li>
       <li><strong>端到端 + 过程评测体系</strong>——建立黄金评测集，从结果端和每个中间环节设计验收标准，每次迭代保证黄金评测集效果不退步</li>
-      <li><strong>独立审计 Agent</strong>——主 Agent 回答后由独立审计 Agent 二次评估，bad case 分类归档、针对性调优</li>
+      <li><strong>前端交互打磨与 独立审计 Agent</strong>——主 Agent 回答后由独立审计 Agent 二次评估，bad case 分类归档、针对性调优</li>
     </ul>
 
     <div class="narrative">
-      <p>基于上千名真实玩家的访谈与 BI 数据 1:1 建模，每位虚拟玩家包含 20+ 档案字段（UID、付费金额、游戏时长、流失原因等）。支持 7 维度筛选（国家/性别/年龄/平台/付费等级/所属游戏/冒险等级），覆盖美国、英国、日本、俄罗斯等区域。已在米哈游用研团队作为访谈前的情景预演工具实际使用。</p>
+      <p>基于数百名真实玩家的访谈与 BI 数据 1:1 建模，每位虚拟玩家包含 20+ 档案字段（UID、付费金额、游戏时长、流失原因等）。支持 7 维度筛选（国家/性别/年龄/平台/付费等级/所属游戏/冒险等级），覆盖美国、英国、日本、俄罗斯等区域。已在米哈游用研团队作为访谈前的情景预演工具实际使用。</p>
     </div>
 
     <div class="cta-row">
@@ -358,7 +370,7 @@
     </div>
 
     <div class="highlight-box audit">
-      <strong>实际使用中团队认可的设计：预审报告环节。</strong>Agent 在调用任何外部 API 之前，先向用户展示数据摘要——共多少条、每条完整度评估（缺省/市/区/街道/门牌号）、哪些明显无效、是否需要使用者补充信息或做核对——<strong>用户确认后才进入正式审核</strong>。这个设计避免了大量无效 API 调用和 Token 浪费，也保持了审核员对流程的控制感。
+      <strong>人的参与度：预审报告环节。</strong>Agent 在调用外部 API 之前，先向用户展示数据摘要——共多少条、每条完整度评估（缺省/市/区/街道/门牌号）、哪些明显无效、是否需要使用者补充信息或做核对——<strong>用户确认后才进入正式审核</strong>。这个设计避免了大量无效 API 调用和 Token 浪费，也保持了审核员对流程的控制感。
     </div>
 
     <div class="narrative">
@@ -432,10 +444,9 @@
 
     <div class="highlight-box skill">
       <strong>AI 协作闭环：</strong><br>
-      ① <strong>摄入</strong>——读研报 / 笔记 → 提取要点确认 → 结构化写入对应页面 → 更新索引<br>
+      ① <strong>摄入</strong>——读研报 / 飞书笔记 → AI读取本地和云空间后提取要点确认 → 结构化写入对应页面 → 更新索引<br>
       ② <strong>沉淀</strong>——对话结束后提取新判断 / 事实 / 方法 → 写入 wiki → 检查与已有内容矛盾<br>
       ③ <strong>答疑</strong>——飞书笔记自动检测疑问句 → 查 wiki 框架性知识 + iFinD 实时数据 → 给出可溯源答案<br>
-      ④ <strong>健康检查</strong>——定期扫描 inbox 积压、孤立页面、矛盾判断、过期数据
     </div>
 
     <div class="narrative">
@@ -447,6 +458,62 @@
       <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio/blob/main/knowledge-wiki-system/设计思路详解.md" target="_blank" rel="noopener">设计思路详解</a>
       <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio/tree/main/knowledge-wiki-system/samples" target="_blank" rel="noopener">查看脱敏样例</a>
       <span class="cta-note">文档型工程案例 · 无需启动 Web 服务</span>
+    </div>
+  </section>
+
+  <!-- ═══════════ PROJECT 5: QUANT RESEARCH ═══════════ -->
+  <section class="project-card" id="quant" aria-labelledby="quant-title">
+    <div class="project-head">
+      <span class="project-dot quant" aria-hidden="true"></span>
+      <h2 id="quant-title">AI 量化策略投研系统</h2>
+    </div>
+    <p class="project-context">本地量化 MVP · <strong>B端 PC 工作台 + C端理财通入口双版本</strong> · 研究链路可审计</p>
+
+    <div class="narrative">
+      <p><strong>传统模式：</strong>量化研究分散在数据脚本、因子表、回测 notebook 和聊天记录里，口径、时间顺序和版本记录难以对齐；策略收益一下滑，往往要花大量时间排查是信号失效、执行成本高，还是某个参数被悄悄覆盖。</p>
+      <p><strong>AI 时代的机遇：</strong>AI 可以加速计算和表达，但如果让模型直接给结论，会掩盖数据口径、前视函数、样本划分和成本假设等关键风险。</p>
+    </div>
+
+    <div class="highlight-box quant">
+      <strong>本项目的思路：</strong>把一次量化研究拆成<strong>数据 → 因子 → 综合 → 风控 → 策略 → 回测 → 记录</strong>七个可检查环节。研究员负责方向、审批和判断；AI 负责把想法形式化、执行确定性计算、生成证据表、检查口径与时序，并提出下一步建议；量化引擎负责固定公式计算。关键决策全部留档，结果可被复核。
+    </div>
+
+    <div class="narrative">
+      <p>将研究员「锁定配置 → 单因子测试 → 因子审批 → 正交化综合 → 策略设计 → 风控调仓 → 回测归档」的完整链路转化为双端可交互流程：</p>
+      <div class="flow">
+        <span class="flow-step">锁定研究配置</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">单因子测试</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">因子审批</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">正交化综合</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">策略与风控</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">回测报告</span>
+        <span class="flow-arrow">→</span>
+        <span class="flow-step">版本归档</span>
+      </div>
+    </div>
+
+    <h3>三个核心设计</h3>
+    <ul class="design-list quant">
+      <li><strong>七阶段证据链</strong>——每个模块有明确输入、输出与责任人；出了问题先定位环节，而不是重跑整套脚本</li>
+      <li><strong>双端同构</strong>——PC 工作台信息密度高，适合专业研究员横向比较；财富端 APP 渐进披露，适合个人投资者按步决策；两端共享同一套计算与归档逻辑</li>
+      <li><strong>人机审批边界</strong>——AI 可辅助或主导执行，但研究方案、因子采纳、策略发布必须由人确认；独立验证模块专门检查前视、泄漏和口径漂移</li>
+    </ul>
+
+    <div class="narrative">
+      <p>Demo 使用合成数据展示完整流程；本地启动服务后，前端点击运行会调用统一回测入口，在 <code>runs/&lt;运行号&gt;/</code> 下生成不可覆盖的七阶段档案。页面明确标注“全部数值均为合成数据”，不构成投资建议。</p>
+    </div>
+
+    <div class="cta-row">
+      <a class="cta primary" href="../quant-research-mvp/site/index.html" target="_blank" rel="noopener">产品功能页</a>
+      <a class="cta ghost" href="../quant-research-mvp/site/research.html" target="_blank" rel="noopener">PC 工作台</a>
+      <a class="cta ghost" href="../quant-research-mvp/site/wealth.html" target="_blank" rel="noopener">手机 APP 演示</a>
+      <a class="cta ghost" href="https://github.com/MimikyuQWER/ai-product-portfolio/tree/main/quant-research-mvp" target="_blank" rel="noopener">仓库说明</a>
+      <span class="cta-note">静态页面可直接浏览 · 完整运行需本地服务</span>
     </div>
   </section>
 

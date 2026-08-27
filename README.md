@@ -1,6 +1,6 @@
 # 张逸帆 · AI 产品作品集
 
-复旦大学 2026 届硕士，求职方向为 AI 产品经理。作品集包含两项在实习团队实际使用的 AI 产品，以及两项个人工程项目；重点呈现我如何识别业务瓶颈、把人的判断标准转译为 AI 工作流，并通过评测、审计、溯源和安全降级提高结果可靠性。
+复旦大学 2026 届硕士，求职方向为 AI 产品经理。作品集包含两项在实习团队实际使用的 AI 产品，以及三项个人工程项目；重点呈现我如何识别业务瓶颈、把人的判断标准转译为 AI 工作流，并通过评测、审计、溯源和安全降级提高结果可靠性。
 
 **[打开在线作品集总览](https://mimikyuqwer.github.io/ai-product-portfolio/portfolio/index.html)**
 
@@ -12,6 +12,7 @@
 | 02 · 地址信息审核 Agent | [项目演示页](https://mimikyuqwer.github.io/ai-product-portfolio/address-audit-agent/landing.html) | 在线看完整流程；本地应用按 [README](address-audit-agent/README.md) 启动 |
 | 03 · 每日 AI 资讯日报 | [在线体验 Demo](https://mimikyuqwer.github.io/ai-product-portfolio/daily-news-demo/) | 浏览、编辑、撤销、恢复和导出均可直接体验 |
 | 04 · 本地结构化知识库 | [架构与工程说明](knowledge-wiki-system/README.md) | 阅读 [设计思路](knowledge-wiki-system/设计思路详解.md)、[Schema](knowledge-wiki-system/SCHEMA.md) 与 [脱敏样例](knowledge-wiki-system/samples/README.md) |
+| 05 · AI 量化策略投研系统 | [产品功能页](quant-research-mvp/site/index.html) | 打开 PC 工作台 [`research.html`](quant-research-mvp/site/research.html)、移动端演示 [`wealth.html`](quant-research-mvp/site/wealth.html) 与 [设计思路](quant-research-mvp/site/design.html)；完整运行见 [README](quant-research-mvp/README.md) |
 
 ## 01 · 虚拟用户访谈平台
 
@@ -47,11 +48,20 @@ npm run demo
 
 核心约束是每条事实性陈述必须可溯源到原文；不确定内容标记“待补充”，不允许用常识填空。仓库公开架构文档、同步与入库脚本以及四类脱敏样例，不包含个人知识正文、账号凭证或金融数据配置。
 
+## 05 · AI 量化策略投研系统
+
+面向量化研究场景的 B 端 PC 工作台 + C 端财富入口双端 Demo，重点不是预测收益，而是把一次完整研究拆成可检查、可复盘、可审计的七段流程：数据 → 因子 → 综合 → 风控 → 策略 → 回测 → 记录。
+
+研究员负责提出研究问题、确认经济意义、批准或废弃因子和策略；AI 负责把想法形式化、执行确定性计算、生成证据表、检查口径和时间顺序，并提出下一步建议；金融指标和回测由固定的量化引擎计算。PC 工作台强调信息密度和横向比较，财富端 APP 强调逐步决策和渐进披露，但两端共享同一套计算与归档逻辑。
+
+公开 Demo 使用合成数据，可在浏览器中直接查看产品功能页、研究工作台、移动端演示与设计思路页。完整运行并归档需要本地启动 Python 服务；iFinD 真实接口冒烟验证为可选步骤。本 Demo 不构成投资建议。
+
 ## 仓库边界
 
 - 两个实习项目均已脱敏，保留产品逻辑、交互与可靠性设计。
 - AI 日报在线版使用固定快照；抓取器、数据库、调度器和发布账号不在公开 Demo 中。
 - 知识库仅公开工程规范、工具与脱敏样例。
+- 量化投研 Demo 使用合成数据，完整运行需本地 Python 服务；iFinD 冒烟验证仅在已配置 iFinD 环境时可选运行，不构成投资建议。
 - 需要模型、地图或搜索服务的完整能力，均由使用者在本地自行配置密钥。
 
 ---

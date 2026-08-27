@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f3f0e8" />
+  <title>研究工作台 · 研究档案</title>
+  <link rel="stylesheet" href="styles.css?v=24" />
+</head>
+<body class="broker-workbench">
+  <header class="site-header"><div class="header-inner"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span>研究档案 / 本地量化 MVP</a><nav class="nav" aria-label="主导航"><span class="nav-note">脱敏展示版</span><a href="index.html">产品功能</a><a class="active" href="research.html">研究工作台</a><a href="wealth.html">手机 APP 版</a><a href="design.html">设计思路</a></nav></div></header>
+  <main class="page research-page">
+    <section class="pc-workbench-header" aria-labelledby="workbench-title">
+      <div><h1 id="workbench-title">AI量化投研工作台</h1><p>人确认研究方向，AI整理并执行，验证模块独立找错。</p></div>
+      <div class="pc-header-actions">
+        <div class="research-mode-switch" aria-label="研究模式"><button type="button" data-research-mode="professional">专业研究</button><button type="button" data-research-mode="autonomous">AI自主研究</button></div>
+        <button id="pc-guide-button" class="guide-trigger" type="button" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M9.8 9a2.4 2.4 0 1 1 3.1 2.3c-.9.4-1.4 1-1.4 2M12 17h.01"></path></svg><span>使用指引</span></button>
+      </div>
+    </section>
+    <div class="pc-project-strip"><div><span>当前项目</span><strong>行业多因子研究 · 合成数据</strong></div><div><span id="workflow-status">等待锁定研究配置</span><small id="mode-description">专业研究模式：每个关键阶段由用户审批。</small></div></div>
+
+    <section class="pc-workbench-grid" aria-label="投研工作区">
+      <aside class="workflow-nav pc-primary-nav" aria-label="研究阶段">
+          <button class="workflow-step active" type="button" data-workflow="config"><span>01</span><strong>研究配置</strong><small>范围 / 成本 / 切分</small></button>
+          <button class="workflow-step" type="button" data-workflow="factor"><span>02</span><strong>单因子评估</strong><small>公式 / IC / 分组</small></button>
+          <button class="workflow-step" type="button" data-workflow="factor-approval"><span>03</span><strong>因子审批</strong><small>采纳 / 调整 / 废弃</small></button>
+          <button class="workflow-step" type="button" data-workflow="composite"><span>04</span><strong>因子改进</strong><small>合成 / 加权</small></button>
+          <button class="workflow-step" type="button" data-workflow="strategy"><span>05</span><strong>策略设计</strong><small>逻辑 / 约束 / 迭代</small></button>
+          <button class="workflow-step" type="button" data-workflow="backtest"><span>06</span><strong>回测质检</strong><small>报告 / 规则校验</small></button>
+          <button class="workflow-step" type="button" data-workflow="versions"><span>07</span><strong>版本记录</strong><small>历史 / 下一步</small></button>
+      </aside>
+      <section class="pc-evidence-pane" aria-labelledby="workspace-title"><div class="pc-pane-heading"><div><h2 id="workspace-title">研究证据</h2><p>当前阶段的输入、输出、计算结果与审批动作。</p></div><span>所有结果均为合成示例</span></div><div id="context-bar" class="context-bar" aria-live="polite"></div><div class="workspace-content" id="workspace-content" aria-live="polite"></div></section>
+      <aside class="pc-ai-rail" aria-labelledby="assistant-title">
+        <div class="pc-ai-heading"><div><h2 id="assistant-title">AI研究助手</h2><p>整理定义、解释结果，不替用户批准。</p></div><span id="validation-status" class="validation-chip">等待检查</span></div>
+        <form id="assistant-form" class="assistant-input-panel pc-assistant-input">
+          <label for="assistant-input">研究想法</label>
+          <textarea id="assistant-input" rows="4" placeholder="例如：用六个月动量选择三个指数，趋势转弱时降低仓位。"></textarea>
+          <div class="prompt-examples" aria-label="研究想法示例"><button type="button" data-prompt="我想在指数池里测试六个月动量，月度调仓，选择排名靠前的三个标的。">六个月动量</button><button type="button" data-prompt="我想把动量、价值和低波合成一个月度多因子策略，并比较正交化前后的结果。">多因子</button><button type="button" data-prompt="我想用十二个月趋势判断市场状态，趋势转弱时把策略仓位降到一半。">趋势择时</button></div>
+          <div class="assistant-submit"><button class="button" type="submit">整理方案</button><span>本地规则解析，不调用外部模型。</span></div>
+        </form>
+        <div id="assistant-result" class="assistant-result pc-assistant-result" aria-live="polite"><div class="assistant-empty"><strong>等待研究想法</strong><p>助手会把自然语言整理为可检查的研究定义。</p></div></div>
+        <section id="stage-advice" class="pc-ai-summary" aria-live="polite"><h3>AI研究小结</h3><div><strong>下一步</strong><p>先保存研究配置。</p></div></section>
+        <section id="validation-panel" class="pc-validation-panel" aria-live="polite"><h3>独立验证</h3><p>运行后检查时间顺序、成本、公式与计算一致性。</p></section>
+      </aside>
+    </section>
+  </main>
+  <div id="pc-guide" class="product-guide" role="dialog" aria-modal="true" aria-labelledby="pc-guide-title" hidden>
+    <div class="product-guide-panel"><div class="product-guide-head"><div><span id="pc-guide-progress">第 1 / 9 步</span><h2 id="pc-guide-title">从研究配置开始</h2></div><button type="button" data-guide-close aria-label="关闭使用指引">关闭</button></div><div class="guide-tour-copy"><p id="pc-guide-copy">先确定研究标的、区间、样本切分、信号滞后和交易成本。未锁定这些参数，后续步骤不会开始。</p></div><div class="product-guide-actions"><button type="button" class="button secondary" data-guide-prev>上一步</button><button type="button" class="button secondary" data-guide-close>跳过指引</button><button type="button" class="button" data-guide-next>下一步</button></div></div>
+  </div>
+  <div id="pc-guide-spotlight" class="guide-spotlight" hidden aria-hidden="true"></div>
+  <footer class="site-footer"><span><strong>研究档案 / 本地量化 MVP</strong> · 研究工作台</span><span><a href="index.html">返回产品功能 ↗</a> · <a href="design.html">查看设计思路 ↗</a></span></footer>
+  <script src="assistant.js?v=24"></script>
+  <script src="research.js?v=24"></script>
+</body>
+</html>

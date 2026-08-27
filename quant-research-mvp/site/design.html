@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f3f0e8" />
+  <title>设计思路 · 研究档案</title>
+  <link rel="stylesheet" href="styles.css?v=22" />
+</head>
+<body class="design-page">
+  <header class="site-header"><div class="header-inner"><a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span>研究档案 / 本地量化 MVP</a><nav class="nav" aria-label="主导航"><span class="nav-note">脱敏展示版</span><a href="index.html">产品功能</a><a href="research.html">研究工作台</a><a href="wealth.html">手机 APP 版</a><a class="active" href="design.html">设计思路</a></nav></div></header>
+  <main class="page read-page">
+    <section class="section version-roadmap" aria-labelledby="roadmap-title"><div class="section-head"><div><h2 id="roadmap-title">需求变化，决定了产品形态。</h2></div><p class="section-intro">产品不是从一开始就确定为双端 AI 应用，而是随着真实使用对象和研究痛点逐步收敛。</p></div><div class="roadmap"><article><span>01 · 后端架构</span><h3>先解决研究流程如何稳定运行</h3><p>最初目标是搭建量化研究后端，把数据、因子、风控、回测和记录拆成可复用模块，先保证计算口径统一、结果可以复现。</p></article><article><span>02 · PC 工作台</span><h3>再让专业人员看见并控制过程</h3><p>当系统需要被研究员使用，重点从“能计算”变成“能协作”：用户可以查看公式、参数、证据和版本，并在关键节点确认或修改。</p></article><article><span>03 · 双版本</span><h3>面向不同用户重新组织交互</h3><p>随后扩展为 PC 专业投研工作台与面向个人投资者的手机 APP 版。两端共享同一套研究、回测和归档逻辑，但信息密度、操作节奏和解释方式不同。</p></article><article><span>04 · 双模式</span><h3>让 AI 的参与程度可以被选择</h3><p>专业用户使用“人主导、AI 协作”，个人用户可使用“AI 主导、人审批”。无论哪种模式，研究方案和关键阶段都保留人工确认，AI 不静默改变公式、数据或回测口径。</p></article></div></section>
+    <div class="route-line"><span>设计说明 / 正式系统逻辑</span><strong>建议在产品页和工作台之后阅读</strong></div>
+    <section class="read-hero" aria-labelledby="design-title"><div><h1 id="design-title">这套系统的重点，不是替研究员做决定，而是让每个结论<strong>有依据、可复盘</strong>。</h1><p class="hero-copy">产品设计围绕量化研究中的几个高风险环节展开：数据口径、时间顺序、参数变更、样本外验证和结果留存。它们被拆成可检查的工程对象，AI 在明确边界内参与。</p></div><aside class="read-hero-aside"><strong>这页回答三个问题</strong>为什么拆成七个模块；为什么每一步都要有输入和输出；AI 可以做什么，哪些判断必须由人完成。</aside></section>
+
+    <section class="section" aria-labelledby="principles-title"><div class="section-head"><div><h2 id="principles-title">我把复杂度放进系统，把判断留给人。</h2></div><p class="section-intro">下面四条不是视觉口号，而是我在正式版架构和 Demo 交互中共同遵守的工作原则。</p></div>
+      <div class="principle-row"><div class="principle-name">责任边界</div><div><h3>每个模块像一位知道自己职责的同事。</h3><p>数据层负责材料和可见性，因子层负责信号，策略层负责如何把信号变成目标权重，回测层负责时间顺序、成本和指标，记录层负责把结果留档。出了问题，先定位是哪一环，而不是把整套脚本重跑一遍。</p></div></div>
+      <div class="principle-row"><div class="principle-name">输入 / 输出</div><div><h3>步骤之间有明确交接，研究才不会变成一段“能跑的代码”。</h3><p>数据清单、因子表、目标权重、执行权重、净收益、成本、指标和运行 manifest 都是可检查的对象。这样既方便单测，也方便未来接入新的数据源或策略。</p></div></div>
+      <div class="principle-row"><div class="principle-name">时间纪律</div><div><h3>回测的第一责任，是不让未来信息穿越回来。</h3><p>策略信号和执行收益之间有显式滞后；样本区间从配置读取；数据目录记录可用日期滞后；结果报告不重新偷偷计算一套指标。Demo 用合成数据演示这一点，正式系统用真实行情和规则回归测试守住这一点。</p></div></div>
+      <div class="principle-row"><div class="principle-name">证据留存</div><div><h3>最终数字不是终点，数字的来路才是研究资产。</h3><p>一次运行会把有效配置、数据文件指纹、代码状态、持仓、成本、净值和指标放在一个不可覆盖的运行档案里。研究可以被复盘、交接，也能知道哪一次变更造成了结果变化。</p></div></div>
+    </section>
+
+    <section class="section" aria-labelledby="flow-title"><div class="section-head"><div><h2 id="flow-title">我把完整研究链路画成一张责任图。</h2></div><p class="section-intro">所以 Demo 不把所有内容压成“输入参数 → 收益率”两个框，而是把研究中的交接关系展示出来。</p></div><div class="flow"><div class="flow-cell"><span>01</span><strong>数据</strong><small>材料清单 / manifest</small></div><div class="flow-cell"><span>02</span><strong>因子</strong><small>定义 / IC / 分组</small></div><div class="flow-cell"><span>03</span><strong>综合</strong><small>标准化 / 权重</small></div><div class="flow-cell"><span>04</span><strong>风控</strong><small>边界 / 成本</small></div><div class="flow-cell"><span>05</span><strong>策略</strong><small>迭代 / 版本</small></div><div class="flow-cell"><span>06</span><strong>回测</strong><small>净值 / 绩效</small></div><div class="flow-cell"><span>07</span><strong>记录</strong><small>不可覆盖档案</small></div></div></section>
+
+    <section class="section" aria-labelledby="surface-title"><div class="section-head"><div><h2 id="surface-title">同一套能力，按使用场景改变呈现方式。</h2></div><p class="section-intro">我没有把 PC 页面直接缩小到手机上，而是为两类用户分别组织完整流程。</p></div><table class="tradeoff-table"><thead><tr><th>用户与场景</th><th>界面重点</th><th>流程取舍</th></tr></thead><tbody><tr><th>专业投资者 · PC 工作台</th><td>左侧流程、中间证据、右侧 AI 与独立验证并行呈现。</td><td>人主导每个阶段，适合比较口径、查看数据和逐步审批。</td></tr><tr><th>个人投资者 · 手机 APP 版</th><td>核心指标优先、固定关键操作、AI 解读使用底部抽屉。</td><td>可选择受约束的 AI 自主研究，但研究方案和因子阶段仍由人批准。</td></tr></tbody></table></section>
+
+    <section class="section" aria-labelledby="iteration-title"><div class="section-head"><div><h2 id="iteration-title">产品不是一次成型，而是沿着真实问题迭代。</h2></div><p class="section-intro">两版 PRD 的变化不是增加按钮，而是逐步解决“流程不完整、AI存在感弱、AI自己证明自己”的问题。</p></div><div class="ai-process"><div class="ai-process-item"><span>初版 / 跑通</span><h3>先建立七阶段证据链</h3><p>把数据、因子、组合、风控、策略、回测和版本记录拆开，每一步都有输入、输出和人工决定。</p></div><div class="ai-process-item"><span>第二版 / 可用</span><h3>区分专业端与移动端</h3><p>PC 强调并行比较，手机端强调顺序和核心信息；两端共享计算接口，但都能独立完成研究。</p></div><div class="ai-process-item"><span>v2.1 / 可信</span><h3>加入两种模式和独立验证</h3><p>AI可辅助或主导执行，但关键审批属于人；验证模块只看结构化对象，负责找前视、泄漏和计算漂移。</p></div></div></section>
+
+    <section class="section" aria-labelledby="authority-title"><div class="section-head"><div><h2 id="authority-title">研究能力分工，也需要相互制约。</h2></div><p class="section-intro">可信的 AI 投研不是让一个模型包办全部工作，而是让研究、计算、验证和决策互相独立。</p></div><table class="tradeoff-table"><thead><tr><th>角色</th><th>负责什么</th><th>不能做什么</th></tr></thead><tbody><tr><th>研究 AI</th><td>整理需求、形成方案、执行计算、解释结果和提出下一步。</td><td>不能静默改方向，不能批准因子或发布生产版本。</td></tr><tr><th>量化引擎</th><td>按固定公式计算因子、成本、净值和指标。</td><td>不解释经济意义，不替用户判断策略价值。</td></tr><tr><th>独立验证模块</th><td>检查时间顺序、样本泄漏、成本、正交化和固定结果。</td><td>不复述研究 AI 的结论，也不修改研究对象。</td></tr><tr><th>用户</th><td>确定研究方向，在关键节点批准、修改或结束研究。</td><td>不能绕过阻断性错误直接进入候选生产版本。</td></tr></tbody></table></section>
+
+    <section class="section" aria-labelledby="tradeoff-title"><div class="section-head"><div><h2 id="tradeoff-title">我把每个选择的代价写清楚。</h2></div><p class="section-intro">我不只展示“做成了什么”，也说明为什么没有盲目追求更重、更大、更像生产平台。</p></div><table class="tradeoff-table"><thead><tr><th>我的选择</th><th>我为什么这样做</th><th>我接受的代价</th></tr></thead><tbody><tr><th>本地优先</th><td>没有服务端和数据库也能完成研究，数据、配置和结果都在本地可审计。</td><td>多人协作和远程调度能力较弱；这不是实盘交易系统。</td></tr><tr><th>统一 runner</th><td>策略只返回目标权重，滞后、成本、净值和指标由同一入口处理。</td><td>不能为了某个策略随意改写回测循环；特殊逻辑需要显式扩展接口。</td></tr><tr><th>轻量策略样例</th><td>动量、低波、价值和等权足以展示因子、组合、评估链路，容易解释和测试。</td><td>不覆盖复杂组合优化、实时风控和多资产生产调度。</td></tr><tr><th>AI 参与但不越权</th><td>我让 AI 协助拆需求、找边界、补测试、做脱敏表达和发现口径冲突。</td><td>经济含义、数据许可、样本划分和最终投资判断仍由我确认。</td></tr></tbody></table></section>
+
+    <section class="section" aria-labelledby="ai-title"><div class="section-head"><div><h2 id="ai-title">我把 AI 当作研究工程协作者，而不是功能按钮。</h2></div><p class="section-intro">在这个项目里，AI 参与了需求、架构、验证和表达四个阶段，但每一步都有我的复核边界。</p></div><div class="ai-process"><div class="ai-process-item"><span>01 / 需求</span><h3>我把模糊需求变成流程</h3><p>我让 AI 协助把“做一个量化系统”拆成用户、场景、输入、输出、验收标准和不做什么。</p></div><div class="ai-process-item"><span>02 / 架构</span><h3>我把责任拆成模块</h3><p>我用 AI 协助识别数据、因子、策略、回测、风险和记录之间的边界，减少脚本之间的隐性耦合。</p></div><div class="ai-process-item"><span>03 / 验证</span><h3>我把风险变成测试</h3><p>我让 AI 协助围绕未来函数、时间错位、权重约束、指标口径、文件指纹和版本漂移补充测试。</p></div><div class="ai-process-item"><span>04 / 表达</span><h3>我把技术翻译给人</h3><p>我让 AI 协助把正式系统的工程语言转换成面试官能理解的产品价值，同时保留真实边界和风险。</p></div></div><blockquote class="quote">我使用 AI 来更快地把问题整理清楚、把过程做得可检查；但我不会把因子的经济含义、数据许可、样本切分和最终投资判断交给 AI。<small>我的人机协作约定</small></blockquote></section>
+  </main>
+  <footer class="site-footer"><span><strong>研究档案 / 本地量化 MVP</strong> · 设计思路页</span><span><a href="index.html">返回产品功能 ↗</a></span></footer>
+</body>
+</html>

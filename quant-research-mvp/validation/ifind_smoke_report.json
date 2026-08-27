@@ -1,0 +1,2380 @@
+{
+  "schema_version": "demo-run-v2",
+  "generated_at": "synthetic-deterministic",
+  "disclaimer": "This is a local iFinD smoke report. It contains metadata and derived metrics only; no raw prices or credentials are shipped.",
+  "data_manifest": {
+    "source": "iFinD",
+    "endpoint": "cmd_history_quotation",
+    "asset_type": "index",
+    "universe_id": "ifind_index_smoke_pool",
+    "codes": [
+      "000300.SH",
+      "000905.SH",
+      "000852.SH",
+      "000922.CSI",
+      "000821.CSI"
+    ],
+    "frequency": "monthly_after_resample",
+    "date_start": "2024-02-29",
+    "date_end": "2025-12-31",
+    "rows": 23,
+    "adjustment": "raw_index_close_CPS_1"
+  },
+  "config": {
+    "start": "2024-02-29",
+    "end": "2025-12-31",
+    "frequency": "monthly",
+    "signal_lag": 1,
+    "cost_model": "demo_linear_5bp_buy_10bp_sell",
+    "benchmark": "equal_weight",
+    "asset_type": "index",
+    "universe_id": "synthetic_sector_8",
+    "allow_short": false,
+    "max_gross_exposure": 1.0,
+    "sample_split": {
+      "train": {
+        "start": "2019-01-31",
+        "end": "2022-12-31"
+      },
+      "validation": {
+        "start": "2023-01-31",
+        "end": "2024-12-31"
+      },
+      "holdout": {
+        "start": "2025-01-31",
+        "end": "2025-12-31",
+        "purpose": "final review only"
+      }
+    },
+    "cost_assumptions": {
+      "buy_rate": 0.0005,
+      "sell_rate": 0.001,
+      "currency": "fraction of traded notional"
+    }
+  },
+  "assets": [
+    {
+      "id": "000300.SH",
+      "label": "000300.SH"
+    },
+    {
+      "id": "000905.SH",
+      "label": "000905.SH"
+    },
+    {
+      "id": "000852.SH",
+      "label": "000852.SH"
+    },
+    {
+      "id": "000922.CSI",
+      "label": "000922.CSI"
+    },
+    {
+      "id": "000821.CSI",
+      "label": "000821.CSI"
+    }
+  ],
+  "strategies": {
+    "momentum": {
+      "id": "momentum",
+      "label": "横截面动量",
+      "summary": "追踪过去 6 个月相对强势的 3 个行业",
+      "logic": "过去表现靠前 → 下一期等权持有",
+      "spec": {
+        "factor_inputs": [
+          "momentum_6m"
+        ],
+        "selection": "Top 3 等权",
+        "rebalance": "monthly",
+        "signal_lag": 1,
+        "risk_controls": {
+          "long_only": true,
+          "max_gross_exposure": 1.0,
+          "transaction_cost": "demo_linear_5bp_buy_10bp_sell"
+        },
+        "timing_rule": "不适用"
+      },
+      "metrics": {
+        "cum": 0.342671,
+        "ann": 0.166183,
+        "vol": 0.164343,
+        "sharpe": 0.862694,
+        "max_dd": -0.052234,
+        "wr": 0.391304,
+        "pl": 2.628943,
+        "ir": -0.119085,
+        "excess_ann": -0.011484,
+        "down_vol": 0.043734,
+        "sortino": 3.228211,
+        "calmar": 3.181537
+      },
+      "nav": [
+        {
+          "date": "2024-02-29",
+          "value": 1.0
+        },
+        {
+          "date": "2024-03-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-04-30",
+          "value": 1.0
+        },
+        {
+          "date": "2024-05-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-06-30",
+          "value": 1.0
+        },
+        {
+          "date": "2024-07-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-08-31",
+          "value": 0.963681
+        },
+        {
+          "date": "2024-09-30",
+          "value": 1.127409
+        },
+        {
+          "date": "2024-10-31",
+          "value": 1.111992
+        },
+        {
+          "date": "2024-11-30",
+          "value": 1.115161
+        },
+        {
+          "date": "2024-12-31",
+          "value": 1.094985
+        },
+        {
+          "date": "2025-01-31",
+          "value": 1.068521
+        },
+        {
+          "date": "2025-02-28",
+          "value": 1.118422
+        },
+        {
+          "date": "2025-03-31",
+          "value": 1.115423
+        },
+        {
+          "date": "2025-04-30",
+          "value": 1.079475
+        },
+        {
+          "date": "2025-05-31",
+          "value": 1.105467
+        },
+        {
+          "date": "2025-06-30",
+          "value": 1.116774
+        },
+        {
+          "date": "2025-07-31",
+          "value": 1.159561
+        },
+        {
+          "date": "2025-08-31",
+          "value": 1.294793
+        },
+        {
+          "date": "2025-09-30",
+          "value": 1.33909
+        },
+        {
+          "date": "2025-10-31",
+          "value": 1.330163
+        },
+        {
+          "date": "2025-11-30",
+          "value": 1.290973
+        },
+        {
+          "date": "2025-12-31",
+          "value": 1.342671
+        }
+      ],
+      "holdings": [
+        {
+          "date": "2024-08-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2024-09-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2024-10-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2024-11-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2024-12-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-01-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-02-28",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-03-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-04-30",
+          "items": [
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-05-31",
+          "items": [
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-06-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-07-31",
+          "items": [
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-08-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-09-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-10-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-11-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-12-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        }
+      ],
+      "evidence": {
+        "signal_lag": 1,
+        "cost_model": "demo_linear_5bp_buy_10bp_sell",
+        "cost_total": 0.005,
+        "turnover_mean": 0.304348,
+        "periods": 23
+      }
+    },
+    "low_vol": {
+      "id": "low_vol",
+      "label": "低波动",
+      "summary": "选择过去 6 个月波动率最低的 3 个行业",
+      "logic": "历史波动率较低 → 下一期等权持有",
+      "spec": {
+        "factor_inputs": [
+          "low_vol_6m"
+        ],
+        "selection": "Top 3 等权",
+        "rebalance": "monthly",
+        "signal_lag": 1,
+        "risk_controls": {
+          "long_only": true,
+          "max_gross_exposure": 1.0,
+          "transaction_cost": "demo_linear_5bp_buy_10bp_sell"
+        },
+        "timing_rule": "不适用"
+      },
+      "metrics": {
+        "cum": 0.21186,
+        "ann": 0.105453,
+        "vol": 0.159761,
+        "sharpe": 0.543373,
+        "max_dd": -0.064999,
+        "wr": 0.434783,
+        "pl": 1.626629,
+        "ir": -0.694935,
+        "excess_ann": -0.072214,
+        "down_vol": 0.047821,
+        "sortino": 1.682376,
+        "calmar": 1.622386
+      },
+      "nav": [
+        {
+          "date": "2024-02-29",
+          "value": 1.0
+        },
+        {
+          "date": "2024-03-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-04-30",
+          "value": 1.0
+        },
+        {
+          "date": "2024-05-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-06-30",
+          "value": 1.0
+        },
+        {
+          "date": "2024-07-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-08-31",
+          "value": 0.969552
+        },
+        {
+          "date": "2024-09-30",
+          "value": 1.161981
+        },
+        {
+          "date": "2024-10-31",
+          "value": 1.109614
+        },
+        {
+          "date": "2024-11-30",
+          "value": 1.116427
+        },
+        {
+          "date": "2024-12-31",
+          "value": 1.146198
+        },
+        {
+          "date": "2025-01-31",
+          "value": 1.10953
+        },
+        {
+          "date": "2025-02-28",
+          "value": 1.103536
+        },
+        {
+          "date": "2025-03-31",
+          "value": 1.117101
+        },
+        {
+          "date": "2025-04-30",
+          "value": 1.086454
+        },
+        {
+          "date": "2025-05-31",
+          "value": 1.114652
+        },
+        {
+          "date": "2025-06-30",
+          "value": 1.13695
+        },
+        {
+          "date": "2025-07-31",
+          "value": 1.161619
+        },
+        {
+          "date": "2025-08-31",
+          "value": 1.20249
+        },
+        {
+          "date": "2025-09-30",
+          "value": 1.193214
+        },
+        {
+          "date": "2025-10-31",
+          "value": 1.224554
+        },
+        {
+          "date": "2025-11-30",
+          "value": 1.207614
+        },
+        {
+          "date": "2025-12-31",
+          "value": 1.21186
+        }
+      ],
+      "holdings": [
+        {
+          "date": "2024-08-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2024-09-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2024-10-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2024-11-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2024-12-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-01-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-02-28",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-03-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-04-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-05-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-06-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-07-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-08-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-09-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-10-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-11-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-12-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        }
+      ],
+      "evidence": {
+        "signal_lag": 1,
+        "cost_model": "demo_linear_5bp_buy_10bp_sell",
+        "cost_total": 0.0035,
+        "turnover_mean": 0.217391,
+        "periods": 23
+      }
+    },
+    "momentum_timing": {
+      "id": "momentum_timing",
+      "label": "动量择时",
+      "summary": "用 12 个月趋势过滤决定持仓比例，再持有相对强势行业",
+      "logic": "12 个月趋势为正满仓 Top 3，趋势转弱降至半仓，下一期执行",
+      "spec": {
+        "factor_inputs": [
+          "momentum_6m",
+          "market_trend_12m"
+        ],
+        "selection": "Top 3 等权",
+        "rebalance": "monthly",
+        "signal_lag": 1,
+        "risk_controls": {
+          "long_only": true,
+          "max_gross_exposure": 1.0,
+          "transaction_cost": "demo_linear_5bp_buy_10bp_sell"
+        },
+        "timing_rule": "12个月基准趋势为正满仓，否则半仓"
+      },
+      "metrics": {
+        "cum": 0.25597,
+        "ann": 0.126267,
+        "vol": 0.104821,
+        "sharpe": 0.949423,
+        "max_dd": -0.035932,
+        "wr": 0.304348,
+        "pl": 2.491224,
+        "ir": -0.305748,
+        "excess_ann": -0.0514,
+        "down_vol": 0.031768,
+        "sortino": 3.187745,
+        "calmar": 3.514002
+      },
+      "nav": [
+        {
+          "date": "2024-02-29",
+          "value": 1.0
+        },
+        {
+          "date": "2024-03-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-04-30",
+          "value": 1.0
+        },
+        {
+          "date": "2024-05-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-06-30",
+          "value": 1.0
+        },
+        {
+          "date": "2024-07-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-08-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-09-30",
+          "value": 1.0
+        },
+        {
+          "date": "2024-10-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-11-30",
+          "value": 1.0
+        },
+        {
+          "date": "2024-12-31",
+          "value": 1.0
+        },
+        {
+          "date": "2025-01-31",
+          "value": 1.0
+        },
+        {
+          "date": "2025-02-28",
+          "value": 1.046201
+        },
+        {
+          "date": "2025-03-31",
+          "value": 1.043396
+        },
+        {
+          "date": "2025-04-30",
+          "value": 1.00977
+        },
+        {
+          "date": "2025-05-31",
+          "value": 1.034083
+        },
+        {
+          "date": "2025-06-30",
+          "value": 1.04466
+        },
+        {
+          "date": "2025-07-31",
+          "value": 1.084683
+        },
+        {
+          "date": "2025-08-31",
+          "value": 1.211183
+        },
+        {
+          "date": "2025-09-30",
+          "value": 1.25262
+        },
+        {
+          "date": "2025-10-31",
+          "value": 1.24427
+        },
+        {
+          "date": "2025-11-30",
+          "value": 1.20761
+        },
+        {
+          "date": "2025-12-31",
+          "value": 1.25597
+        }
+      ],
+      "holdings": [
+        {
+          "date": "2025-02-28",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-03-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-04-30",
+          "items": [
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-05-31",
+          "items": [
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-06-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-07-31",
+          "items": [
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-08-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-09-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-10-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-11-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        },
+        {
+          "date": "2025-12-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.3333
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.3333
+            }
+          ]
+        }
+      ],
+      "evidence": {
+        "signal_lag": 1,
+        "cost_model": "demo_linear_5bp_buy_10bp_sell",
+        "cost_total": 0.0035,
+        "turnover_mean": 0.217391,
+        "periods": 23
+      }
+    },
+    "equal_weight": {
+      "id": "equal_weight",
+      "label": "等权基准",
+      "summary": "所有行业等权持有，作为可解释基准",
+      "logic": "全资产等权 → 每期保持基准组合",
+      "spec": {
+        "factor_inputs": [],
+        "selection": "全资产等权",
+        "rebalance": "monthly",
+        "signal_lag": 1,
+        "risk_controls": {
+          "long_only": true,
+          "max_gross_exposure": 1.0,
+          "transaction_cost": "demo_linear_5bp_buy_10bp_sell"
+        },
+        "timing_rule": "不适用"
+      },
+      "metrics": {
+        "cum": 0.375654,
+        "ann": 0.181043,
+        "vol": 0.154493,
+        "sharpe": 0.989853,
+        "max_dd": -0.028918,
+        "wr": 0.521739,
+        "pl": 1.699435,
+        "ir": -0.008595,
+        "excess_ann": 0.003376,
+        "down_vol": 0.032363,
+        "sortino": 4.821584,
+        "calmar": 6.260496
+      },
+      "nav": [
+        {
+          "date": "2024-02-29",
+          "value": 1.0
+        },
+        {
+          "date": "2024-03-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-04-30",
+          "value": 1.0
+        },
+        {
+          "date": "2024-05-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-06-30",
+          "value": 1.0
+        },
+        {
+          "date": "2024-07-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-08-31",
+          "value": 1.0
+        },
+        {
+          "date": "2024-09-30",
+          "value": 1.195977
+        },
+        {
+          "date": "2024-10-31",
+          "value": 1.187668
+        },
+        {
+          "date": "2024-11-30",
+          "value": 1.192871
+        },
+        {
+          "date": "2024-12-31",
+          "value": 1.197891
+        },
+        {
+          "date": "2025-01-31",
+          "value": 1.164701
+        },
+        {
+          "date": "2025-02-28",
+          "value": 1.189109
+        },
+        {
+          "date": "2025-03-31",
+          "value": 1.196134
+        },
+        {
+          "date": "2025-04-30",
+          "value": 1.16325
+        },
+        {
+          "date": "2025-05-31",
+          "value": 1.186324
+        },
+        {
+          "date": "2025-06-30",
+          "value": 1.217159
+        },
+        {
+          "date": "2025-07-31",
+          "value": 1.257847
+        },
+        {
+          "date": "2025-08-31",
+          "value": 1.346798
+        },
+        {
+          "date": "2025-09-30",
+          "value": 1.359589
+        },
+        {
+          "date": "2025-10-31",
+          "value": 1.375578
+        },
+        {
+          "date": "2025-11-30",
+          "value": 1.346602
+        },
+        {
+          "date": "2025-12-31",
+          "value": 1.375654
+        }
+      ],
+      "holdings": [
+        {
+          "date": "2024-09-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2024-10-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2024-11-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2024-12-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2025-01-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2025-02-28",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2025-03-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2025-04-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2025-05-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2025-06-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2025-07-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2025-08-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2025-09-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2025-10-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2025-11-30",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        },
+        {
+          "date": "2025-12-31",
+          "items": [
+            {
+              "asset": "000300.SH",
+              "label": "000300.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000905.SH",
+              "label": "000905.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000852.SH",
+              "label": "000852.SH",
+              "weight": 0.2
+            },
+            {
+              "asset": "000922.CSI",
+              "label": "000922.CSI",
+              "weight": 0.2
+            },
+            {
+              "asset": "000821.CSI",
+              "label": "000821.CSI",
+              "weight": 0.2
+            }
+          ]
+        }
+      ],
+      "evidence": {
+        "signal_lag": 1,
+        "cost_model": "demo_linear_5bp_buy_10bp_sell",
+        "cost_total": 0.0005,
+        "turnover_mean": 0.043478,
+        "periods": 23
+      }
+    }
+  },
+  "architecture": [
+    {
+      "id": "data_extract_store",
+      "name": "数据提取与存储",
+      "responsibility": "登记来源、频率、日期范围和可见性边界，并形成 DataBundle。",
+      "input": [
+        "行情接口或本地文件",
+        "资产池",
+        "日期范围"
+      ],
+      "output": [
+        "DataBundle",
+        "dataset manifest",
+        "数据指纹"
+      ],
+      "controls": [
+        "来源可追踪",
+        "日期边界",
+        "不保存凭证"
+      ],
+      "status": "completed"
+    },
+    {
+      "id": "single_factor_research",
+      "name": "单个因子挖掘与测试",
+      "responsibility": "单独定义因子、方向、观察窗口、滞后和 forward return，再评估 IC、分组和覆盖度。",
+      "input": [
+        "数据包",
+        "因子定义",
+        "训练集 / 验证集 / 留出集"
+      ],
+      "output": [
+        "因子值表",
+        "IC / 分组收益",
+        "衰减和换手证据"
+      ],
+      "controls": [
+        "信号至少滞后 1 期",
+        "预测周期明确",
+        "时间切分"
+      ],
+      "status": "partial"
+    },
+    {
+      "id": "factor_improvement",
+      "name": "因子改进与综合",
+      "responsibility": "把经过单因子测试的信号做标准化、方向统一和加权合成，记录每个权重的来源。",
+      "input": [
+        "单因子评估结果",
+        "标准化规则",
+        "权重方案"
+      ],
+      "output": [
+        "composite_v1 因子",
+        "权重快照",
+        "对比结果"
+      ],
+      "controls": [
+        "权重和为 1",
+        "横截面正交化",
+        "不使用 holdout 调参",
+        "版本化"
+      ],
+      "status": "not_available"
+    },
+    {
+      "id": "risk_rebalance",
+      "name": "风控与调仓逻辑",
+      "responsibility": "把目标权重变成受约束的执行权重，并统一处理调仓频率、换手和交易成本。",
+      "input": [
+        "目标权重",
+        "持仓状态",
+        "成本配置",
+        "风险约束"
+      ],
+      "output": [
+        "执行权重",
+        "换手",
+        "成本",
+        "风险事件"
+      ],
+      "controls": [
+        "只做多",
+        "总敞口 ≤ 1",
+        "买入与卖出费率"
+      ],
+      "status": "completed"
+    },
+    {
+      "id": "strategy_iteration",
+      "name": "策略设计与迭代",
+      "responsibility": "比较基准、单因子和综合因子，把假设、改动和决策原因写进迭代记录。",
+      "input": [
+        "因子证据",
+        "策略规则",
+        "训练 / 验证结果"
+      ],
+      "output": [
+        "候选策略表",
+        "迭代记录",
+        "待验证假设"
+      ],
+      "controls": [
+        "先训练 / 验证",
+        "留出集不参与调参",
+        "保留失败版本"
+      ],
+      "status": "completed"
+    },
+    {
+      "id": "backtest_report",
+      "name": "回测与报告产出",
+      "responsibility": "按时间顺序执行信号、滞后、收益和成本，产出可复核的净值、持仓和绩效报告。",
+      "input": [
+        "回测配置",
+        "目标权重",
+        "资产收益",
+        "交易成本模型"
+      ],
+      "output": [
+        "净值",
+        "持仓轨迹",
+        "指标",
+        "报告摘要"
+      ],
+      "controls": [
+        "2024-02-29 → 2025-12-31",
+        "信号滞后 = 1 期",
+        "统一交易成本模型"
+      ],
+      "status": "completed"
+    },
+    {
+      "id": "version_record",
+      "name": "版本管理与运行记录",
+      "responsibility": "将代码、配置、数据、策略参数和产物绑定成可重放的研究版本。",
+      "input": [
+        "各阶段清单",
+        "配置快照",
+        "代码版本"
+      ],
+      "output": [
+        "运行清单",
+        "产物指纹",
+        "版本 / 迭代日志"
+      ],
+      "controls": [
+        "不可覆盖运行 ID",
+        "输入输出可追溯",
+        "脱敏发布"
+      ],
+      "status": "completed"
+    }
+  ],
+  "factor_research": {},
+  "strategy_iterations": [
+    {
+      "version": "baseline.equal_weight",
+      "hypothesis": "先建立不依赖因子的可解释基准",
+      "input": [
+        "asset_returns"
+      ],
+      "output": [
+        "equal_weight"
+      ],
+      "decision": "作为参考基准"
+    },
+    {
+      "version": "candidate.single_factor",
+      "hypothesis": "先分别验证动量、低波和价值信号",
+      "input": [
+        "单因子证据"
+      ],
+      "output": [
+        "momentum",
+        "low_vol",
+        "value"
+      ],
+      "decision": "在训练集和验证集比较"
+    },
+    {
+      "version": "candidate.composite_v1",
+      "hypothesis": "先做横截面正交化，再用 0.5 / 0.3 / 0.2 合成多因子排名",
+      "input": [
+        "momentum_6m",
+        "low_vol_orthogonal",
+        "value_orthogonal"
+      ],
+      "output": [
+        "composite_v1",
+        "综合因子策略"
+      ],
+      "decision": "仅用于留出集复核，不自动晋级"
+    }
+  ],
+  "research_workflow": {
+    "current_stage": "factor_review",
+    "human_ai_contract": {
+      "human": [
+        "提出研究问题",
+        "确认因子经济意义",
+        "批准或废弃因子",
+        "决定是否进入正式策略"
+      ],
+      "ai": [
+        "执行确定性计算",
+        "生成指标表和敏感性表",
+        "检查口径与前视风险",
+        "提出可验证的改善建议"
+      ],
+      "shared": [
+        "每一步先锁定输入",
+        "输出可追溯",
+        "所有批准和废弃都记录原因"
+      ]
+    },
+    "configuration": {
+      "status": "locked_for_demo",
+      "asset_pool": "synthetic_sector_8",
+      "frequency": "monthly",
+      "backtest_window": {
+        "start": "2024-02-29",
+        "end": "2025-12-31"
+      },
+      "sample_split": {
+        "train": {
+          "start": "2019-01-31",
+          "end": "2022-12-31"
+        },
+        "validation": {
+          "start": "2023-01-31",
+          "end": "2024-12-31"
+        },
+        "holdout": {
+          "start": "2025-01-31",
+          "end": "2025-12-31",
+          "purpose": "final review only"
+        }
+      },
+      "cost_model": {
+        "buy_rate": 0.0005,
+        "sell_rate": 0.001,
+        "currency": "fraction of traded notional"
+      },
+      "point_in_time_rule": "因子 t 期只能影响 t+1 期及之后的执行；留出集不能用于调参"
+    },
+    "factor_pool": {
+      "status": "awaiting_human_approval",
+      "decisions": [
+        {
+          "factor_id": "momentum_6m",
+          "status": "pending_review",
+          "decision": null,
+          "reason": null
+        },
+        {
+          "factor_id": "low_vol_6m",
+          "status": "pending_review",
+          "decision": null,
+          "reason": null
+        },
+        {
+          "factor_id": "pb",
+          "status": "pending_review",
+          "decision": null,
+          "reason": null
+        },
+        {
+          "factor_id": "low_vol_orthogonal",
+          "status": "derived_candidate",
+          "decision": null,
+          "reason": "由低波因子正交化生成"
+        },
+        {
+          "factor_id": "value_orthogonal",
+          "status": "derived_candidate",
+          "decision": null,
+          "reason": "由价值因子正交化生成"
+        },
+        {
+          "factor_id": "composite_v1",
+          "status": "candidate_only",
+          "decision": null,
+          "reason": "必须先完成单因子审批"
+        }
+      ]
+    },
+    "composite_design": {
+      "status": "candidate_only",
+      "formula": "0.5 * z(momentum_rank) + 0.3 * z(low_vol_orthogonal) + 0.2 * z(value_orthogonal)",
+      "orthogonalization": "同一截面内用已确认因子解释共同变化，综合因子只保留残差部分，避免重复计权",
+      "human_input": "研究员提出权重和改进方向，AI 执行正交化、标准化并生成对比证据"
+    },
+    "strategy_review": {
+      "status": "awaiting_human_approval",
+      "logic": "已批准因子 → 排名 → 前 N 名 → 目标权重 → 风险约束 → 下一期执行",
+      "ai_observer": "回测完成后先检查公式、时间对齐、成本和版本是否发生漂移，再提示人决定采纳、改进或废弃。"
+    },
+    "backtest_quality": {
+      "status": "passed_with_golden_checks",
+      "checks": [
+        {
+          "id": "metric_formula_registry",
+          "name": "指标统一公式出口",
+          "status": "passed",
+          "evidence": "核心指标库统一计算"
+        },
+        {
+          "id": "future_visibility",
+          "name": "策略不可见回测结束日之后的数据",
+          "status": "passed",
+          "evidence": "回测引擎截断回归测试"
+        },
+        {
+          "id": "net_return_identity",
+          "name": "净收益等于毛收益减成本",
+          "status": "passed",
+          "evidence": "回测契约断言"
+        },
+        {
+          "id": "nav_identity",
+          "name": "净值等于净收益累乘",
+          "status": "passed",
+          "evidence": "回测结果恒等式"
+        },
+        {
+          "id": "artifact_hash",
+          "name": "配置和数据指纹已绑定",
+          "status": "passed",
+          "evidence": "运行记录绑定配置指纹和数据指纹"
+        }
+      ]
+    },
+    "version_history": [
+      {
+        "version_id": "demo-research-v0.1.0",
+        "type": "baseline",
+        "status": "superseded",
+        "reason": "增加显式因子评估、审批和规则校验记录"
+      },
+      {
+        "version_id": "demo-research-v0.2.0",
+        "type": "workflow_mvp",
+        "status": "current_candidate",
+        "reason": "七阶段研究流程已结构化"
+      }
+    ]
+  },
+  "versioning": {
+    "version_id": "demo-research-v0.2.0",
+    "parent": "demo-research-v0.1.0",
+    "run_id": "demo-3b7e367a0cc2",
+    "config_hash": "dbf9da7524d2ec78b97914f33cc7e279be7e46ab031c2a51ac0b636f88fefff7",
+    "data_hash": null,
+    "artifact_policy": "记录输入、输出和阶段契约；发布包不携带外部原始数据"
+  },
+  "supported_asset_types": {
+    "stock": {
+      "label": "股票",
+      "demo_universe": "合成行业股票池"
+    },
+    "fund": {
+      "label": "基金",
+      "demo_universe": "合成基金池"
+    },
+    "bond": {
+      "label": "债券",
+      "demo_universe": "合成债券指数池"
+    },
+    "index": {
+      "label": "指数",
+      "demo_universe": "合成行业指数池"
+    }
+  }
+}
