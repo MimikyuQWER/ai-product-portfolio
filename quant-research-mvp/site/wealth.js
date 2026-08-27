@@ -102,6 +102,7 @@ function resetResearchProgress() {
 }
 
 async function wealthLoadPayload() {
+  if (window.DEMO_RUN_DATA) return window.DEMO_RUN_DATA;
   const response = await fetch("data/demo-run.json", { cache: "no-store" });
   if (!response.ok) throw new Error("研究数据加载失败，请刷新后重试");
   return response.json();

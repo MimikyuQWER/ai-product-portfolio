@@ -16,6 +16,7 @@ const fmtNum = (value, digits = 2) => value == null ? "—" : Number(value).toFi
 const byId = (id) => document.getElementById(id);
 
 async function loadPayload() {
+  if (window.DEMO_RUN_DATA) return window.DEMO_RUN_DATA;
   try {
     const response = await fetch("data/demo-run.json", { cache: "no-store" });
     if (!response.ok) throw new Error("payload unavailable");

@@ -62,6 +62,7 @@ const factorLabel = (id) => FACTOR_LABELS[id] || id;
 const decisionLabel = (value) => ({ adopt: "采纳", adjust: "调整", discard: "废弃" }[value] || value);
 
 async function loadPayload() {
+  if (window.DEMO_RUN_DATA) return window.DEMO_RUN_DATA;
   const response = await fetch("data/demo-run.json", { cache: "no-store" });
   if (!response.ok) throw new Error("演示数据加载失败");
   return response.json();
